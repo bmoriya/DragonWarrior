@@ -101,9 +101,9 @@ class Game(object):
 #                print x, y
         
         self.roof_group = Group()
-        '''
         self.wall_group = Group()
         self.wood_group = Group()
+        '''
         self.brick_group = Group()
         self.chest_group = Group()
         self.door_group = Group()
@@ -115,17 +115,19 @@ class Game(object):
         self.castle_group = Group()
         self.current_map = TantagelThroneRoom()
         '''
-        self.load_map(tantagel_throne_room)
+        self.current_map = tantagel_throne_room
+
+        self.load_map(self.current_map)
         
-        bigmap_width = 24 * self.TILE_SIZE
-        bigmap_height = 23 * self.TILE_SIZE
+        bigmap_width = len(self.current_map[0]) * self.TILE_SIZE
+        bigmap_height = len(self.current_map) * self.TILE_SIZE
         self.bigmap = Surface((bigmap_width, bigmap_height))
         self.bigmap.fill(self.BLACK)
         
         self.roof_group.draw(self.bigmap)
-        '''
         self.wall_group.draw(self.bigmap)
         self.wood_group.draw(self.bigmap)
+        '''
         self.brick_group.draw(self.bigmap)
         self.chest_group.draw(self.bigmap)
         self.door_group.draw(self.bigmap)
@@ -155,12 +157,12 @@ class Game(object):
                     roof = BaseSprite(center_pt, self.sprites[self.ROOF][0])
                     self.roof_group.add(roof)
                 elif current_map[y][x] == self.WALL:
-                    wall = BaseSprite(center_pt, self.sprites[self.WALL][1])
+                    wall = BaseSprite(center_pt, self.sprites[self.WALL][0])
                     self.wall_group.add(wall)
-                '''
                 elif current_map[y][x] == self.WOOD:
-                    wood = BaseSprite(center_pt, self.sprites[self.WOOD])
+                    wood = BaseSprite(center_pt, self.sprites[self.WOOD][0])
                     self.wood_group.add(wood)
+                    '''
                 elif current_map[y][x] == self.BRICK:
                     brick = BaseSprite(center_pt, self.sprites[self.BRICK])
                     self.brick_group.add(brick)
