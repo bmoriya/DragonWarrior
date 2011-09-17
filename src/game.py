@@ -103,7 +103,6 @@ class Game(object):
         self.roof_group = Group()
         self.wall_group = Group()
         self.wood_group = Group()
-        '''
         self.brick_group = Group()
         self.chest_group = Group()
         self.door_group = Group()
@@ -113,10 +112,8 @@ class Game(object):
         self.weapon_sign_group = Group()
         self.inn_sign_group = Group()
         self.castle_group = Group()
-        self.current_map = TantagelThroneRoom()
-        '''
-        self.current_map = tantagel_throne_room
 
+        self.current_map = tantagel_throne_room
         self.load_map(self.current_map)
         
         bigmap_width = len(self.current_map[0]) * self.TILE_SIZE
@@ -127,12 +124,11 @@ class Game(object):
         self.roof_group.draw(self.bigmap)
         self.wall_group.draw(self.bigmap)
         self.wood_group.draw(self.bigmap)
-        '''
         self.brick_group.draw(self.bigmap)
         self.chest_group.draw(self.bigmap)
         self.door_group.draw(self.bigmap)
         self.brick_stairdn_group.draw(self.bigmap)
-        '''
+
         self.bigmap.convert()
         
         self.background = Surface(self.screen.get_size())
@@ -162,22 +158,20 @@ class Game(object):
                 elif current_map[y][x] == self.WOOD:
                     wood = BaseSprite(center_pt, self.sprites[self.WOOD][0])
                     self.wood_group.add(wood)
-                    '''
                 elif current_map[y][x] == self.BRICK:
-                    brick = BaseSprite(center_pt, self.sprites[self.BRICK])
+                    brick = BaseSprite(center_pt, self.sprites[self.BRICK][0])
                     self.brick_group.add(brick)
                 elif current_map[y][x] == self.CHEST:
-                    chest = BaseSprite(center_pt, self.sprites[self.CHEST])
+                    chest = BaseSprite(center_pt, self.sprites[self.CHEST][0])
                     self.chest_group.add(chest)
                 elif current_map[y][x] == self.DOOR:
-                    door = BaseSprite(center_pt, self.sprites[self.DOOR])
+                    door = BaseSprite(center_pt, self.sprites[self.DOOR][0])
                     self.door_group.add(door)
                 elif current_map[y][x] == self.BRICK_STAIRDN:
                     brick_stairdn = BaseSprite(center_pt, 
                                                self.sprites[
-                            self.BRICK_STAIRDN])
+                            self.BRICK_STAIRDN][0])
                     self.brick_stairdn_group.add(brick_stairdn)
-                '''
 
     def load_spritesheet(self, filename, width, height, colorkey=None):
         '''
