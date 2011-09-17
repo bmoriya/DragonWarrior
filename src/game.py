@@ -31,12 +31,37 @@ class Game(object):
         init()
         set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
         set_caption(self.GAME_NAME)
+        
 
     def main(self):
         '''
         Function that runs the game.
         '''
         pass
+
+    def load_spritesheet(self, filename, width, height, colorkey=None):
+        try:
+            tile_sheet = load(filename)
+            if colorkey:
+                tile_sheet.set_colorkey(colorkey)
+                tile_sheet.convert_alpha()
+            else:
+                tile_sheet.convert()
+        except error, e:
+            print e
+            return
+        
+        tile_sheet_width, tile_sheet_height = tile_sheet.get_size()
+        tiles = []
+        for tile_x in range(0, tile_sheet_width / width):
+            row = []
+            tiles.append(row)
+            for tile_y in range(0, tile_sheet_height / height):
+                rect = (tile_x * width, tile_y * height, width, height)
+                row.append(tile_sheet.subsurface(rect))
+                
+        return tiles
+
 
 
 if __name__ == "__main__":
