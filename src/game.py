@@ -28,6 +28,9 @@ class Game(object):
 
     GAME_NAME = "Dragon Warrior"
     
+    #Colors
+    BLACK = (0, 0, 0)
+
     #Index values for the map tiles corresponding to location on tilesheet.
     ROOF = 0
     WALL = 1
@@ -70,53 +73,54 @@ class Game(object):
         Initialize the game.
         '''
         init()
-        set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
+        self.screen = set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
         set_caption(self.GAME_NAME)
-        
-        #Load images from spritesheets
-        self.terrain_tiles = self.load_spritesheet(self.TILE_SHEET, width=16, 
-                                                   height=16)
-        self.char_tiles = self.load_spritesheet(self.CHAR_SHEET, width=16, 
-                                                height=16)
+        self.screen.fill(self.BLACK)
 
+        #Load images from spritesheets and combine them into a sprite list.
+        self.sprites = self.load_spritesheet(self.TILE_SHEET, width=16,
+                                             height=16)
+        self.sprites.extend(self.load_spritesheet(self.CHAR_SHEET, 
+                                                  width=16, height=16))
+        
     def main(self):
         '''
         Function that runs the game.
         '''
-        pass
+        
+        #Keep for debugging. prints entire sprite sheets.
+        #for x, row in enumerate(self.sprites):
+        #    for y, tile in enumerate(row):
+        #        self.screen.blit(tile, (x*32, y*24))
 
-    def load_sprites(self, cur_map):
-        '''
-        Load sprites for a map.
-        '''
-        x_offset = self.TILE_SIZE / 2
-        y_offset = self.TILE_SIZE / 2
-        
-        
+        flip()
+
 
     def load_spritesheet(self, filename, width, height, colorkey=None):
+        '''
+        Loads spritesheet and slices into images of given width and height.
+
+        Returns:
+        a list of lists containing the sliced images. First index 
+        value would correspond to the row number and the second would be
+        column the sprite is found in on the physical sheet.
+        '''
         try:
-            tile_sheet = load(filename)
-            if colorkey:
-                tile_sheet.set_colorkey(colorkey)
-                tile_sheet.convert_alpha()
-            else:
-                tile_sheet.convert()
+            image = load(filename).convert()
         except error, e:
             print e
             return
+        image_width, image_height = image.get_size()
         
-        tile_sheet_width, tile_sheet_height = tile_sheet.get_size()
-        tiles = []
-        for tile_x in range(0, tile_sheet_width / width):
-            row = []
-            tiles.append(row)
-            for tile_y in range(0, tile_sheet_height / height):
-                rect = (tile_x * width, tile_y * height, width, height)
-                row.append(tile_sheet.subsurface(rect))
-                
-        return tiles
+        tile_table = []
 
+        for x in range(0, image_width / width):
+            row = []
+            tile_table.append(row)
+            for y in range(0, image_height / height):
+                rect = (x * width, y * height, width, height)
+                row.append(image.subsurface(rect))
+        return tile_table
 
 
 if __name__ == "__main__":
