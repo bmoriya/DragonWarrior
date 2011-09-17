@@ -1,13 +1,16 @@
 from os import pardir
 from os.path import join
-from pygame import init, error, Surface
+from pygame import init, error, Surface, QUIT, quit, K_LEFT, K_RIGHT, K_UP, \
+    K_DOWN
 from pygame.display import set_mode, set_caption, flip
+from pygame.event import get
 from pygame.image import load
+from pygame.key import get_pressed
 from pygame.sprite import Group
 from pygame.transform import scale
+from pygame.time import Clock
 
 from base_sprite import BaseSprite
-#from tantagel_throne_room import TantagelThroneRoom
 from maps import tantagel_throne_room
 
 class Game(object):
@@ -36,6 +39,16 @@ class Game(object):
     
     #Colors
     BLACK = (0, 0, 0)
+
+    cornerpoint = [0, 0]
+    ORIGIN = (0, 0)
+
+    #Map scrolling variables
+    scroll_step_x = 3
+    scroll_step_y = 3
+
+    #Frames per second
+    FPS = 60
 
     #Index values for the map tiles corresponding to location on tilesheet.
     ROOF = 0
@@ -83,6 +96,8 @@ class Game(object):
         set_caption(self.GAME_NAME)
         self.screen.fill(self.BLACK)
 
+        self.clock = Clock()
+
         #Load images from spritesheets and combine them into a sprite list.
         self.sprites = self.load_spritesheet(self.TILE_SHEET, width=16,
                                              height=16)
@@ -116,9 +131,9 @@ class Game(object):
         self.current_map = tantagel_throne_room
         self.load_map()
         
-        bigmap_width = len(self.current_map[0]) * self.TILE_SIZE
-        bigmap_height = len(self.current_map) * self.TILE_SIZE
-        self.bigmap = Surface((bigmap_width, bigmap_height))
+        self.bigmap_width = len(self.current_map[0]) * self.TILE_SIZE
+        self.bigmap_height = len(self.current_map) * self.TILE_SIZE
+        self.bigmap = Surface((self.bigmap_width, self.bigmap_height))
         self.bigmap.fill(self.BLACK)
         
         self.roof_group.draw(self.bigmap)
@@ -132,12 +147,63 @@ class Game(object):
         self.bigmap.convert()
         
         self.background = Surface(self.screen.get_size())
-        self.background = self.bigmap.subsurface(0, 0, self.WIN_WIDTH, 
+        self.event_loop()
+        quit()
+
+    def update_display(self):
+        self.background = self.bigmap.subsurface(self.cornerpoint[0], 
+                                                 self.cornerpoint[1], 
+                                                 self.WIN_WIDTH, 
                                                  self.WIN_HEIGHT)
         self.background.convert()
-        self.screen.blit(self.background, (0, 0))
-        
+        self.screen.blit(self.background, self.ORIGIN)
         flip()
+
+    def event_loop(self):
+        running = True
+        
+        while running:
+            self.clock.tick(self.FPS)
+            for event in get():
+                if event.type == QUIT:
+                    running = False
+        
+            #scroll bigmap
+            scrollx = 0
+            scrolly = 0
+
+            #Temporary scrolling until character is added.
+            pressed_keys = get_pressed()
+
+            if pressed_keys[K_LEFT]:
+                scrollx -= self.scroll_step_x
+            elif pressed_keys[K_RIGHT]:
+                scrollx += self.scroll_step_x
+            elif pressed_keys[K_UP]:
+                scrolly -= self.scroll_step_y
+            elif pressed_keys[K_DOWN]:
+                scrolly += self.scroll_step_y
+
+            #Move screen
+            self.cornerpoint[0] += scrollx
+            self.cornerpoint[1] += scrolly
+
+            #Stay in bounds
+            if self.cornerpoint[0] < 0:
+                self.cornerpoint[0] = 0
+                scrollx = 0
+            elif self.cornerpoint[0] > self.bigmap_width - self.WIN_WIDTH:
+                self.cornerpoint[0] = self.bigmap_width - self.WIN_WIDTH
+                scrollx = 0
+            if self.cornerpoint[1] < 0:
+                self.cornerpoint[1] = 0
+                scrolly = 0
+            elif self.cornerpoint[1] > self.bigmap_height - self.WIN_HEIGHT:
+                self.cornerpoint[1] = self.bigmap_height - self.WIN_HEIGHT
+                scrolly = 0
+
+            self.update_display()
+        return 0
 
     def load_map(self):
         x_offset = self.TILE_SIZE / 2
