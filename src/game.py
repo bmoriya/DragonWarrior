@@ -95,9 +95,9 @@ class Game(object):
         '''
         
         #Keep for debugging. prints entire sprite sheets.
-        for x, row in enumerate(self.sprites):
-            for y, tile in enumerate(row):
-                self.screen.blit(tile, (x*16*self.SCALE, y*16*self.SCALE))
+#        for x, row in enumerate(self.sprites):
+#            for y, tile in enumerate(row):
+#                self.screen.blit(tile, (x*self.TILE_SIZE, y*TILE_SIZE))
 #                print x, y
         
         self.roof_group = Group()
