@@ -4,8 +4,7 @@ from pygame import error, RLEACCEL
 
 class BaseMap(object):
     
-    def __init__(self, wall_size):
-        WALL_SIZE = wall_size
+    def __init__(self, tile_size):
         self.ROOF = 0
         self.WALL = 1
         self.WOOD = 2
