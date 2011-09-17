@@ -21,14 +21,16 @@ class Game(object):
     #Size for the game window.
     WIN_WIDTH = NESRES[0] * SCALE
     WIN_HEIGHT = NESRES[1] * SCALE
-
+    
+    GAME_NAME = "Dragon Warrior"
+    
     def __init__(self):
         '''
         Initialize the game.
         '''
         init()
         set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
-        
+        set_caption(self.GAME_NAME)
 
     def main(self):
         '''
