@@ -3,6 +3,7 @@ from os.path import join
 from pygame import init, error
 from pygame.display import set_mode, set_caption, flip
 from pygame.image import load
+from pygame.transform import scale
 
 class Game(object):
     '''
@@ -89,9 +90,9 @@ class Game(object):
         '''
         
         #Keep for debugging. prints entire sprite sheets.
-        #for x, row in enumerate(self.sprites):
-        #    for y, tile in enumerate(row):
-        #        self.screen.blit(tile, (x*32, y*24))
+        for x, row in enumerate(self.sprites):
+            for y, tile in enumerate(row):
+                self.screen.blit(tile, (x*16*self.SCALE, y*16*self.SCALE))
 
         flip()
 
@@ -107,13 +108,16 @@ class Game(object):
         '''
         try:
             image = load(filename).convert()
+            image = scale(image, (image.get_width() * self.SCALE,
+                          image.get_height() * self.SCALE))
         except error, e:
             print e
             return
         image_width, image_height = image.get_size()
-        
+        width *= self.SCALE
+        height *= self.SCALE
         tile_table = []
-
+        
         for x in range(0, image_width / width):
             row = []
             tile_table.append(row)
