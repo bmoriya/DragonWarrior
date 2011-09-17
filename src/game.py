@@ -136,6 +136,7 @@ class Game(object):
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height))
         self.bigmap.fill(self.BLACK)
         
+        #Draw the static sprites
         self.roof_group.draw(self.bigmap)
         self.wall_group.draw(self.bigmap)
         self.wood_group.draw(self.bigmap)
@@ -147,7 +148,8 @@ class Game(object):
         self.bigmap.convert()
         
         self.background = Surface(self.screen.get_size())
-        self.event_loop()
+        self.current_state = self.event_loop()
+        
         quit()
 
     def update_display(self):
@@ -159,6 +161,41 @@ class Game(object):
         self.screen.blit(self.background, self.ORIGIN)
         flip()
 
+    def scroll_map(self):
+        #scroll bigmap
+        scrollx = 0
+        scrolly = 0
+
+        #Temporary scrolling until character is added.
+        pressed_keys = get_pressed()
+        
+        if pressed_keys[K_LEFT]:
+            scrollx -= self.scroll_step_x
+        elif pressed_keys[K_RIGHT]:
+            scrollx += self.scroll_step_x
+        elif pressed_keys[K_UP]:
+            scrolly -= self.scroll_step_y
+        elif pressed_keys[K_DOWN]:
+            scrolly += self.scroll_step_y
+            
+        #Move screen
+        self.cornerpoint[0] += scrollx
+        self.cornerpoint[1] += scrolly
+
+        #Stay in bounds
+        if self.cornerpoint[0] < 0:
+            self.cornerpoint[0] = 0
+            scrollx = 0
+        elif self.cornerpoint[0] > self.bigmap_width - self.WIN_WIDTH:
+            self.cornerpoint[0] = self.bigmap_width - self.WIN_WIDTH
+            scrollx = 0
+        if self.cornerpoint[1] < 0:
+            self.cornerpoint[1] = 0
+            scrolly = 0
+        elif self.cornerpoint[1] > self.bigmap_height - self.WIN_HEIGHT:
+            self.cornerpoint[1] = self.bigmap_height - self.WIN_HEIGHT
+            scrolly = 0
+
     def event_loop(self):
         running = True
         
@@ -168,39 +205,7 @@ class Game(object):
                 if event.type == QUIT:
                     running = False
         
-            #scroll bigmap
-            scrollx = 0
-            scrolly = 0
-
-            #Temporary scrolling until character is added.
-            pressed_keys = get_pressed()
-
-            if pressed_keys[K_LEFT]:
-                scrollx -= self.scroll_step_x
-            elif pressed_keys[K_RIGHT]:
-                scrollx += self.scroll_step_x
-            elif pressed_keys[K_UP]:
-                scrolly -= self.scroll_step_y
-            elif pressed_keys[K_DOWN]:
-                scrolly += self.scroll_step_y
-
-            #Move screen
-            self.cornerpoint[0] += scrollx
-            self.cornerpoint[1] += scrolly
-
-            #Stay in bounds
-            if self.cornerpoint[0] < 0:
-                self.cornerpoint[0] = 0
-                scrollx = 0
-            elif self.cornerpoint[0] > self.bigmap_width - self.WIN_WIDTH:
-                self.cornerpoint[0] = self.bigmap_width - self.WIN_WIDTH
-                scrollx = 0
-            if self.cornerpoint[1] < 0:
-                self.cornerpoint[1] = 0
-                scrolly = 0
-            elif self.cornerpoint[1] > self.bigmap_height - self.WIN_HEIGHT:
-                self.cornerpoint[1] = self.bigmap_height - self.WIN_HEIGHT
-                scrolly = 0
+            self.scroll_map()
 
             self.update_display()
         return 0
