@@ -14,6 +14,7 @@ class Game(object):
     WIN_HEIGHT = NESRES[1] * SCALE
     DATA_DIR = join(pardir, 'data')
     MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
+    UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_heor.png')
     TILE_SIZE = 16 * SCALE
     
     def __init__(self):
@@ -35,7 +36,7 @@ class Game(object):
             #Load the map tile spritesheet
             map_tilesheet = load(self.MAP_TILES_PATH).convert()
             #Load unarmed hero images
-            
+            unarmed_herosheet = load(
             
         except error, e:
             print e
