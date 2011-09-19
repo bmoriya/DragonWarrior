@@ -14,7 +14,7 @@ class Game(object):
     WIN_HEIGHT = NESRES[1] * SCALE
     DATA_DIR = join(pardir, 'data')
     MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
-    UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_heor.png')
+    UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
     TILE_SIZE = 16 * SCALE
     
     def __init__(self):
