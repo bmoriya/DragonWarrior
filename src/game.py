@@ -26,7 +26,6 @@ class Game(object):
         
         self.load_images()
         
-        flip()
 
     def load_images(self):
         '''
@@ -43,7 +42,6 @@ class Game(object):
         width, height = map_tilesheet.get_size()
         map_tilesheet = scale(map_tilesheet, (width * self.SCALE, 
                                               height * self.SCALE))
-        self.screen.blit(map_tilesheet, (0, 0))
         
         #Parse map tilesheet for individual tiles
         self.map_tiles = []
