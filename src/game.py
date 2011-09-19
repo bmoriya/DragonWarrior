@@ -49,6 +49,8 @@ class Game(object):
 
     #Frames per second
     FPS = 60
+    #For animation updates
+    interval = 0.15
 
     #Index values for the map tiles corresponding to location on tilesheet.
     ROOF = 0
@@ -85,8 +87,9 @@ class Game(object):
     BOTTOM_TOP_LEFT_COAST = 31
     BOTTOM_TOP_COAST = 32
     BOTTOM_TOP_RIGHT_COAST = 33
-    
-    
+    HERO = 34
+    KING_LORIK = 35
+        
     def __init__(self):
         '''
         Initialize the game.
@@ -97,12 +100,14 @@ class Game(object):
         self.screen.fill(self.BLACK)
 
         self.clock = Clock()
+        self.cycle_time = 0
 
-        #Load images from spritesheets and combine them into a sprite list.
+        #Load images from spritesheets.
         self.sprites = self.load_spritesheet(self.TILE_SHEET, width=16,
                                              height=16)
-        self.sprites.extend(self.load_spritesheet(self.CHAR_SHEET, 
-                                                  width=16, height=16))
+        self.char_sprites = (self.load_spritesheet(self.CHAR_SHEET, 
+                                                   width=16, height=16))
+        
         
     def main(self):
         '''
