@@ -30,7 +30,7 @@ class Game(object):
         '''
         try:
             #Load the map tile spritesheet.
-            map_tiles = load(self.MAP_TILES_PATH)
+            map_tiles = load(self.MAP_TILES_PATH).convert()
             
         except error, e:
             print e
