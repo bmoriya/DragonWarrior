@@ -61,13 +61,22 @@ class Game(object):
         #Scale and handle transparency on hero images
         unarmed_herosheet.set_colorkey(self.COLORKEY)
         unarmed_herosheet.convert_alpha()
+        width, height = unarmed_herosheet.get_size()
+        print width, height
         unarmed_herosheet = scale(unarmed_herosheet, (width * self.SCALE, 
                                                       height * self.SCALE))
-        width, height = unarmed_herosheet.get_size()
-        for i in xrange(0, 8):
+        
+        facing_down = []
+        facing_left = []
+        facing_up = []
+        facing_right = []    
+        for i in xrange(0, 2):
             print i
-        
-        
+            rect1 = (i * self.TILE_SIZE, 0, self.TILE_SIZE, self.TILE_SIZE)
+            print rect1
+            facing_down.append(unarmed_herosheet.subsurface(rect1))
+        self.screen.blit(facing_down[1], (0, 0))
+        flip()
 
 if __name__ == "__main__":
     game = Game()
