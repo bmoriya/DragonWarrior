@@ -32,18 +32,20 @@ class Game(object):
         Load all the images for the game graphics.
         '''
         try:
-            #Load the map tile spritesheet.
+            #Load the map tile spritesheet
             map_tilesheet = load(self.MAP_TILES_PATH).convert()
+            #Load unarmed hero images
+            
             
         except error, e:
             print e
             return
         
+        #Parse map tilesheet for individual tiles
         width, height = map_tilesheet.get_size()
         map_tilesheet = scale(map_tilesheet, (width * self.SCALE, 
                                               height * self.SCALE))
         
-        #Parse map tilesheet for individual tiles
         self.map_tiles = []
         for x in range(0, width / self.TILE_SIZE):
             row = []
@@ -52,6 +54,8 @@ class Game(object):
                 rect = (x * self.TILE_SIZE, y * self.TILE_SIZE, 
                         self.TILE_SIZE, self.TILE_SIZE)
                 row.append(self.map_tiles.subsurface(rect))
+
+        
         
 
 if __name__ == "__main__":
