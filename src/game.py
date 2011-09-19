@@ -16,6 +16,7 @@ class Game(object):
     MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
     UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
     TILE_SIZE = 16 * SCALE
+    COLORKEY = (0, 128, 128)
     
     def __init__(self):
         #Initialize pygame
@@ -35,8 +36,9 @@ class Game(object):
         try:
             #Load the map tile spritesheet
             map_tilesheet = load(self.MAP_TILES_PATH).convert()
+            
             #Load unarmed hero images
-            unarmed_herosheet = load(
+            unarmed_herosheet = load(self.UNARMED_HERO_PATH)
             
         except error, e:
             print e
@@ -54,8 +56,16 @@ class Game(object):
             for y in range(0, height / self.TILE_SIZE):
                 rect = (x * self.TILE_SIZE, y * self.TILE_SIZE, 
                         self.TILE_SIZE, self.TILE_SIZE)
-                row.append(self.map_tiles.subsurface(rect))
+                row.append(map_tilesheet.subsurface(rect))
 
+        #Scale and handle transparency on hero images
+        unarmed_herosheet.set_colorkey(self.COLORKEY)
+        unarmed_herosheet.convert_alpha()
+        unarmed_herosheet = scale(unarmed_herosheet, (width * self.SCALE, 
+                                                      height * self.SCALE))
+        width, height = unarmed_herosheet.get_size()
+        for i in xrange(0, 8):
+            print i
         
         
 
