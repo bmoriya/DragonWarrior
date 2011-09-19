@@ -58,33 +58,36 @@ class Game(object):
                         self.TILE_SIZE, self.TILE_SIZE)
                 row.append(map_tilesheet.subsurface(rect))
 
-        #Scale and handle transparency on hero images
-        unarmed_herosheet.set_colorkey(self.COLORKEY)
-        unarmed_herosheet.convert_alpha()
-        width, height = unarmed_herosheet.get_size()
-        unarmed_herosheet = scale(unarmed_herosheet, (width * self.SCALE, 
-                                                      height * self.SCALE))
+        self.parse_animated_spritesheet(unarmed_herosheet)
+
+    def parse_animated_spritesheet(self, sheet):
+        sheet.set_colorkey(self.COLORKEY)
+        sheet.convert_alpha()
+        width, height = sheet.get_size()
+        sheet = scale(sheet, (width * self.SCALE, height * self.SCALE))
         
         facing_down = []
         facing_left = []
         facing_up = []
         facing_right = []    
+        
         for i in xrange(0, 2):
             
             rect = (i * self.TILE_SIZE, 0, self.TILE_SIZE, self.TILE_SIZE)
-            facing_down.append(unarmed_herosheet.subsurface(rect))
+            facing_down.append(sheet.subsurface(rect))
             
             rect = ((i + 2) * self.TILE_SIZE, 0, 
                     self.TILE_SIZE, self.TILE_SIZE) 
-            facing_left.append(unarmed_herosheet.subsurface(rect))
+            facing_left.append(sheet.subsurface(rect))
             
             rect = ((i + 4) * self.TILE_SIZE, 0,
                     self.TILE_SIZE, self.TILE_SIZE)
-            facing_up.append(unarmed_herosheet.subsurface(rect))
+            facing_up.append(sheet.subsurface(rect))
             
             rect = ((i + 6) * self.TILE_SIZE, 0,
                     self.TILE_SIZE, self.TILE_SIZE)
-            facing_right.append(unarmed_herosheet.subsurface(rect))
+            facing_right.append(sheet.subsurface(rect))
+
 
 
 if __name__ == "__main__":
