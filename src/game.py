@@ -16,6 +16,8 @@ class Game(object):
     MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
     UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
     KING_LORIK_PATH = join(DATA_DIR, 'king_lorik.png')
+    RIGHT_GUARD_PATH = join(DATA_DIR, 'right_guard.png')
+    LEFT_GUARD_PATH = join(DATA_DIR, 'left_guard.png')
     TILE_SIZE = 16 * SCALE
     COLORKEY = (0, 128, 128)
     
@@ -43,6 +45,10 @@ class Game(object):
 
             #Load King Lorik images
             king_lorik_sheet = load(self.KING_LORIK_PATH)
+
+            #Guard images.
+            right_guard_sheet = load(self.RIGHT_GUARD_PATH)
+            left_guard_sheet = load(self.LEFT_GUARD_PATH)
             
         except error, e:
             print e
