@@ -87,6 +87,8 @@ class Game(object):
             rect = ((i + 6) * self.TILE_SIZE, 0,
                     self.TILE_SIZE, self.TILE_SIZE)
             facing_right.append(sheet.subsurface(rect))
+            
+        return facing_down, facing_left, facing_up, facing_right
 
 
 
