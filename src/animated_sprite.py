@@ -20,12 +20,9 @@ class AnimatedSprite(BaseSprite):
         self.left_images = left_img
         self.up_images = up_img
         self.right_images = right_img
-        self.direction = self.RIGHT
+        self.direction = self.UP
         self.center_point = center_point
 
-    def update(self, key, surface):
-        pass
-        
     def animate(self, surface):
         self.frame_count += 1
         if self.frame_count > self.frame_delay:
@@ -36,19 +33,10 @@ class AnimatedSprite(BaseSprite):
                 self.current_frame = 0
         
         if self.direction == self.DOWN:
-            surface.fill(BACK_FILL_COLOR, self.rect)
-            surface.blit(self.down_images[self.current_frame], 
-                         (self.rect[0], self.rect[1]))
+            self.image = self.down_images[self.current_frame]
         elif self.direction == self.LEFT:
-            surface.fill(BACK_FILL_COLOR, self.rect)
-            surface.blit(self.left_images[self.current_frame],
-                         (self.rect[0], self.rect[1]))
+            self.image = self.left_images[self.current_frame]
         elif self.direction == self.UP:
-            surface.fill(BACK_FILL_COLOR, self.rect)
-            surface.blit(self.up_images[self.current_frame], 
-                         (self.rect[0], self.rect[1]))
+            self.image = self.up_images[self.current_frame]
         elif self.direction == self.RIGHT:
-            surface.fill(BACK_FILL_COLOR, self.rect)
-            surface.blit(self.right_images[self.current_frame],
-                         (self.rect[0], self.rect[1]))
-
+            self.image = self.right_images[self.current_frame]

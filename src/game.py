@@ -1,15 +1,15 @@
 from os import pardir
 from os.path import join
-from pygame import init, error, Surface, QUIT
+from pygame import init, error, Surface, QUIT, KEYDOWN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
 from pygame.image import load
-from pygame.sprite import Group
+from pygame.sprite import Group, RenderUpdates
 from pygame.transform import scale
 from pygame.time import Clock
 
 from common import TILE_SIZE, SCALE, BACK_FILL_COLOR
-from animated_sprite import AnimatedSprite
+from player import Player
 from base_sprite import BaseSprite
 from maps import *
 
@@ -41,7 +41,7 @@ class Game(object):
         set_caption(self.GAME_TITLE)
         self.clock = Clock()
         self.load_images()
-        
+       
     def main(self):
         self.init_groups()
         self.current_map = tantagel_throne_room
@@ -60,17 +60,20 @@ class Game(object):
         self.background.fill(BACK_FILL_COLOR)
         
         while True:
+            self.player_sprites.clear(self.screen, self.background)
             self.clock.tick(self.FPS)
             for event in get():
                 if event.type == QUIT:
                     return
-            self.player.animate(self.background)
-            self.screen.blit(self.background, self.ORIGIN)
+                if event.type == KEYDOWN:
+                    pass
             
             self.background = self.bigmap.subsurface(self.cornerpoint[0],
                                                      self.cornerpoint[1],
                                                      self.WIN_WIDTH,
                                                      self.WIN_HEIGHT).convert()
+            self.player.animate(self.background)
+            self.player_sprites.draw(self.background)
             self.screen.blit(self.background, self.ORIGIN)
             flip()
 
@@ -116,7 +119,11 @@ class Game(object):
                     brick_stairdn = BaseSprite(center_pt, self.map_tiles[
                             BRICK_STAIRDN][0])
                     self.brick_stairdn_group.add(brick_stairdn)
-
+                elif self.current_map[y][x] == HERO:
+                    self.player.set_centerpoint(center_pt)
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
+        self.player_sprites = RenderUpdates(self.player)
             
     def init_groups(self):
         self.roof_group = Group()
@@ -162,7 +169,7 @@ class Game(object):
             self.parse_animated_spritesheet(
             unarmed_herosheet, is_roaming=True)
             
-        self.player = AnimatedSprite((TILE_SIZE/2, TILE_SIZE/2), down_img, 
+        self.player = Player((TILE_SIZE/2, TILE_SIZE/2), down_img, 
                                      left_img, up_img, right_img)
 
         #Get images for the King
