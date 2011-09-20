@@ -64,7 +64,8 @@ class Game(object):
 
         #Get the images for the initial hero sprites
         self.parse_animated_spritesheet(unarmed_herosheet, is_roaming=True)
-        
+        #Get images for the King
+        self.parse_animated_spritesheet(king_lorik_sheet, is_roaming=False)
 
     def parse_animated_spritesheet(self, sheet, is_roaming=True):
         '''
