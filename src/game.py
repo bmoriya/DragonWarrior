@@ -10,6 +10,8 @@ from pygame.time import Clock
 
 from common import TILE_SIZE, SCALE, BACK_FILL_COLOR
 from animated_sprite import AnimatedSprite
+from base_sprite import BaseSprite
+from maps import *
 
 class Game(object):
     NESRES = (256, 240)
@@ -27,6 +29,8 @@ class Game(object):
     COLORKEY = (0, 128, 128)
     SCROLL_STEP_X = 3
     SCROLL_STEP_Y = 3
+    ORIGIN = (0, 0)
+    cornerpoint = [0, 0]
     
     def __init__(self):
         #Initialize pygame
@@ -40,6 +44,18 @@ class Game(object):
         
     def main(self):
         self.init_groups()
+        self.current_map = tantagel_throne_room
+        self.load_map()
+
+        #Make the big scrollable map
+        self.bigmap_width = len(self.current_map[0]) * TILE_SIZE
+        self.bigmap_height = len(self.current_map) * TILE_SIZE
+        self.bigmap = Surface((self.bigmap_width, 
+                               self.bigmap_height)).convert()
+        self.bigmap.fill(BACK_FILL_COLOR)
+        
+        self.draw_sprites()
+
         self.background = Surface(self.screen.get_size()).convert()
         self.background.fill(BACK_FILL_COLOR)
         
@@ -49,8 +65,58 @@ class Game(object):
                 if event.type == QUIT:
                     return
             self.player.animate(self.background)
-            self.screen.blit(self.background, (0, 0))
+            self.screen.blit(self.background, self.ORIGIN)
+            
+            self.background = self.bigmap.subsurface(self.cornerpoint[0],
+                                                     self.cornerpoint[1],
+                                                     self.WIN_WIDTH,
+                                                     self.WIN_HEIGHT).convert()
+            self.screen.blit(self.background, self.ORIGIN)
             flip()
+
+    def draw_sprites(self):
+        '''
+        Draw static sprites on the big map.
+        '''
+        self.roof_group.draw(self.bigmap)
+        self.wall_group.draw(self.bigmap)
+        self.wood_group.draw(self.bigmap)
+        self.brick_group.draw(self.bigmap)
+        self.chest_group.draw(self.bigmap)
+        self.door_group.draw(self.bigmap)
+        self.brick_stairdn_group.draw(self.bigmap)
+
+    def load_map(self):
+        x_offset = TILE_SIZE / 2
+        y_offset = TILE_SIZE / 2
+
+        for y in range (len(self.current_map)):
+            for x in range(len(self.current_map[y])):
+                center_pt = [(x * TILE_SIZE) + x_offset, 
+                             (y * TILE_SIZE) + y_offset]
+                if self.current_map[y][x] == ROOF:
+                    roof = BaseSprite(center_pt, self.map_tiles[ROOF][0])
+                    self.roof_group.add(roof)
+                elif self.current_map[y][x] == WALL:
+                    wall = BaseSprite(center_pt, self.map_tiles[WALL][0])
+                    self.wall_group.add(wall)
+                elif self.current_map[y][x] == WOOD:
+                    wood = BaseSprite(center_pt, self.map_tiles[WOOD][0])
+                    self.wood_group.add(wood)
+                elif self.current_map[y][x] == BRICK:
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
+                elif self.current_map[y][x] == CHEST:
+                    chest = BaseSprite(center_pt, self.map_tiles[CHEST][0])
+                    self.chest_group.add(chest)
+                elif self.current_map[y][x] == DOOR:
+                    door = BaseSprite(center_pt, self.map_tiles[DOOR][0])
+                    self.door_group.add(door)
+                elif self.current_map[y][x] == BRICK_STAIRDN:
+                    brick_stairdn = BaseSprite(center_pt, self.map_tiles[
+                            BRICK_STAIRDN][0])
+                    self.brick_stairdn_group.add(brick_stairdn)
+
             
     def init_groups(self):
         self.roof_group = Group()
@@ -65,7 +131,6 @@ class Game(object):
         self.weapon_sign_group = Group()
         self.inn_sign_group = Group()
         self.castle_group = Group()
-
 
     def load_images(self):
         '''
@@ -91,7 +156,7 @@ class Game(object):
             return
         
         self.parse_map_tiles(map_tilesheet)
-        
+
         #Get the images for the initial hero sprites
         down_img, left_img, up_img, right_img = \
             self.parse_animated_spritesheet(
@@ -105,17 +170,21 @@ class Game(object):
 
     def parse_map_tiles(self, map_tilesheet):
         #Parse map tilesheet for individual tiles
+        map_tilesheet = scale(map_tilesheet, 
+                              (map_tilesheet.get_width() * SCALE, 
+                               map_tilesheet.get_height() * SCALE))
+        
         width, height = map_tilesheet.get_size()
-        map_tilesheet = scale(map_tilesheet, (width * SCALE, height * SCALE))
         
         self.map_tiles = []
+
         for x in range(0, width / TILE_SIZE):
             row = []
             self.map_tiles.append(row)
+
             for y in range(0, height / TILE_SIZE):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(map_tilesheet.subsurface(rect))
-
 
     def parse_animated_spritesheet(self, sheet, is_roaming=True):
         '''
