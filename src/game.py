@@ -71,6 +71,20 @@ class Game(object):
             print e
             return
         
+        self.parse_map_tiles(map_tilesheet)
+        
+        #Get the images for the initial hero sprites
+        down_img, left_img, up_img, right_img = \
+            self.parse_animated_spritesheet(
+            unarmed_herosheet, is_roaming=True)
+            
+        self.player = AnimatedSprite((TILE_SIZE/2, TILE_SIZE/2), down_img, 
+                                     left_img, up_img, right_img)
+
+        #Get images for the King
+        self.parse_animated_spritesheet(king_lorik_sheet, is_roaming=False)
+
+    def parse_map_tiles(self, map_tilesheet):
         #Parse map tilesheet for individual tiles
         width, height = map_tilesheet.get_size()
         map_tilesheet = scale(map_tilesheet, (width * SCALE, height * SCALE))
@@ -83,16 +97,6 @@ class Game(object):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(map_tilesheet.subsurface(rect))
 
-        #Get the images for the initial hero sprites
-        down_img, left_img, up_img, right_img = \
-            self.parse_animated_spritesheet(
-            unarmed_herosheet, is_roaming=True)
-            
-        self.player = AnimatedSprite((TILE_SIZE/2, TILE_SIZE/2), down_img, 
-                                     left_img, up_img, right_img)
-
-        #Get images for the King
-        self.parse_animated_spritesheet(king_lorik_sheet, is_roaming=False)
 
     def parse_animated_spritesheet(self, sheet, is_roaming=True):
         '''
