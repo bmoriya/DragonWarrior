@@ -15,6 +15,7 @@ class Game(object):
     DATA_DIR = join(pardir, 'data')
     MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
     UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
+    KING_LORIK_PATH = join(DATA_DIR, 'king_lorik.png')
     TILE_SIZE = 16 * SCALE
     COLORKEY = (0, 128, 128)
     
@@ -39,6 +40,9 @@ class Game(object):
             
             #Load unarmed hero images
             unarmed_herosheet = load(self.UNARMED_HERO_PATH)
+
+            #Load King Lorik images
+            king_lorik_sheet = load(self.KING_LORIK_PATH)
             
         except error, e:
             print e
@@ -58,38 +62,48 @@ class Game(object):
                         self.TILE_SIZE, self.TILE_SIZE)
                 row.append(map_tilesheet.subsurface(rect))
 
-        self.parse_animated_spritesheet(unarmed_herosheet)
+        #Get the images for the initial hero sprites
+        self.parse_animated_spritesheet(unarmed_herosheet, is_roaming=True)
+        
 
-    def parse_animated_spritesheet(self, sheet):
+    def parse_animated_spritesheet(self, sheet, is_roaming=True):
+        '''
+        Parses spritesheets and creates image lists. If is_roaming is True 
+        the sprite will have four lists of images, one for each direction. If
+        is_roaming is False then there will be one list of 2 images.
+        
+        If is_roaming is false make sure to only use the first returned list.
+        '''
         sheet.set_colorkey(self.COLORKEY)
         sheet.convert_alpha()
         width, height = sheet.get_size()
         sheet = scale(sheet, (width * self.SCALE, height * self.SCALE))
-        
+
         facing_down = []
         facing_left = []
         facing_up = []
         facing_right = []    
-        
+
         for i in xrange(0, 2):
             
             rect = (i * self.TILE_SIZE, 0, self.TILE_SIZE, self.TILE_SIZE)
             facing_down.append(sheet.subsurface(rect))
             
-            rect = ((i + 2) * self.TILE_SIZE, 0, 
-                    self.TILE_SIZE, self.TILE_SIZE) 
-            facing_left.append(sheet.subsurface(rect))
-            
-            rect = ((i + 4) * self.TILE_SIZE, 0,
-                    self.TILE_SIZE, self.TILE_SIZE)
-            facing_up.append(sheet.subsurface(rect))
-            
-            rect = ((i + 6) * self.TILE_SIZE, 0,
-                    self.TILE_SIZE, self.TILE_SIZE)
-            facing_right.append(sheet.subsurface(rect))
-            
+            if is_roaming == True:
+                rect = ((i + 2) * self.TILE_SIZE, 0, 
+                        self.TILE_SIZE, self.TILE_SIZE) 
+                facing_left.append(sheet.subsurface(rect))
+                
+                rect = ((i + 4) * self.TILE_SIZE, 0,
+                        self.TILE_SIZE, self.TILE_SIZE)
+                facing_up.append(sheet.subsurface(rect))
+                
+                rect = ((i + 6) * self.TILE_SIZE, 0,
+                        self.TILE_SIZE, self.TILE_SIZE)
+                facing_right.append(sheet.subsurface(rect))
+                
         return facing_down, facing_left, facing_up, facing_right
-
+    
 
 
 if __name__ == "__main__":
