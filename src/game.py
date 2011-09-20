@@ -7,7 +7,7 @@ from pygame.image import load
 from pygame.transform import scale
 from pygame.time import Clock
 
-from common import TILE_SIZE, SCALE
+from common import TILE_SIZE, SCALE, BACK_FILL_COLOR
 from animated_sprite import AnimatedSprite
 
 class Game(object):
@@ -37,7 +37,7 @@ class Game(object):
         
     def main(self):
         self.background = Surface(self.screen.get_size()).convert()
-        self.background.fill((255,255,255))
+        self.background.fill(BACK_FILL_COLOR)
         
         while True:
             self.clock.tick(self.FPS)

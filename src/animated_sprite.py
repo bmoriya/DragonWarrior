@@ -1,4 +1,4 @@
-from common import TILE_SIZE
+from common import TILE_SIZE, BACK_FILL_COLOR
 from base_sprite import BaseSprite
 
 class AnimatedSprite(BaseSprite):
@@ -22,8 +22,6 @@ class AnimatedSprite(BaseSprite):
         self.right_images = right_img
         self.direction = self.RIGHT
         self.center_point = center_point
-        #self.rect = (self.x, self.y, self.x + TILE_SIZE, self.y + TILE_SIZE)
-        
 
     def update(self, key, surface):
         pass
@@ -38,19 +36,19 @@ class AnimatedSprite(BaseSprite):
                 self.current_frame = 0
         
         if self.direction == self.DOWN:
-            surface.fill((255, 255,255), self.rect)
+            surface.fill(BACK_FILL_COLOR, self.rect)
             surface.blit(self.down_images[self.current_frame], 
                          (self.rect[0], self.rect[1]))
         elif self.direction == self.LEFT:
-            surface.fill((255, 255,255), self.rect)
+            surface.fill(BACK_FILL_COLOR, self.rect)
             surface.blit(self.left_images[self.current_frame],
                          (self.rect[0], self.rect[1]))
         elif self.direction == self.UP:
-            surface.fill((255, 255,255), self.rect)
+            surface.fill(BACK_FILL_COLOR, self.rect)
             surface.blit(self.up_images[self.current_frame], 
                          (self.rect[0], self.rect[1]))
         elif self.direction == self.RIGHT:
-            surface.fill((255, 255,255), self.rect)
+            surface.fill(BACK_FILL_COLOR, self.rect)
             surface.blit(self.right_images[self.current_frame],
                          (self.rect[0], self.rect[1]))
 
