@@ -10,6 +10,7 @@ from pygame.time import Clock
 
 from common import TILE_SIZE, SCALE, BACK_FILL_COLOR
 from player import Player
+from animated_sprite import AnimatedSprite
 from base_sprite import BaseSprite
 from maps import *
 
@@ -61,6 +62,8 @@ class Game(object):
         
         while True:
             self.player_sprites.clear(self.screen, self.background)
+            self.king_lorik_sprites.clear(self.screen, self.background)
+
             self.clock.tick(self.FPS)
             for event in get():
                 if event.type == QUIT:
@@ -120,7 +123,16 @@ class Game(object):
                             BRICK_STAIRDN][0])
                     self.brick_stairdn_group.add(brick_stairdn)
                 elif self.current_map[y][x] == HERO:
-                    self.player.set_centerpoint(center_pt)
+                    self.player = Player(center_pt, 2, 
+                                         self.hero_images[0], 
+                                         self.hero_images[1], 
+                                         self.hero_images[2], 
+                                         self.hero_images[3])
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
+                elif self.current_map[y][x] == KING_LORIK:
+                    self.king_lorik = AnimatedSprite(center_pt, 0,
+                                                     self.king_lorik_images[0])
                     brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
         self.player_sprites = RenderUpdates(self.player)
@@ -148,10 +160,10 @@ class Game(object):
             map_tilesheet = load(self.MAP_TILES_PATH).convert()
             
             #Load unarmed hero images
-            unarmed_herosheet = load(self.UNARMED_HERO_PATH)
+            self.unarmed_herosheet = load(self.UNARMED_HERO_PATH)
 
             #Load King Lorik images
-            king_lorik_sheet = load(self.KING_LORIK_PATH)
+            self.king_lorik_sheet = load(self.KING_LORIK_PATH)
 
             #Guard images.
             right_guard_sheet = load(self.RIGHT_GUARD_PATH)
@@ -165,15 +177,12 @@ class Game(object):
         self.parse_map_tiles(map_tilesheet)
 
         #Get the images for the initial hero sprites
-        down_img, left_img, up_img, right_img = \
-            self.parse_animated_spritesheet(
-            unarmed_herosheet, is_roaming=True)
+        self.hero_images = self.parse_animated_spritesheet(
+            self.unarmed_herosheet, is_roaming=True)
             
-        self.player = Player((TILE_SIZE/2, TILE_SIZE/2), down_img, 
-                                     left_img, up_img, right_img)
-
         #Get images for the King
-        self.parse_animated_spritesheet(king_lorik_sheet, is_roaming=False)
+        self.king_lorik_images = self.parse_animated_spritesheet(
+                            self.king_lorik_sheet, is_roaming=False)
 
     def parse_map_tiles(self, map_tilesheet):
         #Parse map tilesheet for individual tiles

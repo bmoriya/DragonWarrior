@@ -8,7 +8,8 @@ class AnimatedSprite(BaseSprite):
     UP = 2
     RIGHT = 3
 
-    def __init__(self, center_point, down_img, left_img, up_img, right_img):
+    def __init__(self, center_point, direction, 
+                 down_img=[], left_img=[], up_img=[], right_img=[]):
         BaseSprite.__init__(self, center_point, down_img[0])
 
         self.current_frame = 0
@@ -20,7 +21,7 @@ class AnimatedSprite(BaseSprite):
         self.left_images = left_img
         self.up_images = up_img
         self.right_images = right_img
-        self.direction = self.UP
+        self.direction = direction
         self.center_point = center_point
 
     def animate(self, surface):
