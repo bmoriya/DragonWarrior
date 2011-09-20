@@ -4,6 +4,7 @@ from pygame import init, error, Surface, QUIT
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
 from pygame.image import load
+from pygame.sprite import Group
 from pygame.transform import scale
 from pygame.time import Clock
 
@@ -24,6 +25,8 @@ class Game(object):
     LEFT_GUARD_PATH = join(DATA_DIR, 'left_guard.png')
     ROAMING_GUARD_PATH = join(DATA_DIR, 'roaming_guard.png')
     COLORKEY = (0, 128, 128)
+    SCROLL_STEP_X = 3
+    SCROLL_STEP_Y = 3
     
     def __init__(self):
         #Initialize pygame
@@ -36,6 +39,7 @@ class Game(object):
         self.load_images()
         
     def main(self):
+        self.init_groups()
         self.background = Surface(self.screen.get_size()).convert()
         self.background.fill(BACK_FILL_COLOR)
         
@@ -47,6 +51,21 @@ class Game(object):
             self.player.animate(self.background)
             self.screen.blit(self.background, (0, 0))
             flip()
+            
+    def init_groups(self):
+        self.roof_group = Group()
+        self.wall_group = Group()
+        self.wood_group = Group()
+        self.brick_group = Group()
+        self.chest_group = Group()
+        self.door_group = Group()
+        self.brick_stairdn_group = Group()
+        self.brick_stairup_group = Group()
+        self.barrier_group = Group()
+        self.weapon_sign_group = Group()
+        self.inn_sign_group = Group()
+        self.castle_group = Group()
+
 
     def load_images(self):
         '''
