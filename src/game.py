@@ -109,8 +109,8 @@ class Game(object):
         facing_down = []
         facing_left = []
         facing_up = []
-        facing_right = []    
-
+        facing_right = []
+        
         for i in xrange(0, 2):
             
             rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)

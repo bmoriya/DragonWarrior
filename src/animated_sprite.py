@@ -24,22 +24,11 @@ class AnimatedSprite(Sprite):
         self.left_images = left_img
         self.up_images = up_img
         self.right_images = right_img
-        self.direction = self.DOWN
+        self.direction = self.RIGHT
 
     def update(self, key, surface):
-        if key == K_DOWN:
-            surface.blit(self.down_images[self.current_frame], 
-                         (self.x, self.y))
-        elif key == K_LEFT:
-            surface.blit(self.left_images[self.current_frame],
-                         (self.x, self.y))
-        elif key == K_UP:
-            surface.blit(self.up_images[self.current_frame], 
-                         (self.x, self.y))
-        elif key == K_RIGHT:
-            surface.blit(self.right_images[self.current_frame],
-                         (self.x, self.y))
-
+        pass
+        
     def animate(self, surface):
         self.frame_count += 1
         if self.frame_count > self.frame_delay:
@@ -53,3 +42,16 @@ class AnimatedSprite(Sprite):
             surface.fill((255, 255,255), self.rect)
             surface.blit(self.down_images[self.current_frame], 
                          (self.x, self.y))
+        elif self.direction == self.LEFT:
+            surface.fill((255, 255,255), self.rect)
+            surface.blit(self.left_images[self.current_frame],
+                         (self.x, self.y))
+        elif self.direction == self.UP:
+            surface.fill((255, 255,255), self.rect)
+            surface.blit(self.up_images[self.current_frame], 
+                         (self.x, self.y))
+        elif self.direction == self.RIGHT:
+            surface.fill((255, 255,255), self.rect)
+            surface.blit(self.right_images[self.current_frame],
+                         (self.x, self.y))
+
