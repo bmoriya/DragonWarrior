@@ -1,30 +1,29 @@
-from pygame import K_DOWN, K_LEFT, K_UP, K_RIGHT
-from pygame.sprite import Sprite
-
 from common import TILE_SIZE
+from base_sprite import BaseSprite
 
-class AnimatedSprite(Sprite):
+class AnimatedSprite(BaseSprite):
     
     DOWN = 0
     LEFT = 1
     UP = 2
     RIGHT = 3
 
-    def __init__(self, down_img, left_img, up_img, right_img):
-        Sprite.__init__(self)
+    def __init__(self, center_point, down_img, left_img, up_img, right_img):
+        BaseSprite.__init__(self, center_point, down_img[0])
 
         self.current_frame = 0
         self.max_frame = 1
         self.frame_count = 0
         self.frame_delay = 12
-        self.x = 0
-        self.y = 0
-        self.rect = (self.x, self.y, self.x + TILE_SIZE, self.y + TILE_SIZE)
+        
         self.down_images = down_img
         self.left_images = left_img
         self.up_images = up_img
         self.right_images = right_img
         self.direction = self.RIGHT
+        self.center_point = center_point
+        #self.rect = (self.x, self.y, self.x + TILE_SIZE, self.y + TILE_SIZE)
+        
 
     def update(self, key, surface):
         pass
@@ -41,17 +40,17 @@ class AnimatedSprite(Sprite):
         if self.direction == self.DOWN:
             surface.fill((255, 255,255), self.rect)
             surface.blit(self.down_images[self.current_frame], 
-                         (self.x, self.y))
+                         (self.rect[0], self.rect[1]))
         elif self.direction == self.LEFT:
             surface.fill((255, 255,255), self.rect)
             surface.blit(self.left_images[self.current_frame],
-                         (self.x, self.y))
+                         (self.rect[0], self.rect[1]))
         elif self.direction == self.UP:
             surface.fill((255, 255,255), self.rect)
             surface.blit(self.up_images[self.current_frame], 
-                         (self.x, self.y))
+                         (self.rect[0], self.rect[1]))
         elif self.direction == self.RIGHT:
             surface.fill((255, 255,255), self.rect)
             surface.blit(self.right_images[self.current_frame],
-                         (self.x, self.y))
+                         (self.rect[0], self.rect[1]))
 

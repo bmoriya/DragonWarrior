@@ -88,7 +88,8 @@ class Game(object):
             self.parse_animated_spritesheet(
             unarmed_herosheet, is_roaming=True)
             
-        self.player = AnimatedSprite(down_img, left_img, up_img, right_img)
+        self.player = AnimatedSprite((TILE_SIZE/2, TILE_SIZE/2), down_img, 
+                                     left_img, up_img, right_img)
 
         #Get images for the King
         self.parse_animated_spritesheet(king_lorik_sheet, is_roaming=False)
