@@ -1,4 +1,4 @@
-from common import TILE_SIZE, BACK_FILL_COLOR
+from common import TILE_SIZE
 from base_sprite import BaseSprite
 
 class AnimatedSprite(BaseSprite):

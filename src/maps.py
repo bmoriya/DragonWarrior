@@ -1,4 +1,10 @@
-from common import map_tilesheet, unarmed_herosheet, king_lorik_sheet
+from pygame.sprite import Group, RenderUpdates
+
+from base_sprite import BaseSprite
+from animated_sprite import AnimatedSprite
+from common import TILE_SIZE
+from player import Player
+
 #Tile Key:
 #Index values for the map tiles corresponding to location on tilesheet.
 ROOF = 0
@@ -74,11 +80,95 @@ class TantagelThroneRoom(object):
     '''
     This is the first map in the game.
     '''
-    def __init__(self):
+    def __init__(self, player, map_tiles, hero_images=[], 
+                 king_lorik_images=[]):
+        self.player = player
+        self.map_tiles = map_tiles
+        self.hero_images = hero_images
+        self.king_lorik_images = king_lorik_images
         self.layout = tantagel_throne_room
+        self.width = len(self.layout[0] * TILE_SIZE)
+        self.height = len(self.layout * TILE_SIZE)
+        
+    def init_groups(self):
+        self.roof_group = Group()
+        self.wall_group = Group()
+        self.wood_group = Group()
+        self.brick_group = Group()
+        self.chest_group = Group()
+        self.door_group = Group()
+        self.brick_stairdn_group = Group()
+
+    def load_map(self):
+
+        x_offset = TILE_SIZE / 2
+        y_offset = TILE_SIZE / 2
+
+        self.king_lorik_sprites = RenderUpdates()
+
+        for y in range (len(self.layout)):
+            for x in range(len(self.layout[y])):
+                center_pt = [(x * TILE_SIZE) + x_offset, 
+                             (y * TILE_SIZE) + y_offset]
+                if self.layout[y][x] == ROOF:
+                    roof = BaseSprite(center_pt, self.map_tiles[ROOF][0])
+                    self.roof_group.add(roof)
+                elif self.layout[y][x] == WALL:
+                    wall = BaseSprite(center_pt, self.map_tiles[WALL][0])
+                    self.wall_group.add(wall)
+                elif self.layout[y][x] == WOOD:
+                    wood = BaseSprite(center_pt, self.map_tiles[WOOD][0])
+                    self.wood_group.add(wood)
+                elif self.layout[y][x] == BRICK:
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
+                elif self.layout[y][x] == CHEST:
+                    chest = BaseSprite(center_pt, self.map_tiles[CHEST][0])
+                    self.chest_group.add(chest)
+                elif self.layout[y][x] == DOOR:
+                    door = BaseSprite(center_pt, self.map_tiles[DOOR][0])
+                    self.door_group.add(door)
+                elif self.layout[y][x] == BRICK_STAIRDN:
+                    brick_stairdn = BaseSprite(center_pt, self.map_tiles[
+                            BRICK_STAIRDN][0])
+                    self.brick_stairdn_group.add(brick_stairdn)
+                elif self.layout[y][x] == HERO:
+                    self.player = Player(center_pt, 2, 
+                                         self.hero_images[0], 
+                                         self.hero_images[1], 
+                                         self.hero_images[2], 
+                                         self.hero_images[3])
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
+                elif self.layout[y][x] == KING_LORIK:
+                    self.king_lorik = AnimatedSprite(center_pt, 0,
+                                                     self.king_lorik_images[0])
+                    self.king_lorik_sprites.add(self.king_lorik)
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
+        self.player_sprites = RenderUpdates(self.player)
 
     def draw_map(self, surface):
-        pass
+        '''
+        Draw static sprites on the big map.
+        '''
+        self.roof_group.draw(surface)
+        self.wall_group.draw(surface)
+        self.wood_group.draw(surface)
+        self.brick_group.draw(surface)
+        self.chest_group.draw(surface)
+        self.door_group.draw(surface)
+        self.brick_stairdn_group.draw(surface)
+        
+    def clear_sprites(self, screen, surface):
+        self.player_sprites.clear(screen, surface)
+        self.king_lorik_sprites.clear(screen, surface)
 
-    def load_sprites(self):
-        pass
+    def animate(self):
+        self.player.animate()
+        self.king_lorik.animate()
+        
+    def draw_sprites(self, surface):
+        self.player_sprites.draw(surface)
+        self.king_lorik_sprites.draw(surface)
+
