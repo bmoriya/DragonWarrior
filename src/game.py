@@ -162,6 +162,8 @@ class Game(object):
         '''
         Load all the images for the game graphics.
         '''
+        global map_tilesheet, unarmed_herosheet, king_lorik_sheet
+
         try:
             #Load the map tile spritesheet
             map_tilesheet = load(self.MAP_TILES_PATH).convert()
@@ -181,17 +183,19 @@ class Game(object):
             print e
             return
         
-        self.parse_map_tiles(map_tilesheet)
+        self.parse_map_tiles()
 
         #Get the images for the initial hero sprites
         self.hero_images = self.parse_animated_spritesheet(unarmed_herosheet, 
                                                            is_roaming=True)
-            
+        
         #Get images for the King
         self.king_lorik_images = self.parse_animated_spritesheet(
             king_lorik_sheet, is_roaming=False)
 
-    def parse_map_tiles(self, map_tilesheet):
+    def parse_map_tiles(self):
+        global map_tilesheet
+
         #Parse map tilesheet for individual tiles
         map_tilesheet = scale(map_tilesheet, 
                               (map_tilesheet.get_width() * SCALE, 
