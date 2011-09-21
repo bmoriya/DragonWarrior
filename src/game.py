@@ -163,7 +163,7 @@ class Game(object):
         '''
         try:
             #Load the map tile spritesheet
-            map_tilesheet = load(self.MAP_TILES_PATH).convert()
+            self.map_tilesheet = load(self.MAP_TILES_PATH).convert()
             
             #Load unarmed hero images
             self.unarmed_herosheet = load(self.UNARMED_HERO_PATH)
@@ -180,7 +180,7 @@ class Game(object):
             print e
             return
         
-        self.parse_map_tiles(map_tilesheet)
+        self.parse_map_tiles(self.map_tilesheet)
 
         #Get the images for the initial hero sprites
         self.hero_images = self.parse_animated_spritesheet(

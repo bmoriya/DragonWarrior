@@ -66,3 +66,18 @@ tantagel_throne_room = [
 tantagel_courtyard = [
 
 ]
+
+
+#Working on class refactoring of maps
+class TantagelThroneRoom(object):
+    '''
+    This is the first map in the game.
+    '''
+    def __init__(self):
+        self.layout = tantagel_throne_room
+
+    def draw_map(self, surface):
+        pass
+
+    def load_sprites(self):
+        pass
