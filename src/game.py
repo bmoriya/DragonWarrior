@@ -8,7 +8,8 @@ from pygame.sprite import Group, RenderUpdates
 from pygame.transform import scale
 from pygame.time import Clock
 
-from common import TILE_SIZE, SCALE, BACK_FILL_COLOR
+from common import TILE_SIZE, SCALE, BACK_FILL_COLOR, map_tilesheet, \
+    unarmed_herosheet, king_lorik_sheet
 from player import Player
 from animated_sprite import AnimatedSprite
 from base_sprite import BaseSprite
@@ -163,13 +164,13 @@ class Game(object):
         '''
         try:
             #Load the map tile spritesheet
-            self.map_tilesheet = load(self.MAP_TILES_PATH).convert()
+            map_tilesheet = load(self.MAP_TILES_PATH).convert()
             
             #Load unarmed hero images
-            self.unarmed_herosheet = load(self.UNARMED_HERO_PATH)
+            unarmed_herosheet = load(self.UNARMED_HERO_PATH)
 
             #Load King Lorik images
-            self.king_lorik_sheet = load(self.KING_LORIK_PATH)
+            king_lorik_sheet = load(self.KING_LORIK_PATH)
 
             #Guard images.
             right_guard_sheet = load(self.RIGHT_GUARD_PATH)
@@ -180,15 +181,15 @@ class Game(object):
             print e
             return
         
-        self.parse_map_tiles(self.map_tilesheet)
+        self.parse_map_tiles(map_tilesheet)
 
         #Get the images for the initial hero sprites
-        self.hero_images = self.parse_animated_spritesheet(
-            self.unarmed_herosheet, is_roaming=True)
+        self.hero_images = self.parse_animated_spritesheet(unarmed_herosheet, 
+                                                           is_roaming=True)
             
         #Get images for the King
         self.king_lorik_images = self.parse_animated_spritesheet(
-                            self.king_lorik_sheet, is_roaming=False)
+            king_lorik_sheet, is_roaming=False)
 
     def parse_map_tiles(self, map_tilesheet):
         #Parse map tilesheet for individual tiles
