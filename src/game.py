@@ -9,7 +9,7 @@ from pygame.transform import scale
 from pygame.time import Clock
 
 from common import TILE_SIZE, SCALE, BACK_FILL_COLOR, map_tilesheet, \
-    unarmed_herosheet, king_lorik_sheet
+    unarmed_herosheet, king_lorik_sheet, map_tiles
 from player import Player
 from animated_sprite import AnimatedSprite
 from base_sprite import BaseSprite
@@ -194,20 +194,13 @@ class Game(object):
             king_lorik_sheet, is_roaming=False)
 
     def parse_map_tiles(self):
-        global map_tilesheet
+        global map_tilesheet, map_tiles
 
-        #Parse map tilesheet for individual tiles
-        map_tilesheet = scale(map_tilesheet, 
-                              (map_tilesheet.get_width() * SCALE, 
-                               map_tilesheet.get_height() * SCALE))
-        
         width, height = map_tilesheet.get_size()
         
-        self.map_tiles = []
-
         for x in range(0, width / TILE_SIZE):
             row = []
-            self.map_tiles.append(row)
+            map_tiles.append(row)
 
             for y in range(0, height / TILE_SIZE):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)

@@ -9,3 +9,5 @@ BACK_FILL_COLOR = (0, 0, 0)
 map_tilesheet = None
 unarmed_herosheet = None
 king_lorik_sheet = None
+
+map_tiles = []

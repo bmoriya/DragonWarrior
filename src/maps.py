@@ -1,3 +1,4 @@
+from common import map_tilesheet, unarmed_herosheet, king_lorik_sheet
 #Tile Key:
 #Index values for the map tiles corresponding to location on tilesheet.
 ROOF = 0
