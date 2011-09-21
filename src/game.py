@@ -75,8 +75,11 @@ class Game(object):
                                                      self.cornerpoint[1],
                                                      self.WIN_WIDTH,
                                                      self.WIN_HEIGHT).convert()
-            self.player.animate(self.background)
+            self.player.animate()
+            self.king_lorik.animate()
+
             self.player_sprites.draw(self.background)
+            self.king_lorik_sprites.draw(self.background)
             self.screen.blit(self.background, self.ORIGIN)
             flip()
 
@@ -95,6 +98,8 @@ class Game(object):
     def load_map(self):
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
+
+        self.king_lorik_sprites = RenderUpdates()
 
         for y in range (len(self.current_map)):
             for x in range(len(self.current_map[y])):
@@ -133,6 +138,7 @@ class Game(object):
                 elif self.current_map[y][x] == KING_LORIK:
                     self.king_lorik = AnimatedSprite(center_pt, 0,
                                                      self.king_lorik_images[0])
+                    self.king_lorik_sprites.add(self.king_lorik)
                     brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
         self.player_sprites = RenderUpdates(self.player)

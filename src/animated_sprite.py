@@ -24,7 +24,7 @@ class AnimatedSprite(BaseSprite):
         self.direction = direction
         self.center_point = center_point
 
-    def animate(self, surface):
+    def animate(self):
         self.frame_count += 1
         if self.frame_count > self.frame_delay:
             self.frame_count = 0
