@@ -1,11 +1,12 @@
-from os import pardir
-from os.path import join
-from pygame import init, error, Surface, QUIT, KEYDOWN
-from pygame.display import set_mode, set_caption, flip
+# Edward Forgacs
+# eddie.forgacs@gmail.com
+# forked from a repository by:
+# Brian Moriya
+# brian.moriya@capturedbypenguins.com
+
+from pygame import init, DOUBLEBUF, Surface, QUIT, KEYDOWN, K_ESCAPE
+from pygame.display import set_caption, set_mode, flip
 from pygame.event import get
-from pygame.image import load
-from pygame.sprite import Group, RenderUpdates
-from pygame.transform import scale
 from pygame.time import Clock
 
 from src.common import TILE_SIZE, SCALE
@@ -14,25 +15,9 @@ from src.maps import TantagelThroneRoom
 
 
 class Game(object):
-    NESRES = (256, 240)
-    FPS = 60
-    GAME_TITLE = "Dragon Warrior"
-    WIN_WIDTH = NESRES[0] * SCALE
-    WIN_HEIGHT = NESRES[1] * SCALE
-    DATA_DIR = join(pardir, 'data')
-    MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
-    UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
-    KING_LORIK_PATH = join(DATA_DIR, 'king_lorik.png')
-    RIGHT_GUARD_PATH = join(DATA_DIR, 'right_guard.png')
-    LEFT_GUARD_PATH = join(DATA_DIR, 'left_guard.png')
-    ROAMING_GUARD_PATH = join(DATA_DIR, 'roaming_guard.png')
-    COLORKEY = (0, 128, 128)
-    SCROLL_STEP_X = 3
-    SCROLL_STEP_Y = 3
-    ORIGIN = (0, 0)
-    cornerpoint = [0, 0]
-    BLACK = (0, 0, 0)
-    BACK_FILL_COLOR = BLACK
+    '''
+    Generic class that Holds the game logic.
+    '''
 
     def __init__(self):
         # Initialize pygame
@@ -94,7 +79,7 @@ class Game(object):
 
     def load_images(self):
         '''
-        Load all the images for the game graphics.
+        Runs the game.
         '''
         try:
             # Load the map tile spritesheet
@@ -149,11 +134,9 @@ class Game(object):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(self.map_tilesheet.subsurface(rect))
 
-    def parse_animated_spritesheet(self, sheet, is_roaming=True):
+    def event_loop(self, is_running=True):
         '''
-        Parses spritesheets and creates image lists. If is_roaming is True 
-        the sprite will have four lists of images, one for each direction. If
-        is_roaming is False then there will be one list of 2 images.
+        Game events captured here.
         '''
         sheet.set_colorkey(self.COLORKEY)
         sheet.convert_alpha()
