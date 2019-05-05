@@ -1,12 +1,12 @@
 from pygame.sprite import Group, RenderUpdates
 
-from base_sprite import BaseSprite
-from animated_sprite import AnimatedSprite
-from common import TILE_SIZE
-from player import Player
+from src.animated_sprite import AnimatedSprite
+from src.base_sprite import BaseSprite
+from src.common import TILE_SIZE
+from src.player import Player
 
-#Tile Key:
-#Index values for the map tiles corresponding to location on tilesheet.
+# Tile Key:
+# Index values for the map tiles corresponding to location on tilesheet.
 ROOF = 0
 WALL = 1
 WOOD = 2
@@ -43,31 +43,31 @@ BOTTOM_TOP_COAST = 32
 BOTTOM_TOP_RIGHT_COAST = 33
 HERO = 34
 KING_LORIK = 35
-    
+
 tantagel_throne_room = [
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,01,01,01,01,01,01,01,01,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,03,03,03,03,03,04,03,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,02,02,02,02,02,02,03,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,02,35,02,02,03,02,03,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,03,34,04,04,03,03,03,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,03,03,03,03,03,03,03,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,03,03,03,03,03,03,03,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,01,01,01,05,01,01,01,01,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,03,03,03,03,03,03,03,06,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,01,01,01,01,01,01,01,01,01,01,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
-[00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o4, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o2, 0o2, 0o2, 0o2, 0o2, 0o2, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o2, 35, 0o2, 0o2, 0o3, 0o2, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 34, 0o4, 0o4, 0o3, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o1, 0o1, 0o1, 0o5, 0o1, 0o1, 0o1, 0o1, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o6, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
 ]
 
 tantagel_courtyard = [
@@ -75,12 +75,13 @@ tantagel_courtyard = [
 ]
 
 
-#Working on class refactoring of maps
+# Working on class refactoring of maps
 class TantagelThroneRoom(object):
     '''
     This is the first map in the game.
     '''
-    def __init__(self, player, map_tiles, hero_images=[], 
+
+    def __init__(self, player, map_tiles, hero_images=[],
                  king_lorik_images=[]):
         self.player = player
         self.map_tiles = map_tiles
@@ -89,7 +90,7 @@ class TantagelThroneRoom(object):
         self.layout = tantagel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
-        
+
     def init_groups(self):
         self.roof_group = Group()
         self.wall_group = Group()
@@ -106,9 +107,9 @@ class TantagelThroneRoom(object):
 
         self.king_lorik_sprites = RenderUpdates()
 
-        for y in range (len(self.layout)):
+        for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
-                center_pt = [(x * TILE_SIZE) + x_offset, 
+                center_pt = [(x * TILE_SIZE) + x_offset,
                              (y * TILE_SIZE) + y_offset]
                 if self.layout[y][x] == ROOF:
                     roof = BaseSprite(center_pt, self.map_tiles[ROOF][0])
@@ -130,13 +131,13 @@ class TantagelThroneRoom(object):
                     self.door_group.add(door)
                 elif self.layout[y][x] == BRICK_STAIRDN:
                     brick_stairdn = BaseSprite(center_pt, self.map_tiles[
-                            BRICK_STAIRDN][0])
+                        BRICK_STAIRDN][0])
                     self.brick_stairdn_group.add(brick_stairdn)
                 elif self.layout[y][x] == HERO:
-                    self.player = Player(center_pt, 2, 
-                                         self.hero_images[0], 
-                                         self.hero_images[1], 
-                                         self.hero_images[2], 
+                    self.player = Player(center_pt, 2,
+                                         self.hero_images[0],
+                                         self.hero_images[1],
+                                         self.hero_images[2],
                                          self.hero_images[3])
                     brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
@@ -159,7 +160,7 @@ class TantagelThroneRoom(object):
         self.chest_group.draw(surface)
         self.door_group.draw(surface)
         self.brick_stairdn_group.draw(surface)
-        
+
     def clear_sprites(self, screen, surface):
         self.player_sprites.clear(screen, surface)
         self.king_lorik_sprites.clear(screen, surface)
@@ -167,8 +168,7 @@ class TantagelThroneRoom(object):
     def animate(self):
         self.player.animate()
         self.king_lorik.animate()
-        
+
     def draw_sprites(self, surface):
         self.player_sprites.draw(surface)
         self.king_lorik_sprites.draw(surface)
-
