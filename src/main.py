@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from game import Game
+from src.game import Game
 
 def main():
     window_w = 256
