@@ -3,7 +3,7 @@ from os.path import join
 from pygame import init, error, Surface, QUIT, KEYDOWN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
-from pygame.image import load
+from pygame.image import load_extended
 from pygame.sprite import Group, RenderUpdates
 from pygame.transform import scale
 from pygame.time import Clock
@@ -98,18 +98,18 @@ class Game(object):
         '''
         try:
             # Load the map tile spritesheet
-            self.map_tilesheet = load(self.MAP_TILES_PATH).convert()
+            self.map_tilesheet = load_extended(self.MAP_TILES_PATH).convert()
 
             # Load unarmed hero images
-            self.unarmed_herosheet = load(self.UNARMED_HERO_PATH)
+            self.unarmed_herosheet = load_extended(self.UNARMED_HERO_PATH)
 
             # Load King Lorik images
-            self.king_lorik_sheet = load(self.KING_LORIK_PATH)
+            self.king_lorik_sheet = load_extended(self.KING_LORIK_PATH)
 
             # Guard images.
-            right_guard_sheet = load(self.RIGHT_GUARD_PATH)
-            left_guard_sheet = load(self.LEFT_GUARD_PATH)
-            roaming_guard_sheet = load(self.ROAMING_GUARD_PATH)
+            right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
+            left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
+            roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
 
         except error as e:
             print(e)
