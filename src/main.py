@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 from src.game import Game
 
-def main():
-    window_w = 256
-    window_h = 240
-    multiplier = 3
 
-    fps = 60
-    title = "RPG Tutorial"
+def main():
     
-    game = Game(window_w, window_h, fps, title, multiplier)
-    game.run()
+    Game()
+
 
 if __name__ == "__main__":
     main()

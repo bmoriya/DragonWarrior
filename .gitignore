@@ -26,3 +26,5 @@ src/__pycache__/player.cpython-37.pyc
 *.pyc
 src/__pycache__/base_sprite.cpython-37.pyc
 .idea/workspace.xml
+src/__pycache__/maps.cpython-37.pyc
+.idea/workspace.xml

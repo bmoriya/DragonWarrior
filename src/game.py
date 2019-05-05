@@ -178,6 +178,9 @@ class Game(object):
 
         return facing_down, facing_left, facing_up, facing_right
 
+    def run(self):
+        pass
+
 
 if __name__ == "__main__":
     game = Game()
