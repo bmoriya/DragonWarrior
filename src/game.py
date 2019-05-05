@@ -4,7 +4,8 @@ from pygame import init, error, Surface, QUIT, KEYDOWN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
 from pygame.image import load_extended
-from pygame.sprite import Group, RenderUpdates
+from pygame.sprite import Group
+from pygame.sprite import RenderUpdates
 from pygame.transform import scale
 from pygame.time import Clock
 
@@ -51,7 +52,6 @@ class Game(object):
         self.current_map = TantagelThroneRoom(self.player, self.map_tiles,
                                               self.unarmed_hero_images,
                                               self.king_lorik_images)
-        self.current_map.init_groups()
         self.current_map.load_map()
 
         # Move to map class

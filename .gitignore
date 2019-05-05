@@ -21,3 +21,5 @@ src/__pycache__/common.cpython-37.pyc
 src/__pycache__/maps.cpython-37.pyc
 src/__pycache__/player.cpython-37.pyc
 .idea/workspace.xml
+*.pyc
+.idea/workspace.xml

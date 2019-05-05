@@ -83,6 +83,13 @@ class TantagelThroneRoom(object):
 
     def __init__(self, player, map_tiles, hero_images=[],
                  king_lorik_images=[]):
+        self.brick_stairdn_group = Group()
+        self.door_group = Group()
+        self.chest_group = Group()
+        self.brick_group = Group()
+        self.wood_group = Group()
+        self.wall_group = Group()
+        self.roof_group = Group()
         self.player = player
         self.map_tiles = map_tiles
         self.hero_images = hero_images
@@ -90,15 +97,6 @@ class TantagelThroneRoom(object):
         self.layout = tantagel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
-
-    def init_groups(self):
-        self.roof_group = Group()
-        self.wall_group = Group()
-        self.wood_group = Group()
-        self.brick_group = Group()
-        self.chest_group = Group()
-        self.door_group = Group()
-        self.brick_stairdn_group = Group()
 
     def load_map(self):
 
