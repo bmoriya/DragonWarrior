@@ -8,9 +8,17 @@ class AnimatedSprite(BaseSprite):
     RIGHT = 3
 
     def __init__(self, center_point, direction,
-                 down_img=[], left_img=[], up_img=[], right_img=[]):
+                 down_img=None, left_img=None, up_img=None, right_img=None):
         BaseSprite.__init__(self, center_point, down_img[0])
 
+        if right_img is None:
+            right_img = []
+        if up_img is None:
+            up_img = []
+        if left_img is None:
+            left_img = []
+        if down_img is None:
+            down_img = []
         self.current_frame = 0
         self.max_frame = 1
         self.frame_count = 0
