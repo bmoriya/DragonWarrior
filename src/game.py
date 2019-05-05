@@ -1,16 +1,14 @@
 from os import pardir
 from os.path import join
+
 from pygame import init, error, Surface, QUIT, KEYDOWN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
 from pygame.image import load_extended
-from pygame.sprite import Group
-from pygame.sprite import RenderUpdates
-from pygame.transform import scale
 from pygame.time import Clock
+from pygame.transform import scale
 
 from src.common import TILE_SIZE, SCALE
-from src.player import Player
 from src.maps import TantagelThroneRoom
 
 
@@ -31,7 +29,7 @@ class Game(object):
     SCROLL_STEP_X = 3
     SCROLL_STEP_Y = 3
     ORIGIN = (0, 0)
-    cornerpoint = [0, 0]
+    corner_point = [0, 0]
     BLACK = (0, 0, 0)
     BACK_FILL_COLOR = BLACK
 
@@ -82,8 +80,8 @@ class Game(object):
                 if event.type == KEYDOWN:
                     pass
 
-            self.background = self.bigmap.subsurface(self.cornerpoint[0],
-                                                     self.cornerpoint[1],
+            self.background = self.bigmap.subsurface(self.corner_point[0],
+                                                     self.corner_point[1],
                                                      self.WIN_WIDTH,
                                                      self.WIN_HEIGHT).convert()
             self.current_map.animate()
@@ -93,9 +91,8 @@ class Game(object):
             flip()
 
     def load_images(self):
-        '''
-        Load all the images for the game graphics.
-        '''
+        """Load all the images for the game graphics.
+        """
         try:
             # Load the map tile spritesheet
             self.map_tilesheet = load_extended(self.MAP_TILES_PATH).convert()
@@ -150,11 +147,11 @@ class Game(object):
                 row.append(self.map_tilesheet.subsurface(rect))
 
     def parse_animated_spritesheet(self, sheet, is_roaming=True):
-        '''
-        Parses spritesheets and creates image lists. If is_roaming is True 
+        """
+        Parses spritesheets and creates image lists. If is_roaming is True
         the sprite will have four lists of images, one for each direction. If
         is_roaming is False then there will be one list of 2 images.
-        '''
+        """
         sheet.set_colorkey(self.COLORKEY)
         sheet.convert_alpha()
         width, height = sheet.get_size()

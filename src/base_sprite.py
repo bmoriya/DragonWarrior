@@ -3,10 +3,10 @@ from pygame.sprite import Sprite
 
 class BaseSprite(Sprite):
     '''
-    All sprites in this game need this basic funcionality.
+    All sprites in this game need this basic functionality.
     '''
 
-    def __init__(self, centerPt, image):
+    def __init__(self, center_pt, image):
         '''
         Constructor
         '''
@@ -17,4 +17,4 @@ class BaseSprite(Sprite):
         self.rect = image.get_rect()
 
         # Ensure rect is centered, makes it image size independent.
-        self.rect.center = centerPt
+        self.rect.center = center_pt
