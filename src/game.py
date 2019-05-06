@@ -9,7 +9,7 @@ from pygame.time import Clock
 from pygame.transform import scale
 
 from src.common import TILE_SIZE, SCALE
-from src.maps import TantagelThroneRoom
+from src.maps import TantegelThroneRoom
 
 
 class Game(object):
@@ -47,9 +47,9 @@ class Game(object):
         self.load_images()
 
     def main(self):
-        self.current_map = TantagelThroneRoom(self.player, self.map_tiles,
+        self.current_map = TantegelThroneRoom(self.player, self.map_tiles,
                                               self.unarmed_hero_images,
-                                              self.king_lorik_images)
+                                              self.king_lorik_images, self.left_guard_images, self.right_guard_images, self.roaming_guard_images)
         self.current_map.load_map()
 
         # Move to map class
@@ -98,15 +98,15 @@ class Game(object):
             self.map_tilesheet = load_extended(self.MAP_TILES_PATH).convert()
 
             # Load unarmed hero images
-            self.unarmed_herosheet = load_extended(self.UNARMED_HERO_PATH)
+            self.unarmed_hero_sheet = load_extended(self.UNARMED_HERO_PATH)
 
             # Load King Lorik images
             self.king_lorik_sheet = load_extended(self.KING_LORIK_PATH)
 
             # Guard images.
-            right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
-            left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
-            roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
+            self.left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
+            self.right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
+            self.roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
 
         except error as e:
             print(e)
@@ -115,24 +115,46 @@ class Game(object):
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,
                                     self.map_tilesheet.get_height() * SCALE))
-        self.unarmed_herosheet = scale(self.unarmed_herosheet,
-                                       (self.unarmed_herosheet.get_width() *
-                                        SCALE,
-                                        self.unarmed_herosheet.get_height() *
-                                        SCALE))
+        self.unarmed_hero_sheet = scale(self.unarmed_hero_sheet,
+                                        (self.unarmed_hero_sheet.get_width() *
+                                         SCALE,
+                                         self.unarmed_hero_sheet.get_height() *
+                                         SCALE))
 
         self.king_lorik_sheet = scale(self.king_lorik_sheet,
                                       (self.king_lorik_sheet.get_width() * SCALE,
                                        self.king_lorik_sheet.get_height() * SCALE))
+
+        self.left_guard_sheet = scale(self.left_guard_sheet,
+                                      (self.left_guard_sheet.get_width() * SCALE,
+                                       self.left_guard_sheet.get_height() * SCALE))
+
+        self.right_guard_sheet = scale(self.right_guard_sheet,
+                                       (self.right_guard_sheet.get_width() * SCALE,
+                                        self.right_guard_sheet.get_height() * SCALE))
+
+        self.roaming_guard_sheet = scale(self.roaming_guard_sheet,
+                                         (self.roaming_guard_sheet.get_width() * SCALE,
+                                          self.roaming_guard_sheet.get_height() * SCALE))
+
         self.parse_map_tiles()
 
         # Get the images for the initial hero sprites
         self.unarmed_hero_images = self.parse_animated_spritesheet(
-            self.unarmed_herosheet, is_roaming=True)
+            self.unarmed_hero_sheet, is_roaming=True)
 
         # Get images for the King
         self.king_lorik_images = self.parse_animated_spritesheet(
             self.king_lorik_sheet, is_roaming=False)
+
+        self.left_guard_images = self.parse_animated_spritesheet(
+            self.left_guard_sheet, is_roaming=False)
+
+        self.right_guard_images = self.parse_animated_spritesheet(
+            self.right_guard_sheet, is_roaming=False)
+
+        self.roaming_guard_images = self.parse_animated_spritesheet(
+            self.roaming_guard_sheet, is_roaming=True)
 
     def parse_map_tiles(self):
 
@@ -166,7 +188,7 @@ class Game(object):
             rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
             facing_down.append(sheet.subsurface(rect))
 
-            if is_roaming == True:
+            if is_roaming:
                 rect = ((i + 2) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
                 facing_left.append(sheet.subsurface(rect))
 

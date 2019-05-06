@@ -1,5 +1,4 @@
 from src.animated_sprite import AnimatedSprite
-from src.common import TILE_SIZE
 
 
 class Player(AnimatedSprite):
@@ -12,5 +11,5 @@ class Player(AnimatedSprite):
     def update(self, wall_group):
         pass
 
-    def set_centerpoint(self, center_point):
+    def set_center_point(self, center_point):
         self.center_point = center_point
