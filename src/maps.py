@@ -81,8 +81,12 @@ class TantagelThroneRoom(object):
     This is the first map in the game.
     """
 
-    def __init__(self, player, map_tiles, hero_images=[],
-                 king_lorik_images=[]):
+    def __init__(self, player, map_tiles, hero_images=None,
+                 king_lorik_images=None):
+        if king_lorik_images is None:
+            king_lorik_images = []
+        if hero_images is None:
+            hero_images = []
         self.brick_stairdn_group = Group()
         self.door_group = Group()
         self.chest_group = Group()

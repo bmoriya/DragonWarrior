@@ -30,3 +30,5 @@ src/__pycache__/maps.cpython-37.pyc
 .idea/workspace.xml
 .idea/workspace.xml
 .idea/
+.idea/workspace.xml
+*.iws
