@@ -1,3 +1,4 @@
+import pygame
 from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
@@ -47,7 +48,7 @@ LEFT_GUARD = 36
 RIGHT_GUARD = 37
 ROAMING_GUARD = 38
 
-tantagel_throne_room = [
+tantegel_throne_room = [
     [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
@@ -59,7 +60,7 @@ tantagel_throne_room = [
     [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o2, 0o2, 0o2, 0o2, 0o2, 0o2, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o2, 35, 0o2, 0o2, 0o3, 0o2, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 34, 0o4, 0o4, 0o3, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
-    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
+    [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 38, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 37, 0o3, 36, 0o3, 0o3, 0o3, 0o1, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 0o1, 0o1, 0o1, 0o1, 0o5, 0o1, 0o1, 0o1, 0o1, 0o1, 00, 00, 00, 00, 00, 00, 00],
     [00, 00, 00, 00, 00, 00, 00, 0o1, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o3, 0o6, 0o1, 00, 00, 00, 00, 00, 00, 00],
@@ -73,13 +74,13 @@ tantagel_throne_room = [
     [00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00],
 ]
 
-tantagel_courtyard = [
+tantegel_courtyard = [
 
 ]
 
 
 # Working on class refactoring of maps
-class TantagelThroneRoom(object):
+class TantegelThroneRoom(object):
     """
     This is the first map in the game.
     """
@@ -110,9 +111,12 @@ class TantagelThroneRoom(object):
         self.left_guard_images = left_guard_images
         self.right_guard_images = right_guard_images
         self.roaming_guard_images = roaming_guard_images
-        self.layout = tantagel_throne_room
+        self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
+        pygame.mixer.music.load(
+            "/Users/eforgacs/PycharmProjects/DragonWarrior_clone/data/02_-_Dragon_Warrior_-_NES_-_Chateau_Ladutorm.ogg")
+        pygame.mixer.music.play()
 
     def load_map(self):
 
@@ -176,6 +180,12 @@ class TantagelThroneRoom(object):
                     self.right_guard_sprites.add(self.right_guard)
                     brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
+                elif self.layout[y][x] == ROAMING_GUARD:
+                    self.roaming_guard = AnimatedSprite(center_pt, 0,
+                                                      self.roaming_guard_images[0])
+                    self.roaming_guard_sprites.add(self.roaming_guard)
+                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.brick_group.add(brick)
 
         self.player_sprites = RenderUpdates(self.player)
 
@@ -196,15 +206,18 @@ class TantagelThroneRoom(object):
         self.king_lorik_sprites.clear(screen, surface)
         self.left_guard_sprites.clear(screen, surface)
         self.right_guard_sprites.clear(screen, surface)
+        self.roaming_guard_sprites.clear(screen, surface)
 
     def animate(self):
         self.player.animate()
         self.king_lorik.animate()
         self.left_guard.animate()
         self.right_guard.animate()
+        self.roaming_guard.animate()
 
     def draw_sprites(self, surface):
         self.player_sprites.draw(surface)
         self.king_lorik_sprites.draw(surface)
         self.left_guard_sprites.draw(surface)
         self.right_guard_sprites.draw(surface)
+        self.roaming_guard_sprites.draw(surface)

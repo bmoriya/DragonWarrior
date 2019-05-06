@@ -9,7 +9,7 @@ from pygame.time import Clock
 from pygame.transform import scale
 
 from src.common import TILE_SIZE, SCALE
-from src.maps import TantagelThroneRoom
+from src.maps import TantegelThroneRoom
 
 
 class Game(object):
@@ -47,9 +47,9 @@ class Game(object):
         self.load_images()
 
     def main(self):
-        self.current_map = TantagelThroneRoom(self.player, self.map_tiles,
+        self.current_map = TantegelThroneRoom(self.player, self.map_tiles,
                                               self.unarmed_hero_images,
-                                              self.king_lorik_images, self.left_guard_images, self.right_guard_images)
+                                              self.king_lorik_images, self.left_guard_images, self.right_guard_images, self.roaming_guard_images)
         self.current_map.load_map()
 
         # Move to map class
