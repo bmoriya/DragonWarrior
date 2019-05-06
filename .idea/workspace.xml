@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/maps.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="69" column="124" selection-start-line="69" selection-start-column="124" selection-end-line="69" selection-end-column="124" />
+            <state relative-caret-position="493">
+              <caret line="69" column="96" selection-start-line="69" selection-start-column="96" selection-end-line="69" selection-end-column="96" />
               <folding>
                 <element signature="e#0#46#0" expanded="true" />
               </folding>
@@ -97,6 +97,7 @@
     </findStrings>
     <replaceStrings>
       <replace>load_extended(</replace>
+      <replace>, 00],</replace>
     </replaceStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -347,8 +348,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/maps.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="69" column="124" selection-start-line="69" selection-start-column="124" selection-end-line="69" selection-end-column="124" />
+        <state relative-caret-position="493">
+          <caret line="69" column="96" selection-start-line="69" selection-start-column="96" selection-end-line="69" selection-end-column="96" />
           <folding>
             <element signature="e#0#46#0" expanded="true" />
           </folding>
