@@ -3,15 +3,11 @@ ABOUT
 
 This is a clone of Dragon Warrior for the NES done in Python for Linux.
 
-I also started one in C, as a different user, but no longer have the email 
-address associated with that account so I am abandoning it.
 
 REQUIREMENTS
 ============
 
-Python 2.x, Pygame 1.9, and I think that's it. I haven't tested on Windows yet
-but it should work. I have been developing it on xubuntu 11.04 so I know it 
-runs on Linux.
+Python 3.x, Pygame 1.9.
 
 INSTRUCTIONS
 ============
