@@ -22,7 +22,7 @@ class AnimatedSprite(BaseSprite):
         self.current_frame = 0
         self.max_frame = 1
         self.frame_count = 0
-        self.frame_delay = 2
+        self.frame_delay = 1
 
         self.down_images = down_img
         self.left_images = left_img
@@ -36,7 +36,6 @@ class AnimatedSprite(BaseSprite):
         if self.frame_count > self.frame_delay:
             self.frame_count = 0
             self.current_frame += 1
-
 
             if self.current_frame > self.max_frame:
                 self.current_frame = 0

@@ -1,15 +1,20 @@
+import sys
 from os import pardir
 from os.path import join
+from pygame.sprite import RenderUpdates
 
-from pygame import init, error, Surface, QUIT, KEYDOWN
+import pygame
+from pygame import init, Surface, QUIT, KEYDOWN
 from pygame.display import set_mode, set_caption, flip
-from pygame.event import get
 from pygame.image import load_extended
 from pygame.time import Clock
 from pygame.transform import scale
+from src.animated_sprite import AnimatedSprite
+from src.base_sprite import BaseSprite
 
+import src.maps
+import src.player
 from src.common import TILE_SIZE, SCALE
-from src.maps import TantegelThroneRoom
 
 
 class Game(object):
@@ -47,38 +52,46 @@ class Game(object):
         self.load_images()
 
     def main(self):
-        self.current_map = TantegelThroneRoom(self.player, self.map_tiles,
-                                              self.unarmed_hero_images,
-                                              self.king_lorik_images, self.left_guard_images, self.right_guard_images, self.roaming_guard_images)
-        self.current_map.load_map()
+        self.load_current_map()
 
         # Move to map class
         # self.init_groups()
-        # self.current_map = tantagel_throne_room
+        # self.current_map = tantegel_throne_room
         # self.load_map()
 
         # Make the big scrollable map
-        self.bigmap_width = self.current_map.width
-        self.bigmap_height = self.current_map.height
-        self.bigmap = Surface((self.bigmap_width,
-                               self.bigmap_height)).convert()
-        self.bigmap.fill(self.BACK_FILL_COLOR)
+        self.make_bigmap()
 
         self.current_map.draw_map(self.bigmap)
         self.current_map.draw_sprites(self.bigmap)
 
         self.background = Surface(self.screen.get_size()).convert()
         self.background.fill(self.BACK_FILL_COLOR)
+        x_offset = TILE_SIZE / 2
+        y_offset = TILE_SIZE / 2
+        for y in range(len(self.current_map.layout)):
+            for x in range(len(self.current_map.layout[y])):
+                self.center_pt = [(x * TILE_SIZE) + x_offset,
+                                  (y * TILE_SIZE) + y_offset]
 
         while True:
             self.current_map.clear_sprites(self.screen, self.background)
 
             self.clock.tick(self.FPS)
-            for event in get():
+            for event in pygame.event.get():
                 if event.type == QUIT:
-                    return
-                if event.type == KEYDOWN:
-                    pass
+                    pygame.quit()
+                    sys.exit()
+                #TODO: disable this if a dialog box is open.
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.current_map.player.direction = AnimatedSprite.LEFT
+                    if event.key == pygame.K_RIGHT:
+                        self.current_map.player.direction = AnimatedSprite.RIGHT
+                    if event.key == pygame.K_UP:
+                        self.current_map.player.direction = AnimatedSprite.UP
+                    if event.key == pygame.K_DOWN:
+                        self.current_map.player.direction = AnimatedSprite.DOWN
 
             self.background = self.bigmap.subsurface(self.corner_point[0],
                                                      self.corner_point[1],
@@ -90,27 +103,39 @@ class Game(object):
             self.screen.blit(self.background, self.ORIGIN)
             flip()
 
+    def make_bigmap(self):
+        self.bigmap_width = self.current_map.width
+        self.bigmap_height = self.current_map.height
+        self.bigmap = Surface((self.bigmap_width,
+                               self.bigmap_height)).convert()
+        self.bigmap.fill(self.BACK_FILL_COLOR)
+
+    def load_current_map(self):
+        self.current_map = src.maps.TantegelThroneRoom(self.player, self.map_tiles,
+                                                       self.unarmed_hero_images,
+                                                       self.king_lorik_images, self.left_guard_images,
+                                                       self.right_guard_images,
+                                                       self.roaming_guard_images)
+        self.current_map.load_map()
+
     def load_images(self):
         """Load all the images for the game graphics.
         """
-        try:
-            # Load the map tile spritesheet
-            self.map_tilesheet = load_extended(self.MAP_TILES_PATH).convert()
+        # try:
+        # Load the map tile spritesheet
+        self.map_tilesheet = load_extended(self.MAP_TILES_PATH).convert()
+        # Load unarmed hero images
+        self.unarmed_hero_sheet = load_extended(self.UNARMED_HERO_PATH)
+        # Load King Lorik images
+        self.king_lorik_sheet = load_extended(self.KING_LORIK_PATH)
+        # Guard images.
+        self.left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
+        self.right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
+        self.roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
 
-            # Load unarmed hero images
-            self.unarmed_hero_sheet = load_extended(self.UNARMED_HERO_PATH)
-
-            # Load King Lorik images
-            self.king_lorik_sheet = load_extended(self.KING_LORIK_PATH)
-
-            # Guard images.
-            self.left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
-            self.right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
-            self.roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
-
-        except error as e:
-            print(e)
-            return
+        # except error as e:
+        #    print(e)
+        #    return
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,

@@ -78,8 +78,11 @@ tantegel_courtyard = [
 
 ]
 
+current_map = None
 
 # Working on class refactoring of maps
+
+
 class TantegelThroneRoom(object):
     """
     This is the first map in the game.
@@ -87,6 +90,10 @@ class TantegelThroneRoom(object):
 
     def __init__(self, player, map_tiles, hero_images=None,
                  king_lorik_images=None, left_guard_images=None, right_guard_images=None, roaming_guard_images=None):
+        self.roaming_guard_sprites = RenderUpdates()
+        self.right_guard_sprites = RenderUpdates()
+        self.left_guard_sprites = RenderUpdates()
+        self.king_lorik_sprites = RenderUpdates()
         if king_lorik_images is None:
             king_lorik_images = []
         if hero_images is None:
@@ -115,79 +122,101 @@ class TantegelThroneRoom(object):
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
         pygame.mixer.music.load(
-            "/Users/eforgacs/PycharmProjects/DragonWarrior_clone/data/02_-_Dragon_Warrior_-_NES_-_Chateau_Ladutorm.ogg")
-        pygame.mixer.music.play()
+            "/Users/eforgacs/PycharmProjects/DragonWarrior_clone/data/02%20Dragon%20Quest%201%20-%20Tantegel%20Castle%20(22khz%20mono).ogg")
+        pygame.mixer.music.play(-1)
 
     def load_map(self):
 
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
-
-        self.king_lorik_sprites = RenderUpdates()
-        self.left_guard_sprites = RenderUpdates()
-        self.right_guard_sprites = RenderUpdates()
-        self.roaming_guard_sprites = RenderUpdates()
+        x = 0
+        y = 0
+        self.center_pt = [(x * TILE_SIZE) + x_offset, (y * TILE_SIZE) + y_offset]
 
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
-                center_pt = [(x * TILE_SIZE) + x_offset,
+                self.center_pt = [(x * TILE_SIZE) + x_offset,
                              (y * TILE_SIZE) + y_offset]
                 if self.layout[y][x] == ROOF:
-                    roof = BaseSprite(center_pt, self.map_tiles[ROOF][0])
+                    roof = BaseSprite(self.center_pt, self.map_tiles[ROOF][0])
                     self.roof_group.add(roof)
                 elif self.layout[y][x] == WALL:
-                    wall = BaseSprite(center_pt, self.map_tiles[WALL][0])
+                    wall = BaseSprite(self.center_pt, self.map_tiles[WALL][0])
                     self.wall_group.add(wall)
                 elif self.layout[y][x] == WOOD:
-                    wood = BaseSprite(center_pt, self.map_tiles[WOOD][0])
+                    wood = BaseSprite(self.center_pt, self.map_tiles[WOOD][0])
                     self.wood_group.add(wood)
                 elif self.layout[y][x] == BRICK:
-                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
                 elif self.layout[y][x] == CHEST:
-                    chest = BaseSprite(center_pt, self.map_tiles[CHEST][0])
+                    chest = BaseSprite(self.center_pt, self.map_tiles[CHEST][0])
                     self.chest_group.add(chest)
                 elif self.layout[y][x] == DOOR:
-                    door = BaseSprite(center_pt, self.map_tiles[DOOR][0])
+                    door = BaseSprite(self.center_pt, self.map_tiles[DOOR][0])
                     self.door_group.add(door)
                 elif self.layout[y][x] == BRICK_STAIRDN:
-                    brick_stairdn = BaseSprite(center_pt, self.map_tiles[
+                    brick_stairdn = BaseSprite(self.center_pt, self.map_tiles[
                         BRICK_STAIRDN][0])
                     self.brick_stairdn_group.add(brick_stairdn)
                 elif self.layout[y][x] == HERO:
-                    self.player = Player(center_pt, 2,
-                                         self.hero_images[0],
-                                         self.hero_images[1],
-                                         self.hero_images[2],
-                                         self.hero_images[3])
-                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    self.player_up(self.center_pt)
+                    brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
                 elif self.layout[y][x] == KING_LORIK:
-                    self.king_lorik = AnimatedSprite(center_pt, 0,
+                    self.king_lorik = AnimatedSprite(self.center_pt, 0,
                                                      self.king_lorik_images[0])
                     self.king_lorik_sprites.add(self.king_lorik)
-                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
                 elif self.layout[y][x] == LEFT_GUARD:
-                    self.left_guard = AnimatedSprite(center_pt, 0,
+                    self.left_guard = AnimatedSprite(self.center_pt, 0,
                                                      self.left_guard_images[0])
                     self.left_guard_sprites.add(self.left_guard)
-                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
                 elif self.layout[y][x] == RIGHT_GUARD:
-                    self.right_guard = AnimatedSprite(center_pt, 0,
+                    self.right_guard = AnimatedSprite(self.center_pt, 0,
                                                       self.right_guard_images[0])
                     self.right_guard_sprites.add(self.right_guard)
-                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
                 elif self.layout[y][x] == ROAMING_GUARD:
-                    self.roaming_guard = AnimatedSprite(center_pt, 0,
-                                                      self.roaming_guard_images[0])
+                    self.roaming_guard = AnimatedSprite(self.center_pt, 0,
+                                                        self.roaming_guard_images[0])
                     self.roaming_guard_sprites.add(self.roaming_guard)
-                    brick = BaseSprite(center_pt, self.map_tiles[BRICK][0])
+                    brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
 
         self.player_sprites = RenderUpdates(self.player)
+
+    def player_down(self, center_pt):
+        self.player = Player(center_pt, 0,
+                             self.hero_images[0],
+                             self.hero_images[1],
+                             self.hero_images[2],
+                             self.hero_images[3])
+
+    def player_right(self, center_pt):
+        self.player = Player(center_pt, 3,
+                             self.hero_images[0],
+                             self.hero_images[1],
+                             self.hero_images[2],
+                             self.hero_images[3])
+
+    def player_up(self, center_pt):
+        self.player = Player(center_pt, 2,
+                             self.hero_images[0],
+                             self.hero_images[1],
+                             self.hero_images[2],
+                             self.hero_images[3])
+
+    def player_left(self, center_pt):
+        self.player = Player(center_pt, 1,
+                             self.hero_images[0],
+                             self.hero_images[1],
+                             self.hero_images[2],
+                             self.hero_images[3])
 
     def draw_map(self, surface):
         """
