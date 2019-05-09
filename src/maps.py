@@ -123,7 +123,7 @@ class TantegelThroneRoom(object):
         self.height = len(self.layout * TILE_SIZE)
         pygame.mixer.music.load(
             "/Users/eforgacs/PycharmProjects/DragonWarrior_clone/data/02%20Dragon%20Quest%201%20-%20Tantegel%20Castle%20(22khz%20mono).ogg")
-        pygame.mixer.music.play(-1)
+        #pygame.mixer.music.play(-1)
 
     def load_map(self):
 

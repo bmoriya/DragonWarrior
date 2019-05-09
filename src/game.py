@@ -1,19 +1,18 @@
 import sys
 from os import pardir
 from os.path import join
-from pygame.sprite import RenderUpdates
 
 import pygame
-from pygame import init, Surface, QUIT, KEYDOWN
+from pygame import init, Surface, QUIT
 from pygame.display import set_mode, set_caption, flip
 from pygame.image import load_extended
+from pygame.image import load_basic
 from pygame.time import Clock
 from pygame.transform import scale
-from src.animated_sprite import AnimatedSprite
-from src.base_sprite import BaseSprite
 
 import src.maps
 import src.player
+from src.animated_sprite import AnimatedSprite
 from src.common import TILE_SIZE, SCALE
 
 
@@ -62,19 +61,14 @@ class Game(object):
         # Make the big scrollable map
         self.make_bigmap()
 
-        self.current_map.draw_map(self.bigmap)
+        #self.current_map.draw_map(self.bigmap)
         self.current_map.draw_sprites(self.bigmap)
 
         self.background = Surface(self.screen.get_size()).convert()
         self.background.fill(self.BACK_FILL_COLOR)
-        x_offset = TILE_SIZE / 2
-        y_offset = TILE_SIZE / 2
-        for y in range(len(self.current_map.layout)):
-            for x in range(len(self.current_map.layout[y])):
-                self.center_pt = [(x * TILE_SIZE) + x_offset,
-                                  (y * TILE_SIZE) + y_offset]
 
         while True:
+            self.current_map.draw_map(self.bigmap)
             self.current_map.clear_sprites(self.screen, self.background)
 
             self.clock.tick(self.FPS)
@@ -82,7 +76,7 @@ class Game(object):
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-                #TODO: disable this if a dialog box is open.
+                # TODO: disable this if a dialog box is open.
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.current_map.player.direction = AnimatedSprite.LEFT
@@ -106,8 +100,7 @@ class Game(object):
     def make_bigmap(self):
         self.bigmap_width = self.current_map.width
         self.bigmap_height = self.current_map.height
-        self.bigmap = Surface((self.bigmap_width,
-                               self.bigmap_height)).convert()
+        self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
@@ -201,7 +194,7 @@ class Game(object):
         """
         sheet.set_colorkey(self.COLORKEY)
         sheet.convert_alpha()
-        width, height = sheet.get_size()
+        #width, height = sheet.get_size()
 
         facing_down = []
         facing_left = []
