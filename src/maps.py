@@ -90,6 +90,7 @@ class TantegelThroneRoom(object):
 
     def __init__(self, player, map_tiles, hero_images=None,
                  king_lorik_images=None, left_guard_images=None, right_guard_images=None, roaming_guard_images=None):
+        self.current_map = TantegelThroneRoom
         self.roaming_guard_sprites = RenderUpdates()
         self.right_guard_sprites = RenderUpdates()
         self.left_guard_sprites = RenderUpdates()
@@ -118,20 +119,21 @@ class TantegelThroneRoom(object):
         self.left_guard_images = left_guard_images
         self.right_guard_images = right_guard_images
         self.roaming_guard_images = roaming_guard_images
+        self.roaming_characters = []
+
         self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
+
         pygame.mixer.music.load(
             "/Users/eforgacs/PycharmProjects/DragonWarrior_clone/data/02%20Dragon%20Quest%201%20-%20Tantegel%20Castle%20(22khz%20mono).ogg")
         #pygame.mixer.music.play(-1)
 
     def load_map(self):
+        current_loaded_map = self
 
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
-        x = 0
-        y = 0
-        self.center_pt = [(x * TILE_SIZE) + x_offset, (y * TILE_SIZE) + y_offset]
 
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
@@ -160,7 +162,11 @@ class TantegelThroneRoom(object):
                         BRICK_STAIRDN][0])
                     self.brick_stairdn_group.add(brick_stairdn)
                 elif self.layout[y][x] == HERO:
-                    self.player_up(self.center_pt)
+                    # Make player start facing up if in Tantegel Throne Room, else face down.
+                    if isinstance(current_loaded_map, TantegelThroneRoom):
+                        self.player_up(self.center_pt)
+                    else:
+                        self.player_down(self.center_pt)
                     brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
                 elif self.layout[y][x] == KING_LORIK:
@@ -185,6 +191,7 @@ class TantegelThroneRoom(object):
                     self.roaming_guard = AnimatedSprite(self.center_pt, 0,
                                                         self.roaming_guard_images[0])
                     self.roaming_guard_sprites.add(self.roaming_guard)
+                    self.roaming_characters.append(self.roaming_guard)
                     brick = BaseSprite(self.center_pt, self.map_tiles[BRICK][0])
                     self.brick_group.add(brick)
 

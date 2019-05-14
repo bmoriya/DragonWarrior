@@ -1,3 +1,4 @@
+import random
 import sys
 from os import pardir
 from os.path import join
@@ -6,8 +7,8 @@ import pygame
 from pygame import init, Surface, QUIT
 from pygame.display import set_mode, set_caption, flip
 from pygame.image import load_extended
-from pygame.image import load_basic
 from pygame.time import Clock
+from pygame.time import get_ticks
 from pygame.transform import scale
 
 import src.maps
@@ -17,11 +18,11 @@ from src.common import TILE_SIZE, SCALE
 
 
 class Game(object):
-    NESRES = (256, 240)
+    NES_RES = (256, 240)
     FPS = 60
     GAME_TITLE = "Dragon Warrior"
-    WIN_WIDTH = NESRES[0] * SCALE
-    WIN_HEIGHT = NESRES[1] * SCALE
+    WIN_WIDTH = NES_RES[0] * SCALE
+    WIN_HEIGHT = NES_RES[1] * SCALE
     DATA_DIR = join(pardir, 'data')
     MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
     UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
@@ -29,13 +30,13 @@ class Game(object):
     RIGHT_GUARD_PATH = join(DATA_DIR, 'right_guard.png')
     LEFT_GUARD_PATH = join(DATA_DIR, 'left_guard.png')
     ROAMING_GUARD_PATH = join(DATA_DIR, 'roaming_guard.png')
-    COLORKEY = (0, 128, 128)
-    SCROLL_STEP_X = 3
-    SCROLL_STEP_Y = 3
+    COLOR_KEY = (0, 128, 128)
     ORIGIN = (0, 0)
     corner_point = [0, 0]
     BLACK = (0, 0, 0)
     BACK_FILL_COLOR = BLACK
+    MOVEEVENT = pygame.USEREVENT + 1
+    pygame.time.set_timer(MOVEEVENT, 100)
 
     def __init__(self):
         # Initialize pygame
@@ -45,7 +46,13 @@ class Game(object):
         self.screen = set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
         set_caption(self.GAME_TITLE)
         self.clock = Clock()
-        self.player = None
+        self.last_roaming_character_clock_check = get_ticks()
+        self.last_sprite_movement_clock_check = get_ticks()
+        self.roaming_character_go_cooldown = 3000
+        self.sprite_movement_wait_period = 10
+        if src.maps.current_map is None:
+            src.mapscurrent_map = src.maps.TantegelThroneRoom
+            self.player = None
         self.map_tiles = []
 
         self.load_images()
@@ -61,32 +68,29 @@ class Game(object):
         # Make the big scrollable map
         self.make_bigmap()
 
-        #self.current_map.draw_map(self.bigmap)
+        # self.current_map.draw_map(self.bigmap)
         self.current_map.draw_sprites(self.bigmap)
 
         self.background = Surface(self.screen.get_size()).convert()
         self.background.fill(self.BACK_FILL_COLOR)
 
+        self.current_map.roaming_guard.down_images = self.roaming_guard_images[0]
+        self.current_map.roaming_guard.left_images = self.roaming_guard_images[1]
+        self.current_map.roaming_guard.up_images = self.roaming_guard_images[2]
+        self.current_map.roaming_guard.right_images = self.roaming_guard_images[3]
+        camera_pos = self.current_map.center_pt
+
         while True:
             self.current_map.draw_map(self.bigmap)
             self.current_map.clear_sprites(self.screen, self.background)
-
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-                # TODO: disable this if a dialog box is open.
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        self.current_map.player.direction = AnimatedSprite.LEFT
-                    if event.key == pygame.K_RIGHT:
-                        self.current_map.player.direction = AnimatedSprite.RIGHT
-                    if event.key == pygame.K_UP:
-                        self.current_map.player.direction = AnimatedSprite.UP
-                    if event.key == pygame.K_DOWN:
-                        self.current_map.player.direction = AnimatedSprite.DOWN
-
+            # TODO: disable moving if a dialog box is open.
+            self.current_map.player.move(camera_pos)
+            self.move_roaming_character()
             self.background = self.bigmap.subsurface(self.corner_point[0],
                                                      self.corner_point[1],
                                                      self.WIN_WIDTH,
@@ -96,6 +100,47 @@ class Game(object):
 
             self.screen.blit(self.background, self.ORIGIN)
             flip()
+
+    def move_roaming_character(self):
+        # TODO: extend roaming characters beyond just the roaming guard.
+        for roaming_character in self.current_map.roaming_characters:
+            roaming_character_direction = random.randrange(4)
+            if roaming_character_direction == 0:
+                now = get_ticks()
+                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
+                    self.last_roaming_character_clock_check = now
+                    roaming_character.direction = AnimatedSprite.DOWN
+                    roaming_character.rect.y += 48
+            elif roaming_character_direction == 1:
+                now = get_ticks()
+                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
+                    self.last_roaming_character_clock_check = now
+                    roaming_character.direction = AnimatedSprite.LEFT
+                    roaming_character.rect.x -= 48
+            elif roaming_character_direction == 2:
+                now = get_ticks()
+                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
+                    self.last_roaming_character_clock_check = now
+                    roaming_character.direction = AnimatedSprite.UP
+                    roaming_character.rect.y -= 48
+            elif roaming_character_direction == 3:
+                now = get_ticks()
+                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
+                    self.last_roaming_character_clock_check = now
+                    roaming_character.direction = AnimatedSprite.RIGHT
+                    roaming_character.rect.x += 48
+            # roaming character sides collision
+            if roaming_character.rect.x < 0:  # Simple Sides Collision
+                roaming_character.rect.x = 0  # Reset Player Rect Coord
+                # pos_x = camera_pos[0]  # Reset Camera Pos Coord
+            elif roaming_character.rect.x > int(self.WIN_WIDTH - ((self.WIN_WIDTH // 24) * 1.5)):
+                roaming_character.rect.x = int(self.WIN_WIDTH - ((self.WIN_WIDTH // 24) * 1.5))
+                # pos_x = camera_pos[0]
+            if roaming_character.rect.y < 0:
+                roaming_character.rect.y = 0
+                # pos_y = camera_pos[1]
+            elif self.current_map.roaming_guard.rect.y > self.WIN_HEIGHT - 48:
+                self.current_map.roaming_guard.rect.y = self.WIN_HEIGHT - 48
 
     def make_bigmap(self):
         self.bigmap_width = self.current_map.width
@@ -192,9 +237,9 @@ class Game(object):
         the sprite will have four lists of images, one for each direction. If
         is_roaming is False then there will be one list of 2 images.
         """
-        sheet.set_colorkey(self.COLORKEY)
+        sheet.set_colorkey(self.COLOR_KEY)
         sheet.convert_alpha()
-        #width, height = sheet.get_size()
+        # width, height = sheet.get_size()
 
         facing_down = []
         facing_left = []
