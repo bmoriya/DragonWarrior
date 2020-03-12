@@ -25,3 +25,4 @@ src/__pycache__/player.cpython-37.pyc
 data/.DS_Store
 .DS_Store
 /venv/
+.idea/misc.xml
