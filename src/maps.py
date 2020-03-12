@@ -1,4 +1,3 @@
-from enum import Enum
 from os.path import join, pardir
 
 import pygame
@@ -6,7 +5,7 @@ from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import TILE_SIZE
+from src.common import TILE_SIZE, Direction
 from src.player import Player
 
 # Tile Key:
@@ -84,13 +83,6 @@ tantegel_courtyard = [
 current_map = None
 
 
-class Direction(Enum):
-    DOWN = 0
-    LEFT = 1
-    UP = 2
-    RIGHT = 3
-
-
 # Working on class refactoring of maps
 
 
@@ -127,6 +119,8 @@ class TantegelThroneRoom(object):
         self.roaming_guard_images = roaming_guard_images
         self.roaming_characters = []
         self.player_sprites = None
+        self.characters = []
+        self.character_sprites = []
 
         self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
@@ -162,9 +156,18 @@ class TantegelThroneRoom(object):
                 elif self.layout[y][x] == HERO:
                     # Make player start facing up if in Tantegel Throne Room, else face down.
                     if isinstance(current_loaded_map, TantegelThroneRoom):
-                        self.player_direction(self.center_pt, direction=Direction.UP.value)
+
+                        self.player = Player(center_point=self.center_pt, direction=Direction.UP.value,
+                                             down_img=self.hero_images[Direction.DOWN.value],
+                                             left_img=self.hero_images[Direction.LEFT.value],
+                                             up_img=self.hero_images[Direction.UP.value],
+                                             right_img=self.hero_images[Direction.RIGHT.value])
                     else:
-                        self.player_direction(self.center_pt, direction=Direction.DOWN.value)
+                        self.player = Player(center_point=self.center_pt, direction=Direction.DOWN.value,
+                                             down_img=self.hero_images[Direction.DOWN.value],
+                                             left_img=self.hero_images[Direction.LEFT.value],
+                                             up_img=self.hero_images[Direction.UP.value],
+                                             right_img=self.hero_images[Direction.RIGHT.value])
                     self.set_underlying_tile(tile_type=BRICK, tile_group=self.brick_group)
                 elif self.layout[y][x] == KING_LORIK:
                     self.king_lorik = AnimatedSprite(self.center_pt, 0,
@@ -190,6 +193,16 @@ class TantegelThroneRoom(object):
 
         self.player_sprites = RenderUpdates(self.player)
         self.set_underlying_tile(tile_type=BRICK, tile_group=self.brick_group)
+        self.characters = [self.player,
+                           self.king_lorik,
+                           self.left_guard,
+                           self.right_guard,
+                           self.roaming_guard]
+        self.character_sprites = [self.player_sprites,
+                                  self.king_lorik_sprites,
+                                  self.left_guard_sprites,
+                                  self.right_guard_sprites,
+                                  self.roaming_guard_sprites]
 
     def set_underlying_tile(self, tile_type, tile_group):
         tile = BaseSprite(self.center_pt, self.map_tiles[tile_type][0])
@@ -198,13 +211,6 @@ class TantegelThroneRoom(object):
     def add_tile(self, tile_type, tile_group):
         tile = BaseSprite(self.center_pt, self.map_tiles[tile_type][0])
         tile_group.add(tile)
-
-    def player_direction(self, center_pt, direction: int):
-        self.player = Player(center_pt, direction,
-                             self.hero_images[0],
-                             self.hero_images[1],
-                             self.hero_images[2],
-                             self.hero_images[3])
 
     def draw_map(self, surface):
         """
@@ -224,17 +230,3 @@ class TantegelThroneRoom(object):
         self.left_guard_sprites.clear(screen, surface)
         self.right_guard_sprites.clear(screen, surface)
         self.roaming_guard_sprites.clear(screen, surface)
-
-    def animate(self):
-        self.player.animate()
-        self.king_lorik.animate()
-        self.left_guard.animate()
-        self.right_guard.animate()
-        self.roaming_guard.animate()
-
-    def draw_sprites(self, surface):
-        self.player_sprites.draw(surface)
-        self.king_lorik_sprites.draw(surface)
-        self.left_guard_sprites.draw(surface)
-        self.right_guard_sprites.draw(surface)
-        self.roaming_guard_sprites.draw(surface)

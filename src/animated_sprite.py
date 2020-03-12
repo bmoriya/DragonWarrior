@@ -1,11 +1,8 @@
 from src.base_sprite import BaseSprite
+from src.common import Direction
 
 
 class AnimatedSprite(BaseSprite):
-    DOWN = 0
-    LEFT = 1
-    UP = 2
-    RIGHT = 3
 
     def __init__(self, center_point, direction,
                  down_img=None, left_img=None, up_img=None, right_img=None):
@@ -41,11 +38,11 @@ class AnimatedSprite(BaseSprite):
             if self.current_frame > self.max_frame:
                 self.current_frame = 0
 
-        if self.direction == self.DOWN:
+        if self.direction == Direction.DOWN.value:
             self.image = self.down_images[self.current_frame]
-        elif self.direction == self.LEFT:
+        elif self.direction == Direction.LEFT.value:
             self.image = self.left_images[self.current_frame]
-        elif self.direction == self.UP:
+        elif self.direction == Direction.UP.value:
             self.image = self.up_images[self.current_frame]
-        elif self.direction == self.RIGHT:
+        elif self.direction == Direction.RIGHT.value:
             self.image = self.right_images[self.current_frame]

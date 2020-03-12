@@ -11,10 +11,10 @@ from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
 
+import src.common
 import src.maps
 import src.player
-from src.animated_sprite import AnimatedSprite
-from src.common import TILE_SIZE, SCALE
+from src.common import TILE_SIZE, SCALE, Direction
 
 
 class Game(object):
@@ -24,19 +24,20 @@ class Game(object):
     WIN_WIDTH = NES_RES[0] * SCALE
     WIN_HEIGHT = NES_RES[1] * SCALE
     DATA_DIR = join(pardir, 'data')
-    MAP_TILES_PATH = join(DATA_DIR, 'tileset.png')
-    UNARMED_HERO_PATH = join(DATA_DIR, 'unarmed_hero.png')
-    KING_LORIK_PATH = join(DATA_DIR, 'king_lorik.png')
-    RIGHT_GUARD_PATH = join(DATA_DIR, 'right_guard.png')
-    LEFT_GUARD_PATH = join(DATA_DIR, 'left_guard.png')
-    ROAMING_GUARD_PATH = join(DATA_DIR, 'roaming_guard.png')
+    IMAGES_DIR = join(DATA_DIR, 'images')
+    MAP_TILES_PATH = join(IMAGES_DIR, 'tileset.png')
+    UNARMED_HERO_PATH = join(IMAGES_DIR, 'unarmed_hero.png')
+    KING_LORIK_PATH = join(IMAGES_DIR, 'king_lorik.png')
+    RIGHT_GUARD_PATH = join(IMAGES_DIR, 'right_guard.png')
+    LEFT_GUARD_PATH = join(IMAGES_DIR, 'left_guard.png')
+    ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
     COLOR_KEY = (0, 128, 128)
     ORIGIN = (0, 0)
     corner_point = [0, 0]
     BLACK = (0, 0, 0)
     BACK_FILL_COLOR = BLACK
-    MOVEEVENT = pygame.USEREVENT + 1
-    pygame.time.set_timer(MOVEEVENT, 100)
+    MOVE_EVENT = pygame.USEREVENT + 1
+    pygame.time.set_timer(MOVE_EVENT, 100)
 
     def __init__(self):
 
@@ -85,15 +86,17 @@ class Game(object):
         self.make_bigmap()
 
         # self.current_map.draw_map(self.bigmap)
-        self.current_map.draw_sprites(self.bigmap)
+        for sprites in self.current_map.character_sprites:
+            sprites.draw(self.bigmap)
 
         self.background = Surface(self.screen.get_size()).convert()
         self.background.fill(self.BACK_FILL_COLOR)
 
-        self.current_map.roaming_guard.down_images = self.roaming_guard_images[0]
-        self.current_map.roaming_guard.left_images = self.roaming_guard_images[1]
-        self.current_map.roaming_guard.up_images = self.roaming_guard_images[2]
-        self.current_map.roaming_guard.right_images = self.roaming_guard_images[3]
+        self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
+        self.current_map.roaming_guard.left_images = self.roaming_guard_images[Direction.LEFT.value]
+        self.current_map.roaming_guard.up_images = self.roaming_guard_images[Direction.UP.value]
+        self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
+
         camera_pos = self.current_map.center_pt
 
         while True:
@@ -105,15 +108,16 @@ class Game(object):
                     pygame.quit()
                     sys.exit()
             # TODO: disable moving if a dialog box is open.
-            self.current_map.player.move(camera_pos)
+            camera_pos = self.current_map.player.move(camera_pos)
             self.move_roaming_character()
             self.background = self.bigmap.subsurface(self.corner_point[0],
                                                      self.corner_point[1],
                                                      self.WIN_WIDTH,
                                                      self.WIN_HEIGHT).convert()
-            self.current_map.animate()
-            self.current_map.draw_sprites(self.background)
-
+            for character in self.current_map.characters:
+                character.animate()
+            for sprites in self.current_map.character_sprites:
+                sprites.draw(self.background)
             self.screen.blit(self.background, self.ORIGIN)
             flip()
 
@@ -121,30 +125,7 @@ class Game(object):
         # TODO: extend roaming characters beyond just the roaming guard.
         for roaming_character in self.current_map.roaming_characters:
             roaming_character_direction = random.randrange(4)
-            if roaming_character_direction == 0:
-                now = get_ticks()
-                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
-                    self.last_roaming_character_clock_check = now
-                    roaming_character.direction = AnimatedSprite.DOWN
-                    roaming_character.rect.y += 48
-            elif roaming_character_direction == 1:
-                now = get_ticks()
-                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
-                    self.last_roaming_character_clock_check = now
-                    roaming_character.direction = AnimatedSprite.LEFT
-                    roaming_character.rect.x -= 48
-            elif roaming_character_direction == 2:
-                now = get_ticks()
-                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
-                    self.last_roaming_character_clock_check = now
-                    roaming_character.direction = AnimatedSprite.UP
-                    roaming_character.rect.y -= 48
-            elif roaming_character_direction == 3:
-                now = get_ticks()
-                if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
-                    self.last_roaming_character_clock_check = now
-                    roaming_character.direction = AnimatedSprite.RIGHT
-                    roaming_character.rect.x += 48
+            self.move_roaming_character_direction(roaming_character, roaming_character_direction)
             # roaming character sides collision
             if roaming_character.rect.x < 0:  # Simple Sides Collision
                 roaming_character.rect.x = 0  # Reset Player Rect Coord
@@ -155,8 +136,24 @@ class Game(object):
             if roaming_character.rect.y < 0:
                 roaming_character.rect.y = 0
                 # pos_y = camera_pos[1]
-            elif self.current_map.roaming_guard.rect.y > self.WIN_HEIGHT - 48:
-                self.current_map.roaming_guard.rect.y = self.WIN_HEIGHT - 48
+            elif self.current_map.roaming_guard.rect.y > self.WIN_HEIGHT - TILE_SIZE:
+                self.current_map.roaming_guard.rect.y = self.WIN_HEIGHT - TILE_SIZE
+
+    def move_roaming_character_direction(self, roaming_character, direction):
+        now = get_ticks()
+        if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
+            self.last_roaming_character_clock_check = now
+            roaming_character.direction = direction
+            if direction == Direction.UP.value:
+                roaming_character.rect.y -= TILE_SIZE
+            elif direction == Direction.LEFT.value:
+                roaming_character.rect.x -= TILE_SIZE
+            elif direction == Direction.DOWN.value:
+                roaming_character.rect.y += TILE_SIZE
+            elif direction == Direction.RIGHT.value:
+                roaming_character.rect.x += TILE_SIZE
+            else:
+                print("Invalid direction.")
 
     def make_bigmap(self):
         self.bigmap_width = self.current_map.width
@@ -186,10 +183,6 @@ class Game(object):
         left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
         right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
         roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
-
-        # except error as e:
-        #    print(e)
-        #    return
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,

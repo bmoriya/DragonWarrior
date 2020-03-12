@@ -1,6 +1,8 @@
-from src.animated_sprite import AnimatedSprite
 import pygame
+
 import src.game
+from src.animated_sprite import AnimatedSprite
+from src.common import Direction, TILE_SIZE
 
 
 class Player(AnimatedSprite):
@@ -29,34 +31,34 @@ class Player(AnimatedSprite):
         pos_x, pos_y = camera_pos
         key = pygame.key.get_pressed()
         if key[pygame.K_DOWN]:
-            self.direction = AnimatedSprite.DOWN
-            self.rect.y += 48
-            pos_y -= 48
+            self.direction = Direction.DOWN.value
+            self.rect.y += TILE_SIZE
+            pos_y -= TILE_SIZE
         if key[pygame.K_LEFT]:
-            self.direction = AnimatedSprite.LEFT
-            self.rect.x -= 48
-            pos_x += 48
+            self.direction = Direction.LEFT.value
+            self.rect.x -= TILE_SIZE
+            pos_x += TILE_SIZE
         if key[pygame.K_UP]:
-            self.direction = AnimatedSprite.UP
-            self.rect.y -= 48
-            pos_y += 48
+            self.direction = Direction.UP.value
+            self.rect.y -= TILE_SIZE
+            pos_y += TILE_SIZE
         if key[pygame.K_RIGHT]:
-            self.direction = AnimatedSprite.RIGHT
-            self.rect.x += 48
-            pos_x -= 48
+            self.direction = Direction.RIGHT.value
+            self.rect.x += TILE_SIZE
+            pos_x -= TILE_SIZE
 
         # TODO: Handle internal wall sides collision.
         if self.rect.x < 0:  # Simple Sides Collision
             self.rect.x = 0  # Reset Player Rect Coord
             # pos_x = camera_pos[0]  # Reset Camera Pos Coord
-        elif self.rect.x > int(src.game.Game.WIN_WIDTH - ((src.game.Game.WIN_WIDTH // 24) * 1.5)):
-            self.rect.x = int(src.game.Game.WIN_WIDTH - ((src.game.Game.WIN_WIDTH // 24) * 1.5))
+        elif self.rect.x > src.game.Game.WIN_WIDTH - TILE_SIZE:
+            self.rect.x = src.game.Game.WIN_WIDTH - TILE_SIZE
             # pos_x = camera_pos[0]
         if self.rect.y < 0:
             self.rect.y = 0
             # pos_y = camera_pos[1]
-        elif self.rect.y > src.game.Game.WIN_HEIGHT - 48:
-            self.rect.y = src.game.Game.WIN_HEIGHT - 48
+        elif self.rect.y > src.game.Game.WIN_HEIGHT - TILE_SIZE:
+            self.rect.y = src.game.Game.WIN_HEIGHT - TILE_SIZE
         # elif self.rect.y > self.WIN_HEIGHT - ((self.WIN_HEIGHT // 23) * 1.5):
         #    self.rect.y = self.WIN_HEIGHT - ((self.WIN_HEIGHT // 23) * 1.5)
 
