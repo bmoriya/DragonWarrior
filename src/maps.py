@@ -1,3 +1,5 @@
+from os.path import join, pardir
+
 import pygame
 from pygame.sprite import Group, RenderUpdates
 
@@ -124,10 +126,9 @@ class TantegelThroneRoom(object):
         self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
-
-        pygame.mixer.music.load(
-            "/Users/eforgacs/PycharmProjects/DragonWarrior_clone/data/02%20Dragon%20Quest%201%20-%20Tantegel%20Castle%20(22khz%20mono).ogg")
-        #pygame.mixer.music.play(-1)
+        DATA_DIR = join(pardir, 'data')
+        pygame.mixer.music.load(join(DATA_DIR, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg'))
+        pygame.mixer.music.play(-1)
 
     def load_map(self):
         current_loaded_map = self
