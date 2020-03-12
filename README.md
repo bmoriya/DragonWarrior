@@ -22,4 +22,4 @@ All you can do right now is scroll around the first map.
 Run on Repl.it
 ============
 
-[![Run on Repl.it](https://repl.it/badge/github/eforgacs-games/DragonWarrior)](https://repl.it/github/eforgacs-games/DragonWarrior)
+[![Run on Repl.it](https://repl.it/badge/github/eforgacs-games/DragonWarrior)](https://repl.it/@eforgacs/DW)
