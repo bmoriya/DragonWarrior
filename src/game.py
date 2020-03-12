@@ -51,7 +51,7 @@ class Game(object):
         self.roaming_character_go_cooldown = 3000
         self.sprite_movement_wait_period = 10
         if src.maps.current_map is None:
-            src.mapscurrent_map = src.maps.TantegelThroneRoom
+            src.maps.current_map = src.maps.TantegelThroneRoom
             self.player = None
         self.map_tiles = []
 
