@@ -5,12 +5,11 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2e3df33-68d1-41dd-870c-97b1a819b490" name="Default Changelist" comment="Fixed bug where previous positions of sprites were persisting.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/DragonWarrior_clone.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DragonWarrior_clone.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+    <list default="true" id="a2e3df33-68d1-41dd-870c-97b1a819b490" name="Default Changelist" comment="Fix frame rate - was too fast before.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/02%20Dragon%20Quest%201%20-%20Tantegel%20Castle%20(22khz%20mono).ogg" beforeDir="false" afterPath="$PROJECT_DIR$/data/02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/animated_sprite.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/animated_sprite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,8 +130,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.game" />
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.maps" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -147,7 +146,7 @@
       <option name="presentableId" value="Default" />
       <updated>1557088416626</updated>
       <workItem from="1583974846737" duration="2131000" />
-      <workItem from="1583979183360" duration="1065000" />
+      <workItem from="1583979183360" duration="5230000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit of a fork of bmoriya/DragonWarrior. Added compatibility with Python 3 and conducted a general cleanup of the code.&#10;&#10;Throne Room is currently working.">
       <created>1557088877858</created>
@@ -198,7 +197,14 @@
       <option name="project" value="LOCAL" />
       <updated>1583980131137</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Clean up duplicates in .gitignore.">
+      <created>1583980262487</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1583980262487</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -221,45 +227,70 @@
     <MESSAGE value="Commit before implementation of scrolling map feature." />
     <MESSAGE value="Fix music directory." />
     <MESSAGE value="Ignore venv folder." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ignore venv folder." />
+    <MESSAGE value="Clean up duplicates in .gitignore." />
+    <option name="LAST_COMMIT_MESSAGE" value="Clean up duplicates in .gitignore." />
   </component>
   <component name="WindowStateProjectService">
     <state x="308" y="-742" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1583975287214">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="308" y="-742" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583975287214" />
+    <state x="498" y="-842" key="#xdebugger.evaluate" timestamp="1583980564582">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state x="498" y="-842" key="#xdebugger.evaluate/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583980564582" />
     <state x="490" y="-699" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1583979706643">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="490" y="-699" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583979706643" />
-    <state x="350" y="-951" key="CommitChangelistDialog2" timestamp="1583980261884">
+    <state x="350" y="-951" width="1178" height="877" key="CommitChangelistDialog2" timestamp="1583984400543">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="350" y="-951" key="CommitChangelistDialog2/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583980261884" />
-    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog" timestamp="1583979886203">
+    <state x="350" y="-951" width="1178" height="877" key="CommitChangelistDialog2/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583984400543" />
+    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog" timestamp="1583983048411">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583979886203" />
+    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583983048411" />
     <state x="523" y="-790" key="FileChooserDialogImpl" timestamp="1583976968250">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="523" y="-790" key="FileChooserDialogImpl/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583976968250" />
-    <state width="1637" height="205" key="GridCell.Tab.0.bottom" timestamp="1583980003975">
+    <state width="1637" height="205" key="GridCell.Tab.0.bottom" timestamp="1583984416318">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="205" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583980003975" />
-    <state width="1637" height="205" key="GridCell.Tab.0.center" timestamp="1583980003975">
+    <state width="1637" height="205" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583984416318" />
+    <state width="1637" height="205" key="GridCell.Tab.0.center" timestamp="1583984416317">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="205" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583980003975" />
-    <state width="1637" height="205" key="GridCell.Tab.0.left" timestamp="1583980003975">
+    <state width="1637" height="205" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583984416317" />
+    <state width="1637" height="205" key="GridCell.Tab.0.left" timestamp="1583984416317">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="205" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583980003975" />
-    <state width="1637" height="205" key="GridCell.Tab.0.right" timestamp="1583980003975">
+    <state width="1637" height="205" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583984416317" />
+    <state width="1637" height="205" key="GridCell.Tab.0.right" timestamp="1583984416317">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="205" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583980003975" />
+    <state width="1637" height="205" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583984416317" />
+    <state width="1637" height="288" key="GridCell.Tab.1.bottom" timestamp="1583982493232">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state width="1637" height="288" key="GridCell.Tab.1.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583982493232" />
+    <state width="1637" height="288" key="GridCell.Tab.1.center" timestamp="1583982493231">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state width="1637" height="288" key="GridCell.Tab.1.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583982493231" />
+    <state width="1637" height="288" key="GridCell.Tab.1.left" timestamp="1583982493231">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state width="1637" height="288" key="GridCell.Tab.1.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583982493231" />
+    <state width="1637" height="288" key="GridCell.Tab.1.right" timestamp="1583982493231">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state width="1637" height="288" key="GridCell.Tab.1.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583982493231" />
+    <state x="558" y="-611" key="ReplaceDuplicatesPrompt" timestamp="1583981570525">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state x="558" y="-611" key="ReplaceDuplicatesPrompt/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583981570525" />
     <state x="537" y="-834" key="RollbackChangesDialog" timestamp="1583979950213">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
@@ -273,99 +304,24 @@
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="439" y="-947" width="607" height="804" key="find.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583976739839" />
+    <state x="965" y="-791" key="refactoring.ChangeSignatureDialog" timestamp="1583982754828">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state x="965" y="-791" key="refactoring.ChangeSignatureDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583982754828" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/game.py</url>
+          <line>219</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1583980003970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-  </component>
-  <component name="debuggerHistoryManager">
-    <expressions id="evaluateCodeFragment">
-      <expression>
-        <expression-string>self.WIN_HEIGHT - 48</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_HEIGHT - 672</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_HEIGHT</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>(self.WIN_HEIGHT // 23) * 1.55</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>(self.WIN_HEIGHT // 23) * 1.54</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>(self.WIN_HEIGHT // 23)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>(self.WIN_HEIGHT // 23) * 1.6</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>(self.WIN_HEIGHT // 23) * 1.75</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-    </expressions>
-    <expressions id="evaluateExpression">
-      <expression>
-        <expression-string>self.WIN_HEIGHT - ((self.WIN_HEIGHT//23)*1.5)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_HEIGHT - ((self.WIN_HEIGHT/23)*1.5)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_HEIGHT - ((self.WIN_HEIGHT//23)*1.6)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>int(self.WIN_WIDTH - ((self.WIN_WIDTH//24)*1.5))</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_WIDTH - ((self.WIN_WIDTH//24)*1.5)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_WIDTH - ((self.WIN_WIDTH/24)*1.5)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_WIDTH -720</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_WIDTH/24</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.WIN_WIDTH - 720</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-    </expressions>
+    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1583984416311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/DragonWarrior$maps.coverage" NAME="maps Coverage Results" MODIFIED="1583982897807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
 </project>

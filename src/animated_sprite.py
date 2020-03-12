@@ -33,9 +33,10 @@ class AnimatedSprite(BaseSprite):
 
     def animate(self):
         self.frame_count += 1
-        if self.frame_count > self.frame_delay:
-            self.frame_count = 0
-            self.current_frame += 1
+        if self.frame_count % 20 == 0:
+            if self.frame_count > self.frame_delay:
+                self.frame_count = 0
+                self.current_frame += 1
 
             if self.current_frame > self.max_frame:
                 self.current_frame = 0
