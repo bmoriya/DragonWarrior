@@ -12,7 +12,6 @@ from pygame.transform import scale
 import src.common
 import src.maps
 import src.player
-from src import config
 from src.common import Direction
 from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_GUARD_PATH, RIGHT_GUARD_PATH, \
     ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
