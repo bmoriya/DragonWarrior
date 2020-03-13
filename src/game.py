@@ -107,8 +107,9 @@ class Game(object):
                 character.animate()
             for sprites in self.current_map.character_sprites:
                 sprites.draw(self.background)
-            # To have camera follow player, uncomment the following line:
+            self.screen.fill(self.BACK_FILL_COLOR)
             self.screen.blit(self.background, camera_pos)
+
             # self.screen.blit(self.background, self.ORIGIN)
             flip()
 

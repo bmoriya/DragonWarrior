@@ -5,8 +5,10 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a2e3df33-68d1-41dd-870c-97b1a819b490" name="Default Changelist" comment="">
+    <list default="true" id="a2e3df33-68d1-41dd-870c-97b1a819b490" name="Default Changelist" comment="Change import for config.py.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/player.py" afterDir="false" />
     </list>
@@ -192,6 +194,7 @@
       <workItem from="1583979183360" duration="5464000" />
       <workItem from="1584021312597" duration="20502000" />
       <workItem from="1584063786235" duration="9078000" />
+      <workItem from="1584100431643" duration="1531000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit of a fork of bmoriya/DragonWarrior. Added compatibility with Python 3 and conducted a general cleanup of the code.&#10;&#10;Throne Room is currently working.">
       <created>1557088877858</created>
@@ -298,7 +301,14 @@
       <option name="project" value="LOCAL" />
       <updated>1584072783658</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Change import for config.py.">
+      <created>1584100521503</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1584100521503</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -320,7 +330,8 @@
     <MESSAGE value="Add bump noise upon collision." />
     <MESSAGE value="Lay groundwork for internal wall collision and camera scrolling." />
     <MESSAGE value="Refactor configuration variables into config.py." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor configuration variables into config.py." />
+    <MESSAGE value="Change import for config.py." />
+    <option name="LAST_COMMIT_MESSAGE" value="Change import for config.py." />
   </component>
   <component name="WindowStateProjectService">
     <state x="308" y="-742" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1584065556635">
@@ -337,71 +348,71 @@
     </state>
     <state x="538" y="-832" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584063382053" />
     <state x="484" y="147" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1280.680@0.0.1280.680" timestamp="1584040396740" />
-    <state x="814" y="-808" width="488" height="290" key="#xdebugger.evaluate" timestamp="1584069406252">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state x="389" y="108" width="740" height="501" key="#xdebugger.evaluate" timestamp="1584101363088">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="814" y="-808" key="#xdebugger.evaluate/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069406252" />
-    <state x="641" y="319" width="488" height="290" key="#xdebugger.evaluate/0.0.1280.680@0.0.1280.680" timestamp="1584037947374" />
+    <state x="389" y="108" width="740" height="501" key="#xdebugger.evaluate/0.0.1280.680@0.0.1280.680" timestamp="1584101363088" />
     <state x="490" y="-699" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1584063818811">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="490" y="-699" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584063818811" />
     <state x="447" y="236" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1584037553865" />
-    <state x="-4" y="3" width="1243" height="658" key="CommitChangelistDialog2" timestamp="1584100520791">
+    <state x="-4" y="3" width="1243" height="658" key="CommitChangelistDialog2" timestamp="1584101950984">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="350" y="-951" width="1178" height="877" key="CommitChangelistDialog2/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072783094" />
-    <state x="-4" y="3" width="1243" height="658" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1584100520791" />
-    <state x="-5" y="-958" width="1496" height="826" maximized="true" key="DiffContextDialog" timestamp="1584100491853">
+    <state x="-4" y="3" width="1243" height="658" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1584101950984" />
+    <state x="-5" y="-958" width="1496" height="826" maximized="true" key="DiffContextDialog" timestamp="1584101915966">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071804453" />
-    <state x="70" y="62" width="1140" height="557" maximized="true" key="DiffContextDialog/0.0.1280.680@0.0.1280.680" timestamp="1584100491853" />
+    <state x="70" y="62" width="1140" height="557" maximized="true" key="DiffContextDialog/0.0.1280.680@0.0.1280.680" timestamp="1584101915966" />
     <state x="472" y="175" key="FileChooserDialogImpl" timestamp="1584047735183">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="523" y="-790" key="FileChooserDialogImpl/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583976968250" />
     <state x="472" y="175" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1584047735183" />
-    <state width="1637" height="324" key="GridCell.Tab.0.bottom" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="166" key="GridCell.Tab.0.bottom" timestamp="1584101914997">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="271" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="324" key="GridCell.Tab.0.center" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="166" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584101914997" />
+    <state width="1237" height="166" key="GridCell.Tab.0.center" timestamp="1584101914997">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="271" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="324" key="GridCell.Tab.0.left" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="166" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1584101914997" />
+    <state width="1237" height="166" key="GridCell.Tab.0.left" timestamp="1584101914997">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="271" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="324" key="GridCell.Tab.0.right" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="166" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1584101914997" />
+    <state width="1237" height="166" key="GridCell.Tab.0.right" timestamp="1584101914997">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="271" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="324" key="GridCell.Tab.1.bottom" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="166" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1584101914997" />
+    <state width="1237" height="196" key="GridCell.Tab.1.bottom" timestamp="1584101374464">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.1.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="197" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
-    <state width="1637" height="324" key="GridCell.Tab.1.center" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="196" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584101374464" />
+    <state width="1237" height="196" key="GridCell.Tab.1.center" timestamp="1584101374464">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.1.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="197" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
-    <state width="1637" height="324" key="GridCell.Tab.1.left" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="196" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1584101374464" />
+    <state width="1237" height="196" key="GridCell.Tab.1.left" timestamp="1584101374464">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.1.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="197" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
-    <state width="1637" height="324" key="GridCell.Tab.1.right" timestamp="1584072887687">
-      <screen x="-97" y="-1050" width="1680" height="1010" />
+    <state width="1237" height="196" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1584101374464" />
+    <state width="1237" height="196" key="GridCell.Tab.1.right" timestamp="1584101374464">
+      <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state width="1637" height="324" key="GridCell.Tab.1.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072887687" />
-    <state width="1237" height="197" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
+    <state width="1237" height="196" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1584101374464" />
     <state x="558" y="-611" key="ReplaceDuplicatesPrompt" timestamp="1583981570525">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
@@ -438,7 +449,7 @@
     <state x="406" y="-833" width="672" height="678" key="search.everywhere.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071403273" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1584072807321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1584101914981" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/DragonWarrior$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1584062785622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DragonWarrior$main.coverage" NAME="main Coverage Results" MODIFIED="1584046720844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/DragonWarrior$maps.coverage" NAME="maps Coverage Results" MODIFIED="1583982897807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />

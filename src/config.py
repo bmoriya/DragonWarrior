@@ -15,7 +15,7 @@ ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
 
 TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH = join(MUSIC_DIR, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg')
 
-SCALE = 3
+SCALE = 2
 TILE_SIZE = 16 * SCALE
 NES_RES = (256, 240)
 WIN_WIDTH = NES_RES[0] * SCALE

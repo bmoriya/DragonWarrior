@@ -55,22 +55,23 @@ class Player(AnimatedSprite):
         if self.rect.x < 0:  # Simple Sides Collision
             self.rect.x = 0  # Reset Player Rect Coord
             bump_sound.play()
-            # pos_x = camera_pos[0]  # Reset Camera Pos Coord
+            pos_x = camera_pos[0]  # Reset Camera Pos Coord
         elif self.rect.x > WIN_WIDTH - TILE_SIZE:
             self.rect.x = WIN_WIDTH - TILE_SIZE
             bump_sound.play()
-            # pos_x = camera_pos[0]
+            pos_x = camera_pos[0]
         if self.rect.y < 0:
             self.rect.y = 0
             bump_sound.play()
-            # pos_y = camera_pos[1]
+            pos_y = camera_pos[1]
         elif self.rect.y > WIN_HEIGHT - TILE_SIZE:
             self.rect.y = WIN_HEIGHT - TILE_SIZE
             bump_sound.play()
+            pos_y = camera_pos[1]
         # elif self.rect.y > WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5):
         #    self.rect.y = WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
 
-        # pos_y = camera_pos[1]
+
         # TODO: implement actual function of B, A, Start, Select buttons.
         if key[pygame.K_z]:
             # B button
