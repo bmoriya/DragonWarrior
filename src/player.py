@@ -4,7 +4,7 @@ import pygame
 
 from src.animated_sprite import AnimatedSprite
 from src.common import Direction
-from src.config import SFX_DIR, WIN_WIDTH, TILE_SIZE, WIN_HEIGHT
+from src.config import SFX_DIR, TILE_SIZE
 
 
 class Player(AnimatedSprite):
@@ -28,7 +28,7 @@ class Player(AnimatedSprite):
     # def render(self, display):
     # display.blit(self.image, (self.rect.x, self.rect.y))
 
-    def move(self, camera_pos):
+    def move(self, camera_pos, current_map_width, current_map_height):
         # TODO: Smooth out movement.
         pos_x, pos_y = camera_pos
         key = pygame.key.get_pressed()
@@ -56,21 +56,22 @@ class Player(AnimatedSprite):
             self.rect.x = 0  # Reset Player Rect Coord
             bump_sound.play()
             pos_x = camera_pos[0]  # Reset Camera Pos Coord
-        elif self.rect.x > WIN_WIDTH - TILE_SIZE:
-            self.rect.x = WIN_WIDTH - TILE_SIZE
+        elif self.rect.x > current_map_width - TILE_SIZE:
+            self.rect.x = current_map_width - TILE_SIZE
             bump_sound.play()
             pos_x = camera_pos[0]
         if self.rect.y < 0:
             self.rect.y = 0
             bump_sound.play()
             pos_y = camera_pos[1]
-        elif self.rect.y > WIN_HEIGHT - TILE_SIZE:
-            self.rect.y = WIN_HEIGHT - TILE_SIZE
+        elif self.rect.y > current_map_height - TILE_SIZE:
+            self.rect.y = current_map_height - TILE_SIZE
             bump_sound.play()
             pos_y = camera_pos[1]
+
+        # for reference:
         # elif self.rect.y > WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5):
         #    self.rect.y = WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
-
 
         # TODO: implement actual function of B, A, Start, Select buttons.
         if key[pygame.K_z]:

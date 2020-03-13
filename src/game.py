@@ -51,6 +51,9 @@ class Game(object):
         self.bigmap_height = None
         self.bigmap = None
 
+        self.current_map_width = None
+        self.current_map_height = None
+
         self.background = None
         self.current_map = None
         self.king_lorik_images = None
@@ -81,7 +84,6 @@ class Game(object):
             sprites.draw(self.bigmap)
 
         self.background = Surface(self.screen.get_size()).convert()
-        self.background.fill(self.BACK_FILL_COLOR)
 
         self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
         self.current_map.roaming_guard.left_images = self.roaming_guard_images[Direction.LEFT.value]
@@ -96,18 +98,22 @@ class Game(object):
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-            camera_pos = self.current_map.player.move(camera_pos)
-            self.screen.fill(self.BACK_FILL_COLOR)
+            camera_pos = self.current_map.player.move(camera_pos=camera_pos, current_map_width=self.current_map_width,
+                                                      current_map_height=self.current_map_height)
+
             self.current_map.draw_map(self.bigmap)
             self.current_map.clear_sprites(self.screen, self.background)
-            self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], WIN_WIDTH, WIN_HEIGHT).convert()
+            self.screen.fill(self.BACK_FILL_COLOR)
+
+            self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map_width,
+                                                     self.current_map_height).convert()
             # TODO: disable moving of roaming characters if a dialog box is open.
             self.move_roaming_character()
             for character in self.current_map.characters:
                 character.animate()
             for sprites in self.current_map.character_sprites:
                 sprites.draw(self.background)
-            self.screen.fill(self.BACK_FILL_COLOR)
+
             self.screen.blit(self.background, camera_pos)
 
             # self.screen.blit(self.background, self.ORIGIN)
@@ -159,6 +165,8 @@ class Game(object):
                                                        self.king_lorik_images, self.left_guard_images,
                                                        self.right_guard_images,
                                                        self.roaming_guard_images)
+        self.current_map_width = len(self.current_map.layout[0]) * TILE_SIZE
+        self.current_map_height = len(self.current_map.layout) * TILE_SIZE
         self.current_map.load_map()
 
     def load_images(self):
