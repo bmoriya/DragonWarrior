@@ -1,7 +1,9 @@
+from os.path import join
+
 import pygame
 
 from src.animated_sprite import AnimatedSprite
-from src.common import Direction, TILE_SIZE, WIN_HEIGHT, WIN_WIDTH
+from src.common import Direction, TILE_SIZE, WIN_HEIGHT, WIN_WIDTH, SOUND_DIR, SFX_DIR
 
 
 class Player(AnimatedSprite):
@@ -47,17 +49,23 @@ class Player(AnimatedSprite):
             pos_x -= TILE_SIZE
 
         # TODO: Handle internal wall sides collision.
+        bump_sound_dir = join(SFX_DIR, '42 Dragon Quest 1 - Bumping into Walls (22khz mono).wav')
+        bump_sound = pygame.mixer.Sound(bump_sound_dir)
         if self.rect.x < 0:  # Simple Sides Collision
             self.rect.x = 0  # Reset Player Rect Coord
+            bump_sound.play()
             # pos_x = camera_pos[0]  # Reset Camera Pos Coord
         elif self.rect.x > WIN_WIDTH - TILE_SIZE:
             self.rect.x = WIN_WIDTH - TILE_SIZE
+            bump_sound.play()
             # pos_x = camera_pos[0]
         if self.rect.y < 0:
             self.rect.y = 0
+            bump_sound.play()
             # pos_y = camera_pos[1]
         elif self.rect.y > WIN_HEIGHT - TILE_SIZE:
             self.rect.y = WIN_HEIGHT - TILE_SIZE
+            bump_sound.play()
         # elif self.rect.y > WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5):
         #    self.rect.y = WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
 

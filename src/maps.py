@@ -5,7 +5,7 @@ from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import TILE_SIZE, Direction, DATA_DIR
+from src.common import TILE_SIZE, Direction, MUSIC_DIR
 from src.player import Player
 
 # Tile Key:
@@ -81,8 +81,6 @@ tantegel_courtyard = [
 ]
 
 current_map = None
-
-MUSIC_DIR = join(DATA_DIR, 'music')
 
 
 # Working on class refactoring of maps

@@ -10,7 +10,9 @@ WIN_HEIGHT = NES_RES[1] * SCALE
 
 DATA_DIR = join(pardir, 'data')
 IMAGES_DIR = join(DATA_DIR, 'images')
-MUSIC_DIR = join(DATA_DIR, 'music')
+SOUND_DIR = join(DATA_DIR, 'sound')
+MUSIC_DIR = join(SOUND_DIR, 'music')
+SFX_DIR = join(SOUND_DIR, 'sfx')
 
 
 class Direction(Enum):
