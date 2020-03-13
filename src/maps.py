@@ -1,11 +1,11 @@
-from os.path import join, pardir
+from os.path import join
 
 import pygame
 from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import TILE_SIZE, Direction
+from src.common import TILE_SIZE, Direction, DATA_DIR
 from src.player import Player
 
 # Tile Key:
@@ -82,6 +82,8 @@ tantegel_courtyard = [
 
 current_map = None
 
+MUSIC_DIR = join(DATA_DIR, 'music')
+
 
 # Working on class refactoring of maps
 
@@ -125,8 +127,8 @@ class TantegelThroneRoom(object):
         self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
-        data_dir = join(pardir, 'data')
-        pygame.mixer.music.load(join(data_dir, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg'))
+        self.music_file_path = join(MUSIC_DIR, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg')
+        pygame.mixer.music.load(self.music_file_path)
         pygame.mixer.music.play(-1)
 
     def load_map(self):

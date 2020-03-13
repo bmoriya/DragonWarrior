@@ -1,8 +1,7 @@
 import pygame
 
-import src.game
 from src.animated_sprite import AnimatedSprite
-from src.common import Direction, TILE_SIZE
+from src.common import Direction, TILE_SIZE, WIN_HEIGHT, WIN_WIDTH
 
 
 class Player(AnimatedSprite):
@@ -23,8 +22,8 @@ class Player(AnimatedSprite):
     def set_center_point(self, center_point):
         self.center_point = center_point
 
-    #def render(self, display):
-        #display.blit(self.image, (self.rect.x, self.rect.y))
+    # def render(self, display):
+    # display.blit(self.image, (self.rect.x, self.rect.y))
 
     def move(self, camera_pos):
         # TODO: Smooth out movement.
@@ -51,16 +50,16 @@ class Player(AnimatedSprite):
         if self.rect.x < 0:  # Simple Sides Collision
             self.rect.x = 0  # Reset Player Rect Coord
             # pos_x = camera_pos[0]  # Reset Camera Pos Coord
-        elif self.rect.x > src.game.Game.WIN_WIDTH - TILE_SIZE:
-            self.rect.x = src.game.Game.WIN_WIDTH - TILE_SIZE
+        elif self.rect.x > WIN_WIDTH - TILE_SIZE:
+            self.rect.x = WIN_WIDTH - TILE_SIZE
             # pos_x = camera_pos[0]
         if self.rect.y < 0:
             self.rect.y = 0
             # pos_y = camera_pos[1]
-        elif self.rect.y > src.game.Game.WIN_HEIGHT - TILE_SIZE:
-            self.rect.y = src.game.Game.WIN_HEIGHT - TILE_SIZE
-        # elif self.rect.y > self.WIN_HEIGHT - ((self.WIN_HEIGHT // 23) * 1.5):
-        #    self.rect.y = self.WIN_HEIGHT - ((self.WIN_HEIGHT // 23) * 1.5)
+        elif self.rect.y > WIN_HEIGHT - TILE_SIZE:
+            self.rect.y = WIN_HEIGHT - TILE_SIZE
+        # elif self.rect.y > WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5):
+        #    self.rect.y = WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
 
         # pos_y = camera_pos[1]
         # TODO: implement actual function of B, A, Start, Select buttons.

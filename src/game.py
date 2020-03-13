@@ -1,7 +1,6 @@
 import random
 import sys
-from os import pardir
-from os.path import join
+from os.path import join, pardir
 
 import pygame
 from pygame import init, Surface, QUIT
@@ -14,11 +13,10 @@ from pygame.transform import scale
 import src.common
 import src.maps
 import src.player
-from src.common import TILE_SIZE, SCALE, Direction
+from src.common import TILE_SIZE, SCALE, Direction, NES_RES, WIN_WIDTH, WIN_HEIGHT
 
 
 class Game(object):
-    NES_RES = (256, 240)
     FPS = 60
     GAME_TITLE = "Dragon Warrior"
     WIN_WIDTH = NES_RES[0] * SCALE
@@ -33,7 +31,6 @@ class Game(object):
     ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
     COLOR_KEY = (0, 128, 128)
     ORIGIN = (0, 0)
-    corner_point = [0, 0]
     BLACK = (0, 0, 0)
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = pygame.USEREVENT + 1
@@ -45,7 +42,7 @@ class Game(object):
         init()
 
         # Create the game window.
-        self.screen = set_mode((self.WIN_WIDTH, self.WIN_HEIGHT))
+        self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
         set_caption(self.GAME_TITLE)
         self.clock = Clock()
         self.last_roaming_character_clock_check = get_ticks()
@@ -110,10 +107,10 @@ class Game(object):
             # TODO: disable moving if a dialog box is open.
             camera_pos = self.current_map.player.move(camera_pos)
             self.move_roaming_character()
-            self.background = self.bigmap.subsurface(self.corner_point[0],
-                                                     self.corner_point[1],
-                                                     self.WIN_WIDTH,
-                                                     self.WIN_HEIGHT).convert()
+            self.background = self.bigmap.subsurface(self.ORIGIN[0],
+                                                     self.ORIGIN[1],
+                                                     WIN_WIDTH,
+                                                     WIN_HEIGHT).convert()
             for character in self.current_map.characters:
                 character.animate()
             for sprites in self.current_map.character_sprites:
@@ -130,14 +127,14 @@ class Game(object):
             if roaming_character.rect.x < 0:  # Simple Sides Collision
                 roaming_character.rect.x = 0  # Reset Player Rect Coord
                 # pos_x = camera_pos[0]  # Reset Camera Pos Coord
-            elif roaming_character.rect.x > int(self.WIN_WIDTH - ((self.WIN_WIDTH // 24) * 1.5)):
-                roaming_character.rect.x = int(self.WIN_WIDTH - ((self.WIN_WIDTH // 24) * 1.5))
+            elif roaming_character.rect.x > int(WIN_WIDTH - ((WIN_WIDTH // 24) * 1.5)):
+                roaming_character.rect.x = int(WIN_WIDTH - ((WIN_WIDTH // 24) * 1.5))
                 # pos_x = camera_pos[0]
             if roaming_character.rect.y < 0:
                 roaming_character.rect.y = 0
                 # pos_y = camera_pos[1]
-            elif self.current_map.roaming_guard.rect.y > self.WIN_HEIGHT - TILE_SIZE:
-                self.current_map.roaming_guard.rect.y = self.WIN_HEIGHT - TILE_SIZE
+            elif self.current_map.roaming_guard.rect.y > WIN_HEIGHT - TILE_SIZE:
+                self.current_map.roaming_guard.rect.y = WIN_HEIGHT - TILE_SIZE
 
     def move_roaming_character_direction(self, roaming_character, direction):
         now = get_ticks()
@@ -208,11 +205,11 @@ class Game(object):
         self.unarmed_hero_images = self.parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
 
         # Get images for the King
-        self.king_lorik_images = self.parse_animated_spritesheet(king_lorik_sheet, is_roaming=False)
+        self.king_lorik_images = self.parse_animated_spritesheet(king_lorik_sheet)
 
-        self.left_guard_images = self.parse_animated_spritesheet(left_guard_sheet, is_roaming=False)
+        self.left_guard_images = self.parse_animated_spritesheet(left_guard_sheet)
 
-        self.right_guard_images = self.parse_animated_spritesheet(right_guard_sheet, is_roaming=False)
+        self.right_guard_images = self.parse_animated_spritesheet(right_guard_sheet)
 
         self.roaming_guard_images = self.parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
 
@@ -228,7 +225,7 @@ class Game(object):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(self.map_tilesheet.subsurface(rect))
 
-    def parse_animated_spritesheet(self, sheet, is_roaming=True):
+    def parse_animated_spritesheet(self, sheet, is_roaming=False):
         """
         Parses spritesheets and creates image lists. If is_roaming is True
         the sprite will have four lists of images, one for each direction. If
@@ -260,10 +257,11 @@ class Game(object):
 
         return facing_down, facing_left, facing_up, facing_right
 
-    def run(self):
-        pass
+
+def run():
+    game = Game()
+    game.main()
 
 
 if __name__ == "__main__":
-    game = Game()
-    game.main()
+    run()
