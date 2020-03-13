@@ -1,11 +1,11 @@
-from os.path import join
-
 import pygame
 from pygame.sprite import Group, RenderUpdates
 
+from src import config
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import TILE_SIZE, Direction, MUSIC_DIR
+from src.common import Direction
+from src.config import TILE_SIZE, TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
 from src.player import Player
 
 # Tile Key:
@@ -125,7 +125,7 @@ class TantegelThroneRoom(object):
         self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
-        self.music_file_path = join(MUSIC_DIR, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg')
+        self.music_file_path = TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
         pygame.mixer.music.load(self.music_file_path)
         pygame.mixer.music.play(-1)
 

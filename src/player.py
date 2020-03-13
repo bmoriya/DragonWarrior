@@ -2,8 +2,10 @@ from os.path import join
 
 import pygame
 
+from src import config
 from src.animated_sprite import AnimatedSprite
-from src.common import Direction, TILE_SIZE, WIN_HEIGHT, WIN_WIDTH, SOUND_DIR, SFX_DIR
+from src.common import Direction
+from src.config import SFX_DIR, WIN_WIDTH, TILE_SIZE, WIN_HEIGHT
 
 
 class Player(AnimatedSprite):

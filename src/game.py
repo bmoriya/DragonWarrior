@@ -1,6 +1,5 @@
 import random
 import sys
-from os.path import join, pardir
 
 import pygame
 from pygame import init, Surface, QUIT
@@ -13,7 +12,10 @@ from pygame.transform import scale
 import src.common
 import src.maps
 import src.player
-from src.common import TILE_SIZE, SCALE, Direction, NES_RES, WIN_WIDTH, WIN_HEIGHT
+from src import config
+from src.common import Direction
+from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_GUARD_PATH, RIGHT_GUARD_PATH, \
+    ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
 
 
 class Game(object):
@@ -21,14 +23,7 @@ class Game(object):
     GAME_TITLE = "Dragon Warrior"
     WIN_WIDTH = NES_RES[0] * SCALE
     WIN_HEIGHT = NES_RES[1] * SCALE
-    DATA_DIR = join(pardir, 'data')
-    IMAGES_DIR = join(DATA_DIR, 'images')
-    MAP_TILES_PATH = join(IMAGES_DIR, 'tileset.png')
-    UNARMED_HERO_PATH = join(IMAGES_DIR, 'unarmed_hero.png')
-    KING_LORIK_PATH = join(IMAGES_DIR, 'king_lorik.png')
-    RIGHT_GUARD_PATH = join(IMAGES_DIR, 'right_guard.png')
-    LEFT_GUARD_PATH = join(IMAGES_DIR, 'left_guard.png')
-    ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
+
     COLOR_KEY = (0, 128, 128)
     ORIGIN = (0, 0)
     BLACK = (0, 0, 0)
@@ -171,15 +166,15 @@ class Game(object):
         """
         # try:
         # Load the map tile spritesheet
-        self.map_tilesheet = load_extended(self.MAP_TILES_PATH).convert()
+        self.map_tilesheet = load_extended(MAP_TILES_PATH).convert()
         # Load unarmed hero images
-        unarmed_hero_sheet = load_extended(self.UNARMED_HERO_PATH)
+        unarmed_hero_sheet = load_extended(UNARMED_HERO_PATH)
         # Load King Lorik images
-        king_lorik_sheet = load_extended(self.KING_LORIK_PATH)
+        king_lorik_sheet = load_extended(KING_LORIK_PATH)
         # Guard images.
-        left_guard_sheet = load_extended(self.LEFT_GUARD_PATH)
-        right_guard_sheet = load_extended(self.RIGHT_GUARD_PATH)
-        roaming_guard_sheet = load_extended(self.ROAMING_GUARD_PATH)
+        left_guard_sheet = load_extended(LEFT_GUARD_PATH)
+        right_guard_sheet = load_extended(RIGHT_GUARD_PATH)
+        roaming_guard_sheet = load_extended(ROAMING_GUARD_PATH)
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,

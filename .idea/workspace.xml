@@ -6,8 +6,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a2e3df33-68d1-41dd-870c-97b1a819b490" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/player.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,7 +194,7 @@
       <workItem from="1583974846737" duration="2131000" />
       <workItem from="1583979183360" duration="5464000" />
       <workItem from="1584021312597" duration="20502000" />
-      <workItem from="1584063786235" duration="8257000" />
+      <workItem from="1584063786235" duration="8737000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit of a fork of bmoriya/DragonWarrior. Added compatibility with Python 3 and conducted a general cleanup of the code.&#10;&#10;Throne Room is currently working.">
       <created>1557088877858</created>
@@ -283,17 +287,15 @@
       <option name="project" value="LOCAL" />
       <updated>1584066030323</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Lay groundwork for internal wall collision and camera scrolling.">
+      <created>1584072124861</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1584072124861</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
-  </component>
-  <component name="TodoView" selected-index="4">
-    <todo-panel id="selected-file">
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
-    <todo-panel id="all">
-      <are-packages-shown value="true" />
-      <is-autoscroll-to-source value="true" />
-    </todo-panel>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -312,7 +314,8 @@
     <MESSAGE value="Convert readme to markdown format." />
     <MESSAGE value="Refactor/cleanup" />
     <MESSAGE value="Add bump noise upon collision." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add bump noise upon collision." />
+    <MESSAGE value="Lay groundwork for internal wall collision and camera scrolling." />
+    <option name="LAST_COMMIT_MESSAGE" value="Lay groundwork for internal wall collision and camera scrolling." />
   </component>
   <component name="WindowStateProjectService">
     <state x="308" y="-742" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1584065556635">
@@ -354,25 +357,25 @@
     </state>
     <state x="523" y="-790" key="FileChooserDialogImpl/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583976968250" />
     <state x="472" y="175" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1584047735183" />
-    <state width="1637" height="126" key="GridCell.Tab.0.bottom" timestamp="1584072111592">
+    <state width="1637" height="126" key="GridCell.Tab.0.bottom" timestamp="1584072754125">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
+    <state width="1637" height="126" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072754125" />
     <state width="1237" height="271" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="126" key="GridCell.Tab.0.center" timestamp="1584072111592">
+    <state width="1637" height="126" key="GridCell.Tab.0.center" timestamp="1584072754125">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
+    <state width="1637" height="126" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072754125" />
     <state width="1237" height="271" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="126" key="GridCell.Tab.0.left" timestamp="1584072111592">
+    <state width="1637" height="126" key="GridCell.Tab.0.left" timestamp="1584072754125">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
+    <state width="1637" height="126" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072754125" />
     <state width="1237" height="271" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="126" key="GridCell.Tab.0.right" timestamp="1584072111592">
+    <state width="1637" height="126" key="GridCell.Tab.0.right" timestamp="1584072754125">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
+    <state width="1637" height="126" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072754125" />
     <state width="1237" height="271" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
     <state width="1637" height="324" key="GridCell.Tab.1.bottom" timestamp="1584069415866">
       <screen x="-97" y="-1050" width="1680" height="1010" />
@@ -414,10 +417,10 @@
     </state>
     <state x="345" y="-805" key="com.intellij.ide.util.TipDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584063786908" />
     <state x="337" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1584023842216" />
-    <state x="439" y="-947" width="610" height="804" key="find.popup" timestamp="1584069021887">
+    <state x="439" y="-947" width="610" height="804" key="find.popup" timestamp="1584072656922">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="439" y="-947" width="610" height="804" key="find.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069021887" />
+    <state x="439" y="-947" width="610" height="804" key="find.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072656922" />
     <state x="408" y="69" width="612" height="542" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1584040464341" />
     <state x="965" y="-793" key="refactoring.ChangeSignatureDialog" timestamp="1584071247018">
       <screen x="-97" y="-1050" width="1680" height="1010" />
@@ -430,7 +433,7 @@
     <state x="406" y="-833" width="672" height="678" key="search.everywhere.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071403273" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1584072064105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1584072754109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/DragonWarrior$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1584062785622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DragonWarrior$main.coverage" NAME="main Coverage Results" MODIFIED="1584046720844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/DragonWarrior$maps.coverage" NAME="maps Coverage Results" MODIFIED="1583982897807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
