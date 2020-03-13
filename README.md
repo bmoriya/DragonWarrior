@@ -22,4 +22,6 @@ All you can do right now is scroll around the first map.
 Run on Repl.it
 ============
 
-[![Run on Repl.it](https://repl.it/badge/github/eforgacs-games/DragonWarrior)](https://repl.it/github/eforgacs-games/DragonWarrior)
+For quick demonstration purposes, you can run this in the browser on repl.it, but ideally this should be run normally through the command line as delineated above, since performance suffers greatly in the browser.
+
+[![Run on Repl.it](https://repl.it/badge/github/eforgacs-games/DragonWarrior)](https://repl.it/@eforgacs/DW)
