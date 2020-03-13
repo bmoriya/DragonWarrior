@@ -6,12 +6,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a2e3df33-68d1-41dd-870c-97b1a819b490" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/data/sound/sfx/42 Dragon Quest 1 - Bumping into Walls (22khz mono).wav" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/music/02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg" beforeDir="false" afterPath="$PROJECT_DIR$/data/sound/music/02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/common.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/game.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +190,7 @@
       <workItem from="1583974846737" duration="2131000" />
       <workItem from="1583979183360" duration="5464000" />
       <workItem from="1584021312597" duration="20502000" />
-      <workItem from="1584063786235" duration="2127000" />
+      <workItem from="1584063786235" duration="8257000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit of a fork of bmoriya/DragonWarrior. Added compatibility with Python 3 and conducted a general cleanup of the code.&#10;&#10;Throne Room is currently working.">
       <created>1557088877858</created>
@@ -280,7 +276,14 @@
       <option name="project" value="LOCAL" />
       <updated>1584064802477</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Add bump noise upon collision.">
+      <created>1584066030323</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1584066030323</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -308,7 +311,8 @@
     <MESSAGE value="Refactor to simplify code." />
     <MESSAGE value="Convert readme to markdown format." />
     <MESSAGE value="Refactor/cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor/cleanup" />
+    <MESSAGE value="Add bump noise upon collision." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add bump noise upon collision." />
   </component>
   <component name="WindowStateProjectService">
     <state x="308" y="-742" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1584065556635">
@@ -325,79 +329,79 @@
     </state>
     <state x="538" y="-832" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584063382053" />
     <state x="484" y="147" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1280.680@0.0.1280.680" timestamp="1584040396740" />
-    <state x="814" y="-808" width="488" height="290" key="#xdebugger.evaluate" timestamp="1584065978652">
+    <state x="814" y="-808" width="488" height="290" key="#xdebugger.evaluate" timestamp="1584069406252">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="814" y="-808" key="#xdebugger.evaluate/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065978652" />
+    <state x="814" y="-808" key="#xdebugger.evaluate/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069406252" />
     <state x="641" y="319" width="488" height="290" key="#xdebugger.evaluate/0.0.1280.680@0.0.1280.680" timestamp="1584037947374" />
     <state x="490" y="-699" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1584063818811">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="490" y="-699" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584063818811" />
     <state x="447" y="236" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1584037553865" />
-    <state x="350" y="-951" width="1243" height="658" key="CommitChangelistDialog2" timestamp="1584064801093">
+    <state x="350" y="-951" width="1243" height="658" key="CommitChangelistDialog2" timestamp="1584072111576">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="350" y="-951" width="1178" height="877" key="CommitChangelistDialog2/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584064801093" />
+    <state x="350" y="-951" width="1178" height="877" key="CommitChangelistDialog2/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111576" />
     <state x="-4" y="3" width="1243" height="658" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1584041237085" />
-    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog" timestamp="1584064757789">
+    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog" timestamp="1584071804453">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584064757789" />
+    <state x="-5" y="-958" width="1496" height="826" key="DiffContextDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071804453" />
     <state x="70" y="62" width="1140" height="557" maximized="true" key="DiffContextDialog/0.0.1280.680@0.0.1280.680" timestamp="1584047842061" />
     <state x="472" y="175" key="FileChooserDialogImpl" timestamp="1584047735183">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="523" y="-790" key="FileChooserDialogImpl/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583976968250" />
     <state x="472" y="175" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1584047735183" />
-    <state width="1637" height="126" key="GridCell.Tab.0.bottom" timestamp="1584065993997">
+    <state width="1637" height="126" key="GridCell.Tab.0.bottom" timestamp="1584072111592">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065993997" />
+    <state width="1637" height="126" key="GridCell.Tab.0.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
     <state width="1237" height="271" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="126" key="GridCell.Tab.0.center" timestamp="1584065993997">
+    <state width="1637" height="126" key="GridCell.Tab.0.center" timestamp="1584072111592">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065993997" />
+    <state width="1637" height="126" key="GridCell.Tab.0.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
     <state width="1237" height="271" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="126" key="GridCell.Tab.0.left" timestamp="1584065993997">
+    <state width="1637" height="126" key="GridCell.Tab.0.left" timestamp="1584072111592">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065993997" />
+    <state width="1637" height="126" key="GridCell.Tab.0.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
     <state width="1237" height="271" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="126" key="GridCell.Tab.0.right" timestamp="1584065993997">
+    <state width="1637" height="126" key="GridCell.Tab.0.right" timestamp="1584072111592">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="126" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065993997" />
+    <state width="1637" height="126" key="GridCell.Tab.0.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584072111592" />
     <state width="1237" height="271" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1584048273069" />
-    <state width="1637" height="324" key="GridCell.Tab.1.bottom" timestamp="1584065986111">
+    <state width="1637" height="324" key="GridCell.Tab.1.bottom" timestamp="1584069415866">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="324" key="GridCell.Tab.1.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065986111" />
+    <state width="1637" height="324" key="GridCell.Tab.1.bottom/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069415866" />
     <state width="1237" height="197" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
-    <state width="1637" height="324" key="GridCell.Tab.1.center" timestamp="1584065986111">
+    <state width="1637" height="324" key="GridCell.Tab.1.center" timestamp="1584069415865">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="324" key="GridCell.Tab.1.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065986111" />
+    <state width="1637" height="324" key="GridCell.Tab.1.center/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069415865" />
     <state width="1237" height="197" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
-    <state width="1637" height="324" key="GridCell.Tab.1.left" timestamp="1584065986111">
+    <state width="1637" height="324" key="GridCell.Tab.1.left" timestamp="1584069415865">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="324" key="GridCell.Tab.1.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065986111" />
+    <state width="1637" height="324" key="GridCell.Tab.1.left/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069415865" />
     <state width="1237" height="197" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
-    <state width="1637" height="324" key="GridCell.Tab.1.right" timestamp="1584065986111">
+    <state width="1637" height="324" key="GridCell.Tab.1.right" timestamp="1584069415865">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state width="1637" height="324" key="GridCell.Tab.1.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065986111" />
+    <state width="1637" height="324" key="GridCell.Tab.1.right/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069415865" />
     <state width="1237" height="197" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1584038162110" />
     <state x="558" y="-611" key="ReplaceDuplicatesPrompt" timestamp="1583981570525">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
     <state x="558" y="-611" key="ReplaceDuplicatesPrompt/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583981570525" />
-    <state x="483" y="103" key="RollbackChangesDialog" timestamp="1584034045935">
-      <screen x="0" y="0" width="1280" height="680" />
+    <state x="537" y="-834" key="RollbackChangesDialog" timestamp="1584071781200">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="537" y="-834" key="RollbackChangesDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583979950213" />
+    <state x="537" y="-834" key="RollbackChangesDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071781200" />
     <state x="483" y="103" key="RollbackChangesDialog/0.0.1280.680@0.0.1280.680" timestamp="1584034045935" />
     <state x="142" y="0" key="SettingsEditor" timestamp="1584041179470">
       <screen x="0" y="0" width="1280" height="680" />
@@ -410,30 +414,23 @@
     </state>
     <state x="345" y="-805" key="com.intellij.ide.util.TipDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584063786908" />
     <state x="337" y="165" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1584023842216" />
-    <state x="439" y="-947" width="610" height="804" key="find.popup" timestamp="1584065897398">
+    <state x="439" y="-947" width="610" height="804" key="find.popup" timestamp="1584069021887">
       <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="439" y="-947" width="610" height="804" key="find.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584065897398" />
+    <state x="439" y="-947" width="610" height="804" key="find.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584069021887" />
     <state x="408" y="69" width="612" height="542" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1584040464341" />
-    <state x="765" y="0" key="refactoring.ChangeSignatureDialog" timestamp="1584025995960">
-      <screen x="0" y="0" width="1280" height="680" />
+    <state x="965" y="-793" key="refactoring.ChangeSignatureDialog" timestamp="1584071247018">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
     </state>
-    <state x="965" y="-791" key="refactoring.ChangeSignatureDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1583982754828" />
+    <state x="965" y="-793" key="refactoring.ChangeSignatureDialog/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071247018" />
     <state x="765" y="0" key="refactoring.ChangeSignatureDialog/0.0.1280.680@0.0.1280.680" timestamp="1584025995960" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/common.py</url>
-          <line>13</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="406" y="-833" width="672" height="678" key="search.everywhere.popup" timestamp="1584071403273">
+      <screen x="-97" y="-1050" width="1680" height="1010" />
+    </state>
+    <state x="406" y="-833" width="672" height="678" key="search.everywhere.popup/0.0.1280.680/-97.-1050.1680.1010@-97.-1050.1680.1010" timestamp="1584071403273" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1584065993993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/DragonWarrior$game.coverage" NAME="game Coverage Results" MODIFIED="1584072064105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/DragonWarrior$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1584062785622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DragonWarrior$main.coverage" NAME="main Coverage Results" MODIFIED="1584046720844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/DragonWarrior$maps.coverage" NAME="maps Coverage Results" MODIFIED="1583982897807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />

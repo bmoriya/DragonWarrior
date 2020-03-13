@@ -94,28 +94,28 @@ class Game(object):
         self.current_map.roaming_guard.up_images = self.roaming_guard_images[Direction.UP.value]
         self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
 
-        camera_pos = self.current_map.center_pt
+        camera_pos = self.ORIGIN
 
         while True:
-            self.current_map.draw_map(self.bigmap)
-            self.current_map.clear_sprites(self.screen, self.background)
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-            # TODO: disable moving if a dialog box is open.
             camera_pos = self.current_map.player.move(camera_pos)
+            self.screen.fill(self.BACK_FILL_COLOR)
+            self.current_map.draw_map(self.bigmap)
+            self.current_map.clear_sprites(self.screen, self.background)
+            self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], WIN_WIDTH, WIN_HEIGHT).convert()
+            # TODO: disable moving of roaming characters if a dialog box is open.
             self.move_roaming_character()
-            self.background = self.bigmap.subsurface(self.ORIGIN[0],
-                                                     self.ORIGIN[1],
-                                                     WIN_WIDTH,
-                                                     WIN_HEIGHT).convert()
             for character in self.current_map.characters:
                 character.animate()
             for sprites in self.current_map.character_sprites:
                 sprites.draw(self.background)
-            self.screen.blit(self.background, self.ORIGIN)
+            # To have camera follow player, uncomment the following line:
+            self.screen.blit(self.background, camera_pos)
+            # self.screen.blit(self.background, self.ORIGIN)
             flip()
 
     def move_roaming_character(self):
