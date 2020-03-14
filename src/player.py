@@ -1,10 +1,8 @@
-from os.path import join
-
 import pygame
 
 from src.animated_sprite import AnimatedSprite
-from src.common import Direction
-from src.config import SFX_DIR, TILE_SIZE
+from src.common import Direction, play_sound, bump_sfx
+from src.config import TILE_SIZE
 
 
 class Player(AnimatedSprite):
@@ -28,7 +26,7 @@ class Player(AnimatedSprite):
     # def render(self, display):
     # display.blit(self.image, (self.rect.x, self.rect.y))
 
-    def move(self, camera_pos, current_map_width, current_map_height):
+    def move(self, camera_pos, current_map_width, current_map_height, current_map_layout):
         # TODO: Smooth out movement.
         pos_x, pos_y = camera_pos
         key = pygame.key.get_pressed()
@@ -50,23 +48,23 @@ class Player(AnimatedSprite):
             pos_x -= TILE_SIZE
 
         # TODO: Handle internal wall sides collision.
-        bump_sound_dir = join(SFX_DIR, '42 Dragon Quest 1 - Bumping into Walls (22khz mono).wav')
-        bump_sound = pygame.mixer.Sound(bump_sound_dir)
+
+        # bump_sound = pygame.mixer.Sound(bump_sound_dir)
         if self.rect.x < 0:  # Simple Sides Collision
             self.rect.x = 0  # Reset Player Rect Coord
-            bump_sound.play()
+            play_sound(bump_sfx)
             pos_x = camera_pos[0]  # Reset Camera Pos Coord
         elif self.rect.x > current_map_width - TILE_SIZE:
             self.rect.x = current_map_width - TILE_SIZE
-            bump_sound.play()
+            play_sound(bump_sfx)
             pos_x = camera_pos[0]
         if self.rect.y < 0:
             self.rect.y = 0
-            bump_sound.play()
+            play_sound(bump_sfx)
             pos_y = camera_pos[1]
         elif self.rect.y > current_map_height - TILE_SIZE:
             self.rect.y = current_map_height - TILE_SIZE
-            bump_sound.play()
+            play_sound(bump_sfx)
             pos_y = camera_pos[1]
 
         # for reference:

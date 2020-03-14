@@ -1,4 +1,6 @@
 from os.path import join, pardir
+from win32api import GetSystemMetrics
+from sys import platform
 
 DATA_DIR = join(pardir, 'data')
 IMAGES_DIR = join(DATA_DIR, 'images')
@@ -15,7 +17,15 @@ ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
 
 TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH = join(MUSIC_DIR, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg')
 
-SCALE = 2
+if platform == 'win32':
+    CURRENT_SCREEN_RESOLUTION_WIDTH = GetSystemMetrics(0)
+    CURRENT_SCREEN_RESOLUTION_HEIGHT = GetSystemMetrics(1)
+    if CURRENT_SCREEN_RESOLUTION_WIDTH >= 1920 and CURRENT_SCREEN_RESOLUTION_HEIGHT <= 1080:
+        SCALE = 3
+    else:
+        SCALE = 2
+else:
+    SCALE = 2
 TILE_SIZE = 16 * SCALE
 NES_RES = (256, 240)
 WIN_WIDTH = NES_RES[0] * SCALE

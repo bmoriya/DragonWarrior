@@ -85,14 +85,21 @@ current_map = None
 # Working on class refactoring of maps
 
 
-class TantegelThroneRoom(object):
+class DragonWarriorMap(object):
+    def __init__(self):
+        self.center_pt = None
+        self.player = None
+
+
+class TantegelThroneRoom(DragonWarriorMap):
     """
     This is the first map in the game.
     """
 
-    def __init__(self, player, map_tiles, hero_images, king_lorik_images, left_guard_images, right_guard_images,
+    def __init__(self, map_tiles, hero_images, king_lorik_images, left_guard_images, right_guard_images,
                  roaming_guard_images):
-        self.center_pt = None
+
+        super().__init__()
         self.current_map = TantegelThroneRoom
         self.roaming_guard_sprites = RenderUpdates()
         self.right_guard_sprites = RenderUpdates()
@@ -105,9 +112,10 @@ class TantegelThroneRoom(object):
         self.wood_group = Group()
         self.wall_group = Group()
         self.roof_group = Group()
-        self.player = player
+
         self.map_tiles = map_tiles
         self.hero_images = hero_images
+        self.player_sprites = None
         self.king_lorik = None
         self.left_guard = None
         self.right_guard = None
@@ -117,7 +125,7 @@ class TantegelThroneRoom(object):
         self.right_guard_images = right_guard_images
         self.roaming_guard_images = roaming_guard_images
         self.roaming_characters = []
-        self.player_sprites = None
+
         self.characters = []
         self.character_sprites = []
 
@@ -222,10 +230,3 @@ class TantegelThroneRoom(object):
         self.chest_group.draw(surface)
         self.door_group.draw(surface)
         self.brick_stairdn_group.draw(surface)
-
-    def clear_sprites(self, screen, surface):
-        self.player_sprites.clear(screen, surface)
-        self.king_lorik_sprites.clear(screen, surface)
-        self.left_guard_sprites.clear(screen, surface)
-        self.right_guard_sprites.clear(screen, surface)
-        self.roaming_guard_sprites.clear(screen, surface)

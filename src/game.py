@@ -99,10 +99,11 @@ class Game(object):
                     pygame.quit()
                     sys.exit()
             camera_pos = self.current_map.player.move(camera_pos=camera_pos, current_map_width=self.current_map_width,
-                                                      current_map_height=self.current_map_height)
+                                                      current_map_height=self.current_map_height, current_map_layout=self.current_map.layout)
 
             self.current_map.draw_map(self.bigmap)
-            self.current_map.clear_sprites(self.screen, self.background)
+            for sprites in self.current_map.character_sprites:
+                sprites.clear(self.screen, self.background)
             self.screen.fill(self.BACK_FILL_COLOR)
 
             self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map_width,
@@ -127,15 +128,12 @@ class Game(object):
             # roaming character sides collision
             if roaming_character.rect.x < 0:  # Simple Sides Collision
                 roaming_character.rect.x = 0  # Reset Player Rect Coord
-                # pos_x = camera_pos[0]  # Reset Camera Pos Coord
-            elif roaming_character.rect.x > int(WIN_WIDTH - ((WIN_WIDTH // 24) * 1.5)):
-                roaming_character.rect.x = int(WIN_WIDTH - ((WIN_WIDTH // 24) * 1.5))
-                # pos_x = camera_pos[0]
+            elif roaming_character.rect.x > self.current_map_width - TILE_SIZE:
+                roaming_character.rect.x = self.current_map_width - TILE_SIZE
             if roaming_character.rect.y < 0:
                 roaming_character.rect.y = 0
-                # pos_y = camera_pos[1]
-            elif self.current_map.roaming_guard.rect.y > WIN_HEIGHT - TILE_SIZE:
-                self.current_map.roaming_guard.rect.y = WIN_HEIGHT - TILE_SIZE
+            elif self.current_map.roaming_guard.rect.y > self.current_map_height - TILE_SIZE:
+                self.current_map.roaming_guard.rect.y = self.current_map_height - TILE_SIZE
 
     def move_roaming_character_direction(self, roaming_character, direction):
         now = get_ticks()
@@ -160,10 +158,8 @@ class Game(object):
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = src.maps.TantegelThroneRoom(self.player, self.map_tiles,
-                                                       self.unarmed_hero_images,
-                                                       self.king_lorik_images, self.left_guard_images,
-                                                       self.right_guard_images,
+        self.current_map = src.maps.TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.king_lorik_images,
+                                                       self.left_guard_images, self.right_guard_images,
                                                        self.roaming_guard_images)
         self.current_map_width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
