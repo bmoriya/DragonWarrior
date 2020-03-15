@@ -1,5 +1,7 @@
+import numpy as np
 import pygame
 
+from src import maps
 from src.animated_sprite import AnimatedSprite
 from src.common import Direction, play_sound, bump_sfx
 from src.config import TILE_SIZE
@@ -30,26 +32,62 @@ class Player(AnimatedSprite):
         # TODO: Smooth out movement.
         pos_x, pos_y = camera_pos
         key = pygame.key.get_pressed()
+        layout_numpy_array = np.array(current_map_layout)
+        hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key['HERO'])).T
+        hero_layout_position = [hero_layout_position.item(0), hero_layout_position.item(1)]
+        hero_layout_position[0] -= pos_y // TILE_SIZE
+        hero_layout_position[1] -= pos_x // TILE_SIZE
+        current_hero_tile = layout_numpy_array[(hero_layout_position[0], hero_layout_position[1])]
+        current_hero_position_tile = self.get_tile_by_value(current_hero_tile)
         if key[pygame.K_DOWN]:
             self.direction = Direction.DOWN.value
-            self.rect.y += TILE_SIZE
-            pos_y -= TILE_SIZE
+            if self.get_tile_by_value(
+                    current_map_layout[hero_layout_position[0] + 1][hero_layout_position[1]]) not in maps.impassable_tiles:
+                self.rect.y += TILE_SIZE
+                pos_y -= TILE_SIZE
         if key[pygame.K_LEFT]:
             self.direction = Direction.LEFT.value
-            self.rect.x -= TILE_SIZE
-            pos_x += TILE_SIZE
+            if self.get_tile_by_value(
+                    current_map_layout[hero_layout_position[0]][hero_layout_position[1] - 1]) not in maps.impassable_tiles:
+                self.rect.x -= TILE_SIZE
+                pos_x += TILE_SIZE
         if key[pygame.K_UP]:
             self.direction = Direction.UP.value
-            self.rect.y -= TILE_SIZE
-            pos_y += TILE_SIZE
+            if self.get_tile_by_value(
+                    current_map_layout[hero_layout_position[0] - 1][hero_layout_position[1]]) not in maps.impassable_tiles:
+                self.rect.y -= TILE_SIZE
+                pos_y += TILE_SIZE
         if key[pygame.K_RIGHT]:
             self.direction = Direction.RIGHT.value
-            self.rect.x += TILE_SIZE
-            pos_x -= TILE_SIZE
-
-        # TODO: Handle internal wall sides collision.
+            if self.get_tile_by_value(
+                    current_map_layout[hero_layout_position[0]][hero_layout_position[1] + 1]) not in maps.impassable_tiles:
+                self.rect.x += TILE_SIZE
+                pos_x -= TILE_SIZE
 
         # bump_sound = pygame.mixer.Sound(bump_sound_dir)
+        pos_x, pos_y = self.handle_map_edge_side_collision(camera_pos, current_map_height, current_map_width, pos_x,
+                                                           pos_y)
+
+        # TODO: implement actual function of B, A, Start, Select buttons.
+        if key[pygame.K_z]:
+            # B button
+            print("You pressed the z key.")
+        if key[pygame.K_y]:
+            # A button
+            print("You pressed the y key.")
+        if key[pygame.K_SPACE]:
+            # Start button
+            print("You pressed the space bar.")
+        if key[pygame.K_ESCAPE]:
+            # Select button
+            print("You pressed the escape key.")
+        return pos_x, pos_y
+
+    @staticmethod
+    def get_tile_by_value(position):
+        return maps.tile_key_keys[maps.tile_key_values.index(position)]
+
+    def handle_map_edge_side_collision(self, camera_pos, current_map_height, current_map_width, pos_x, pos_y):
         if self.rect.x < 0:  # Simple Sides Collision
             self.rect.x = 0  # Reset Player Rect Coord
             play_sound(bump_sfx)
@@ -66,22 +104,6 @@ class Player(AnimatedSprite):
             self.rect.y = current_map_height - TILE_SIZE
             play_sound(bump_sfx)
             pos_y = camera_pos[1]
-
-        # for reference:
-        # elif self.rect.y > WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5):
-        #    self.rect.y = WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
-
-        # TODO: implement actual function of B, A, Start, Select buttons.
-        if key[pygame.K_z]:
-            # B button
-            print("You pressed the z key.")
-        if key[pygame.K_y]:
-            # A button
-            print("You pressed the y key.")
-        if key[pygame.K_SPACE]:
-            # Start button
-            print("You pressed the space bar.")
-        if key[pygame.K_ESCAPE]:
-            # Select button
-            print("You pressed the escape key.")
         return pos_x, pos_y
+        # for reference:
+        # current_map_height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)

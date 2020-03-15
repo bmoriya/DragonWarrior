@@ -13,8 +13,8 @@ import src.common
 import src.maps
 import src.player
 from src.common import Direction
-from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_GUARD_PATH, RIGHT_GUARD_PATH, \
-    ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
+from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_FACE_GUARD_PATH, \
+    RIGHT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
 
 
 class Game(object):
@@ -58,9 +58,9 @@ class Game(object):
         self.current_map = None
         self.king_lorik_images = None
 
-        self.left_guard_images = None
+        self.left_face_guard_images = None
 
-        self.right_guard_images = None
+        self.right_face_guard_images = None
 
         self.roaming_guard_images = None
         self.unarmed_hero_images = None
@@ -99,7 +99,8 @@ class Game(object):
                     pygame.quit()
                     sys.exit()
             camera_pos = self.current_map.player.move(camera_pos=camera_pos, current_map_width=self.current_map_width,
-                                                      current_map_height=self.current_map_height, current_map_layout=self.current_map.layout)
+                                                      current_map_height=self.current_map_height,
+                                                      current_map_layout=self.current_map.layout)
 
             self.current_map.draw_map(self.bigmap)
             for sprites in self.current_map.character_sprites:
@@ -159,7 +160,7 @@ class Game(object):
 
     def load_current_map(self):
         self.current_map = src.maps.TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.king_lorik_images,
-                                                       self.left_guard_images, self.right_guard_images,
+                                                       self.left_face_guard_images, self.right_face_guard_images,
                                                        self.roaming_guard_images)
         self.current_map_width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
@@ -176,8 +177,8 @@ class Game(object):
         # Load King Lorik images
         king_lorik_sheet = load_extended(KING_LORIK_PATH)
         # Guard images.
-        left_guard_sheet = load_extended(LEFT_GUARD_PATH)
-        right_guard_sheet = load_extended(RIGHT_GUARD_PATH)
+        left_face_guard_sheet = load_extended(LEFT_FACE_GUARD_PATH)
+        right_face_guard_sheet = load_extended(RIGHT_FACE_GUARD_PATH)
         roaming_guard_sheet = load_extended(ROAMING_GUARD_PATH)
 
         self.map_tilesheet = scale(self.map_tilesheet,
@@ -189,11 +190,13 @@ class Game(object):
         king_lorik_sheet = scale(king_lorik_sheet,
                                  (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
 
-        left_guard_sheet = scale(left_guard_sheet,
-                                 (left_guard_sheet.get_width() * SCALE, left_guard_sheet.get_height() * SCALE))
+        left_face_guard_sheet = scale(left_face_guard_sheet,
+                                      (left_face_guard_sheet.get_width() * SCALE,
+                                       left_face_guard_sheet.get_height() * SCALE))
 
-        right_guard_sheet = scale(right_guard_sheet,
-                                  (right_guard_sheet.get_width() * SCALE, right_guard_sheet.get_height() * SCALE))
+        right_face_guard_sheet = scale(right_face_guard_sheet,
+                                       (right_face_guard_sheet.get_width() * SCALE,
+                                        right_face_guard_sheet.get_height() * SCALE))
 
         roaming_guard_sheet = scale(roaming_guard_sheet,
                                     (roaming_guard_sheet.get_width() * SCALE, roaming_guard_sheet.get_height() * SCALE))
@@ -206,9 +209,9 @@ class Game(object):
         # Get images for the King
         self.king_lorik_images = self.parse_animated_spritesheet(king_lorik_sheet)
 
-        self.left_guard_images = self.parse_animated_spritesheet(left_guard_sheet)
+        self.left_face_guard_images = self.parse_animated_spritesheet(left_face_guard_sheet)
 
-        self.right_guard_images = self.parse_animated_spritesheet(right_guard_sheet)
+        self.right_face_guard_images = self.parse_animated_spritesheet(right_face_guard_sheet)
 
         self.roaming_guard_images = self.parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
 
