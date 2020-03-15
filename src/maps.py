@@ -5,6 +5,7 @@ from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction
 from src.config import TILE_SIZE, TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
+from src.game import get_initial_character_location
 from src.player import Player
 
 # Tile Key:
@@ -206,6 +207,8 @@ class TantegelThroneRoom(DragonWarriorMap):
                 elif self.layout[y][x] == tile_key['ROAMING_GUARD']:
                     self.roaming_guard = AnimatedSprite(self.center_pt, 0,
                                                         self.roaming_guard_images[0], name='ROAMING_GUARD')
+                    self.roaming_guard.position = get_initial_character_location(current_map_layout=self.layout,
+                                                                                 character_name=self.roaming_guard.name)
                     self.roaming_guard_sprites.add(self.roaming_guard)
                     self.roaming_characters.append(self.roaming_guard)
                     self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
