@@ -18,6 +18,12 @@ from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_
 from src.player import Player
 
 
+def get_initial_character_location(current_map_layout, character_name):
+    layout_numpy_array = np.array(current_map_layout)
+    hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key[character_name])).T
+    return hero_layout_position
+
+
 class Game(object):
     FPS = 60
     GAME_TITLE = "Dragon Warrior"
@@ -91,7 +97,7 @@ class Game(object):
         self.current_map.roaming_guard.up_images = self.roaming_guard_images[Direction.UP.value]
         self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
 
-        initial_hero_location = Player.get_initial_character_location(self.current_map.layout, 'HERO')
+        initial_hero_location = get_initial_character_location(self.current_map.layout, 'HERO')
         # camera_pos = self.ORIGIN[0], self.ORIGIN[1]
         # camera_pos = -160, -96
         # TODO: Fix the initial camera_pos calculation.
@@ -126,7 +132,7 @@ class Game(object):
             # TODO: Disable moving of roaming characters if a dialog box is open.
             # TODO: Extend roaming characters beyond just the roaming guard.
             for roaming_character in self.current_map.roaming_characters:
-                roaming_character_position = Player.get_initial_character_location(
+                roaming_character_position = get_initial_character_location(
                     current_map_layout=self.current_map.layout, character_name=roaming_character.name)
                 pos_x, pos_y = roaming_character_position.take(0), roaming_character_position.take(1)
                 roaming_character_x_pos = roaming_character_position.item(0) - pos_y // TILE_SIZE

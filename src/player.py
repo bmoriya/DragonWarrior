@@ -1,4 +1,3 @@
-import numpy as np
 import pygame
 
 from src import maps
@@ -107,10 +106,3 @@ class Player(AnimatedSprite):
         return int(pos_x), int(pos_y)
         # for reference:
         # current_map_height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
-
-    # TODO: Refactor get_initial_character_location into src.common.
-    @staticmethod
-    def get_initial_character_location(current_map_layout, character_name):
-        layout_numpy_array = np.array(current_map_layout)
-        hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key[character_name])).T
-        return hero_layout_position
