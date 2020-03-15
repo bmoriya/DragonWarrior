@@ -28,39 +28,39 @@ class Player(AnimatedSprite):
     # def render(self, display):
     # display.blit(self.image, (self.rect.x, self.rect.y))
 
+    # TODO: Move only if button is pressed for 0.5 seconds.
+
     def move(self, camera_pos, current_map_width, current_map_height, current_map_layout):
         # TODO: Smooth out movement.
-        pos_x, pos_y = camera_pos
         key = pygame.key.get_pressed()
-        layout_numpy_array = np.array(current_map_layout)
-        hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key['HERO'])).T
-        hero_layout_position = [hero_layout_position.item(0), hero_layout_position.item(1)]
-        hero_layout_position[0] -= pos_y // TILE_SIZE
-        hero_layout_position[1] -= pos_x // TILE_SIZE
-        current_hero_tile = layout_numpy_array[(hero_layout_position[0], hero_layout_position[1])]
-        current_hero_position_tile = self.get_tile_by_value(current_hero_tile)
+        pos_x, pos_y = camera_pos
+        current_hero_layout_x_pos = self.rect.y // TILE_SIZE
+        current_hero_layout_y_pos = self.rect.x // TILE_SIZE
         if key[pygame.K_DOWN]:
             self.direction = Direction.DOWN.value
             if self.get_tile_by_value(
-                    current_map_layout[hero_layout_position[0] + 1][hero_layout_position[1]]) not in maps.impassable_tiles:
+                    current_map_layout[current_hero_layout_x_pos + 1][
+                        current_hero_layout_y_pos]) not in maps.impassable_tiles:
                 self.rect.y += TILE_SIZE
                 pos_y -= TILE_SIZE
         if key[pygame.K_LEFT]:
             self.direction = Direction.LEFT.value
-            if self.get_tile_by_value(
-                    current_map_layout[hero_layout_position[0]][hero_layout_position[1] - 1]) not in maps.impassable_tiles:
+            if self.get_tile_by_value(current_map_layout[current_hero_layout_x_pos][
+                                          current_hero_layout_y_pos - 1]) not in maps.impassable_tiles:
                 self.rect.x -= TILE_SIZE
                 pos_x += TILE_SIZE
         if key[pygame.K_UP]:
             self.direction = Direction.UP.value
             if self.get_tile_by_value(
-                    current_map_layout[hero_layout_position[0] - 1][hero_layout_position[1]]) not in maps.impassable_tiles:
+                    current_map_layout[current_hero_layout_x_pos - 1][
+                        current_hero_layout_y_pos]) not in maps.impassable_tiles:
                 self.rect.y -= TILE_SIZE
                 pos_y += TILE_SIZE
         if key[pygame.K_RIGHT]:
             self.direction = Direction.RIGHT.value
             if self.get_tile_by_value(
-                    current_map_layout[hero_layout_position[0]][hero_layout_position[1] + 1]) not in maps.impassable_tiles:
+                    current_map_layout[current_hero_layout_x_pos][
+                        current_hero_layout_y_pos + 1]) not in maps.impassable_tiles:
                 self.rect.x += TILE_SIZE
                 pos_x -= TILE_SIZE
 
@@ -104,6 +104,13 @@ class Player(AnimatedSprite):
             self.rect.y = current_map_height - TILE_SIZE
             play_sound(bump_sfx)
             pos_y = camera_pos[1]
-        return pos_x, pos_y
+        return int(pos_x), int(pos_y)
         # for reference:
         # current_map_height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
+
+    # TODO: Refactor get_initial_character_location into src.common.
+    @staticmethod
+    def get_initial_character_location(current_map_layout, character_name):
+        layout_numpy_array = np.array(current_map_layout)
+        hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key[character_name])).T
+        return hero_layout_position

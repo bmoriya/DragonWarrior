@@ -5,8 +5,10 @@ from src.common import Direction
 class AnimatedSprite(BaseSprite):
 
     def __init__(self, center_point, direction,
-                 down_img=None, left_img=None, up_img=None, right_img=None):
+                 down_img=None, left_img=None, up_img=None, right_img=None, name=None):
         BaseSprite.__init__(self, center_point, down_img[0])
+
+        self.name = name
 
         if right_img is None:
             right_img = []
