@@ -1,11 +1,10 @@
-import pygame
+from pygame import mixer
 from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import Direction
+from src.common import Direction, get_initial_character_location
 from src.config import TILE_SIZE, TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
-from src.game import get_initial_character_location
 from src.player import Player
 
 # Tile Key:
@@ -146,8 +145,8 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
         self.music_file_path = TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
-        pygame.mixer.music.load(self.music_file_path)
-        pygame.mixer.music.play(-1)
+        mixer.music.load(self.music_file_path)
+        mixer.music.play(-1)
 
     def load_map(self):
         current_loaded_map = self

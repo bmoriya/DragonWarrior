@@ -2,26 +2,20 @@ import random
 import sys
 
 import numpy as np
-import pygame
-from pygame import init, Surface, QUIT
+from pygame import init, Surface, QUIT, USEREVENT, time, quit
 from pygame.display import set_mode, set_caption, flip
 from pygame.image import load_extended
 from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
+from pygame.event import get
 
-import src.common
 from src import maps
-from src.common import Direction
+from src.common import Direction, get_initial_character_location
 from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_FACE_GUARD_PATH, \
     RIGHT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
+from src.maps import TantegelThroneRoom
 from src.player import Player
-
-
-def get_initial_character_location(current_map_layout, character_name):
-    layout_numpy_array = np.array(current_map_layout)
-    hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key[character_name])).T
-    return hero_layout_position
 
 
 class Game(object):
@@ -34,8 +28,8 @@ class Game(object):
     ORIGIN = (0, 0)
     BLACK = (0, 0, 0)
     BACK_FILL_COLOR = BLACK
-    MOVE_EVENT = pygame.USEREVENT + 1
-    pygame.time.set_timer(MOVE_EVENT, 100)
+    MOVE_EVENT = USEREVENT + 1
+    time.set_timer(MOVE_EVENT, 100)
 
     def __init__(self):
 
@@ -49,8 +43,8 @@ class Game(object):
         self.last_roaming_character_clock_check = get_ticks()
         self.roaming_character_go_cooldown = 3000
         self.sprite_movement_wait_period = 10
-        if src.maps.current_map is None:
-            src.maps.current_map = src.maps.TantegelThroneRoom
+        if maps.current_map is None:
+            maps.current_map = maps.TantegelThroneRoom
             self.player = None
         self.map_tiles = []
 
@@ -107,9 +101,9 @@ class Game(object):
 
         while True:
             self.clock.tick(self.FPS)
-            for event in pygame.event.get():
+            for event in get():
                 if event.type == QUIT:
-                    pygame.quit()
+                    quit()
                     sys.exit()
             camera_pos = self.current_map.player.move(camera_pos=camera_pos, current_map_width=self.current_map_width,
                                                       current_map_height=self.current_map_height,
@@ -195,7 +189,7 @@ class Game(object):
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = src.maps.TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.king_lorik_images,
+        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.king_lorik_images,
                                                        self.left_face_guard_images, self.right_face_guard_images,
                                                        self.roaming_guard_images)
         self.current_map_width = len(self.current_map.layout[0]) * TILE_SIZE

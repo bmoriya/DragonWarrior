@@ -1,0 +1,4 @@
+numpy==1.18.1
+pygame==1.9.6
+pypiwin32==223
+pywin32==227
