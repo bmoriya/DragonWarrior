@@ -4,11 +4,11 @@ import sys
 import numpy as np
 from pygame import init, Surface, QUIT, USEREVENT, time, quit
 from pygame.display import set_mode, set_caption, flip
+from pygame.event import get
 from pygame.image import load_extended
 from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
-from pygame.event import get
 
 from src import maps
 from src.common import Direction, get_initial_character_location
@@ -81,8 +81,8 @@ class Game(object):
         self.make_bigmap()
 
         # self.current_map.draw_map(self.bigmap)
-        for sprites in self.current_map.character_sprites:
-            sprites.draw(self.bigmap)
+        # for sprites in self.current_map.character_sprites:
+        #     sprites.draw(self.bigmap)
 
         self.background = Surface(self.screen.get_size()).convert()
 
@@ -93,11 +93,9 @@ class Game(object):
 
         initial_hero_location = get_initial_character_location(self.current_map.layout, 'HERO')
         # camera_pos = self.ORIGIN[0], self.ORIGIN[1]
-        # camera_pos = -160, -96
         # TODO: Fix the initial camera_pos calculation.
         camera_pos = np.negative(initial_hero_location.take(0) * TILE_SIZE / 2), np.negative(
             initial_hero_location.take(1) * TILE_SIZE / 4 - 8)
-        # camera_pos = np.negative(int((initial_hero_location.take(0) / 2 * TILE_SIZE))), self.ORIGIN[1]
 
         while True:
             self.clock.tick(self.FPS)
@@ -126,10 +124,11 @@ class Game(object):
             # TODO: Disable moving of roaming characters if a dialog box is open.
             # TODO: Extend roaming characters beyond just the roaming guard.
             for roaming_character in self.current_map.roaming_characters:
-                pos_x, pos_y = roaming_character.position.take(0), roaming_character.position.take(1)
+                # initial_pos_x, initial_pos_y = roaming_character.position.take(0), roaming_character.position.take(1)
                 roaming_character_x_pos = roaming_character.rect.y // TILE_SIZE
                 roaming_character_y_pos = roaming_character.rect.x // TILE_SIZE
                 now = get_ticks()
+                # Useful for debugging roaming characters:
                 # print(
                 #     Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][roaming_character_y_pos]))
                 # print("roaming_character_x_pos: " + str(roaming_character_x_pos))
@@ -137,28 +136,8 @@ class Game(object):
                 if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
                     self.last_roaming_character_clock_check = now
                     roaming_character.direction = random.randrange(4)
-                    if roaming_character.direction == Direction.DOWN.value:
-                        if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
-                                                        roaming_character_y_pos]) not in maps.impassable_tiles:
-                            roaming_character.rect.y += TILE_SIZE
-                            pos_y -= 1
-                    elif roaming_character.direction == Direction.LEFT.value:
-                        if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
-                                                        roaming_character_y_pos - 1]) not in maps.impassable_tiles:
-                            roaming_character.rect.x -= TILE_SIZE
-                            pos_x -= 1
-                    elif roaming_character.direction == Direction.UP.value:
-                        if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
-                                                        roaming_character_y_pos]) not in maps.impassable_tiles:
-                            roaming_character.rect.y -= TILE_SIZE
-                            pos_y += 1
-                    elif roaming_character.direction == Direction.RIGHT.value:
-                        if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
-                                                        roaming_character_y_pos + 1]) not in maps.impassable_tiles:
-                            roaming_character.rect.x += TILE_SIZE
-                            pos_x += 1
-                    else:
-                        print("Invalid direction.")
+                    self.move_roaming_character(roaming_character.position.take(0), roaming_character.position.take(1), roaming_character, roaming_character_x_pos,
+                                                roaming_character_y_pos)
 
                 # roaming character sides collision
                 self.handle_roaming_character_map_edge_side_collision(roaming_character)
@@ -171,6 +150,30 @@ class Game(object):
 
             # self.screen.blit(self.background, self.ORIGIN)
             flip()
+
+    def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
+        if roaming_character.direction == Direction.DOWN.value:
+            if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
+                                            roaming_character_y_pos]) not in maps.impassable_tiles:
+                roaming_character.rect.y += TILE_SIZE
+                pos_y -= 1
+        elif roaming_character.direction == Direction.LEFT.value:
+            if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
+                                            roaming_character_y_pos - 1]) not in maps.impassable_tiles:
+                roaming_character.rect.x -= TILE_SIZE
+                pos_x -= 1
+        elif roaming_character.direction == Direction.UP.value:
+            if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
+                                            roaming_character_y_pos]) not in maps.impassable_tiles:
+                roaming_character.rect.y -= TILE_SIZE
+                pos_y += 1
+        elif roaming_character.direction == Direction.RIGHT.value:
+            if Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
+                                            roaming_character_y_pos + 1]) not in maps.impassable_tiles:
+                roaming_character.rect.x += TILE_SIZE
+                pos_x += 1
+        else:
+            print("Invalid direction.")
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
@@ -190,8 +193,8 @@ class Game(object):
 
     def load_current_map(self):
         self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.king_lorik_images,
-                                                       self.left_face_guard_images, self.right_face_guard_images,
-                                                       self.roaming_guard_images)
+                                              self.left_face_guard_images, self.right_face_guard_images,
+                                              self.roaming_guard_images)
         self.current_map_width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
         self.current_map.load_map()
@@ -199,7 +202,6 @@ class Game(object):
     def load_images(self):
         """Load all the images for the game graphics.
         """
-        # try:
         # Load the map tile spritesheet
         self.map_tilesheet = load_extended(MAP_TILES_PATH).convert()
         # Load unarmed hero images

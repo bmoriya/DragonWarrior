@@ -8,8 +8,7 @@ from src.config import TILE_SIZE
 
 class Player(AnimatedSprite):
 
-    def __init__(self, center_point, direction, down_img, left_img, up_img,
-                 right_img):
+    def __init__(self, center_point, down_img, left_img, up_img, right_img, direction=Direction.DOWN.value):
         AnimatedSprite.__init__(self, center_point, direction, down_img,
                                 left_img, up_img, right_img)
         self.index = 0

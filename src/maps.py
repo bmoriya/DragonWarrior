@@ -173,20 +173,14 @@ class TantegelThroneRoom(DragonWarriorMap):
                 elif self.layout[y][x] == tile_key['BRICK_STAIRDN']:
                     self.add_tile(tile_type=tile_key['BRICK_STAIRDN'], tile_group=self.brick_stairdn_group)
                 elif self.layout[y][x] == tile_key['HERO']:
+                    self.player = Player(center_point=self.center_pt,
+                                         down_img=self.hero_images[Direction.DOWN.value],
+                                         left_img=self.hero_images[Direction.LEFT.value],
+                                         up_img=self.hero_images[Direction.UP.value],
+                                         right_img=self.hero_images[Direction.RIGHT.value])
                     # Make player start facing up if in Tantegel Throne Room, else face down.
                     if isinstance(current_loaded_map, TantegelThroneRoom):
-
-                        self.player = Player(center_point=self.center_pt, direction=Direction.UP.value,
-                                             down_img=self.hero_images[Direction.DOWN.value],
-                                             left_img=self.hero_images[Direction.LEFT.value],
-                                             up_img=self.hero_images[Direction.UP.value],
-                                             right_img=self.hero_images[Direction.RIGHT.value])
-                    else:
-                        self.player = Player(center_point=self.center_pt, direction=Direction.DOWN.value,
-                                             down_img=self.hero_images[Direction.DOWN.value],
-                                             left_img=self.hero_images[Direction.LEFT.value],
-                                             up_img=self.hero_images[Direction.UP.value],
-                                             right_img=self.hero_images[Direction.RIGHT.value])
+                        self.player.direction = Direction.UP.value
                     self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
                 elif self.layout[y][x] == tile_key['KING_LORIK']:
                     self.king_lorik = AnimatedSprite(self.center_pt, 0,
