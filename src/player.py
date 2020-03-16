@@ -28,7 +28,7 @@ class Player(AnimatedSprite):
 
     # TODO: Move only if button is pressed for 0.5 seconds.
 
-    def move(self, camera_pos, current_map_width, current_map_height, current_map_layout):
+    def move(self, camera_pos, current_map_width, current_map_height, current_map_layout, current_map_impassable_tiles):
         # TODO: Smooth out movement.
         key = pygame.key.get_pressed()
         pos_x, pos_y = camera_pos
@@ -38,27 +38,27 @@ class Player(AnimatedSprite):
             self.direction = Direction.DOWN.value
             if self.get_tile_by_value(
                     current_map_layout[current_hero_layout_x_pos + 1][
-                        current_hero_layout_y_pos]) not in maps.impassable_tiles:
+                        current_hero_layout_y_pos]) not in current_map_impassable_tiles:
                 self.rect.y += TILE_SIZE
                 pos_y -= TILE_SIZE
         if key[pygame.K_LEFT]:
             self.direction = Direction.LEFT.value
             if self.get_tile_by_value(current_map_layout[current_hero_layout_x_pos][
-                                          current_hero_layout_y_pos - 1]) not in maps.impassable_tiles:
+                                          current_hero_layout_y_pos - 1]) not in current_map_impassable_tiles:
                 self.rect.x -= TILE_SIZE
                 pos_x += TILE_SIZE
         if key[pygame.K_UP]:
             self.direction = Direction.UP.value
             if self.get_tile_by_value(
                     current_map_layout[current_hero_layout_x_pos - 1][
-                        current_hero_layout_y_pos]) not in maps.impassable_tiles:
+                        current_hero_layout_y_pos]) not in current_map_impassable_tiles:
                 self.rect.y -= TILE_SIZE
                 pos_y += TILE_SIZE
         if key[pygame.K_RIGHT]:
             self.direction = Direction.RIGHT.value
             if self.get_tile_by_value(
                     current_map_layout[current_hero_layout_x_pos][
-                        current_hero_layout_y_pos + 1]) not in maps.impassable_tiles:
+                        current_hero_layout_y_pos + 1]) not in current_map_impassable_tiles:
                 self.rect.x += TILE_SIZE
                 pos_x -= TILE_SIZE
 

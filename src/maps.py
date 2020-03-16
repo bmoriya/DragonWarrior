@@ -101,6 +101,15 @@ class DragonWarriorMap(object):
     def __init__(self):
         self.center_pt = None
         self.player = None
+        self.player_sprites = None
+        self.map_tiles = None
+        self.characters = []
+        self.character_sprites = []
+        self.roaming_characters = []
+        self.layout = [[]]
+        self.width = len(self.layout[0] * TILE_SIZE)
+        self.height = len(self.layout * TILE_SIZE)
+        self.tile_group_dict = {}
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -145,6 +154,8 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
         self.music_file_path = TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
+        self.tiles_in_current_loaded_map = None
+        self.current_map_impassable_tiles = None
         mixer.music.load(self.music_file_path)
         mixer.music.play(-1)
 
@@ -153,6 +164,49 @@ class TantegelThroneRoom(DragonWarriorMap):
 
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
+
+        layout_values = [Player.get_tile_by_value(tile) for row in self.layout for tile in row]
+        tiles_to_map = ['ROOF',
+                        'WALL',
+                        'WOOD',
+                        'BRICK',
+                        'CHEST',
+                        'DOOR',
+                        'BRICK_STAIRDN',
+                        'BRICK_STAIRUP',
+                        'BARRIER',
+                        'WEAPON_SIGN',
+                        'INN_SIGN',
+                        'CASTLE',
+                        'TOWN',
+                        'GRASS',
+                        'TREES',
+                        'HILLS',
+                        'MOUNTAINS',
+                        'CAVE',
+                        'GRASS_STAIRDN',
+                        'SAND',
+                        'MARSH',
+                        'BRIDGE',
+                        'WATER',
+                        'BOTTOM_COAST',
+                        'BOTTOM_LEFT_COAST',
+                        'LEFT_COAST',
+                        'TOP_LEFT_COAST',
+                        'TOP_COAST',
+                        'TOP_RIGHT_COAST',
+                        'RIGHT_COAST',
+                        'BOTTOM_RIGHT_COAST',
+                        'BOTTOM_TOP_LEFT_COAST',
+                        'BOTTOM_TOP_COAST',
+                        'BOTTOM_TOP_RIGHT_COAST',
+                        'HERO',
+                        'KING_LORIK',
+                        'LEFT_FACE_GUARD',
+                        'RIGHT_FACE_GUARD',
+                        'ROAMING_GUARD']
+        self.tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tiles_to_map)
+        self.current_map_impassable_tiles = tuple(set(self.tiles_in_current_loaded_map) & set(impassable_tiles))
 
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):

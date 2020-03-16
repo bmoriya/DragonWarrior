@@ -95,7 +95,7 @@ class Game(object):
         # camera_pos = self.ORIGIN[0], self.ORIGIN[1]
         # TODO: Fix the initial camera_pos calculation.
         camera_pos = np.negative(initial_hero_location.take(0) * TILE_SIZE / 2), np.negative(
-            initial_hero_location.take(1) * TILE_SIZE / 4 - 8)
+            initial_hero_location.take(1) * TILE_SIZE / 4.333333333333333)
 
         while True:
             self.clock.tick(self.FPS)
@@ -105,7 +105,8 @@ class Game(object):
                     sys.exit()
             camera_pos = self.current_map.player.move(camera_pos=camera_pos, current_map_width=self.current_map_width,
                                                       current_map_height=self.current_map_height,
-                                                      current_map_layout=self.current_map.layout)
+                                                      current_map_layout=self.current_map.layout,
+                                                      current_map_impassable_tiles=self.current_map.current_map_impassable_tiles)
 
             # For debugging purposes, this prints out the current tile that the hero is standing on.
             # print(Player.get_tile_by_value(self.current_map.layout[self.current_map.player.rect.y // TILE_SIZE][
@@ -136,7 +137,8 @@ class Game(object):
                 if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
                     self.last_roaming_character_clock_check = now
                     roaming_character.direction = random.randrange(4)
-                    self.move_roaming_character(roaming_character.position.take(0), roaming_character.position.take(1), roaming_character, roaming_character_x_pos,
+                    self.move_roaming_character(roaming_character.position.take(0), roaming_character.position.take(1),
+                                                roaming_character, roaming_character_x_pos,
                                                 roaming_character_y_pos)
 
                 # roaming character sides collision
