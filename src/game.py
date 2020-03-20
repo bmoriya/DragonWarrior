@@ -105,11 +105,9 @@ class Game(object):
             # TODO: Smooth out movement even more.
             key = pygame.key.get_pressed()
             camera_pos_x, camera_pos_y = camera_pos
-            current_hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
-            current_hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
-            camera_pos_x, camera_pos_y = self.move_player(camera_pos, current_hero_layout_x_pos,
-                                                          current_hero_layout_y_pos, key,
-                                                          camera_pos_x, camera_pos_y)
+            self.current_hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
+            self.current_hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
+            camera_pos_x, camera_pos_y = self.move_player(camera_pos, key, camera_pos_x, camera_pos_y)
 
             # TODO: implement actual function of B, A, Start, Select buttons.
             if key[pygame.K_z]:
@@ -124,7 +122,7 @@ class Game(object):
             if key[pygame.K_ESCAPE]:
                 # Select button
                 print("You pressed the escape key.")
-            camera_pos = camera_pos_x, camera_pos_y
+            camera_pos = int(camera_pos_x), int(camera_pos_y)
 
             # For debugging purposes, this prints out the current tile that the hero is standing on.
             # print(Player.get_tile_by_value(self.current_map.layout[self.current_map.player.rect.y // TILE_SIZE][
@@ -171,51 +169,53 @@ class Game(object):
             # self.screen.blit(self.background, self.ORIGIN)
             flip()
 
-    def move_player(self, camera_pos, current_hero_layout_x_pos, current_hero_layout_y_pos, key, pos_x, pos_y):
+    def move_player(self, camera_pos, key, pos_x, pos_y):
         # TODO: Move only if button is pressed for 0.5 seconds.
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
             if Player.get_tile_by_value(
-                    self.current_map.layout[current_hero_layout_x_pos + 1][
-                        current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
+                    self.current_map.layout[self.current_hero_layout_x_pos + 1][
+                        self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
                 for x in range(TILE_SIZE):
-                    pygame.display.update()
                     self.current_map.player.rect.y += 1
                     pos_y -= 1
-                    pygame.time.delay(15)
+                    pygame.time.delay(10)
+            else:
+                play_sound(bump_sfx)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
-            if Player.get_tile_by_value(self.current_map.layout[current_hero_layout_x_pos][
-                                            current_hero_layout_y_pos - 1]) not in self.current_map.current_map_impassable_tiles:
+            if Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos][
+                                            self.current_hero_layout_y_pos - 1]) not in self.current_map.current_map_impassable_tiles:
                 for x in range(TILE_SIZE):
-                    pygame.display.update()
                     self.current_map.player.rect.x -= 1
                     pos_x += 1
-                    pygame.display.update()
-                    pygame.time.delay(15)
+                    pygame.time.delay(10)
+            else:
+                play_sound(bump_sfx)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
             if Player.get_tile_by_value(
-                    self.current_map.layout[current_hero_layout_x_pos - 1][
-                        current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
+                    self.current_map.layout[self.current_hero_layout_x_pos - 1][
+                        self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
                 for i in range(TILE_SIZE):
-                    pygame.display.update()
                     self.current_map.player.rect.y -= 1
                     pos_y += 1
-                    pygame.display.update()
-                    pygame.time.delay(15)
+                    pygame.time.delay(10)
+            else:
+                play_sound(bump_sfx)
         if key[pygame.K_RIGHT]:
             self.current_map.player.direction = Direction.RIGHT.value
             if Player.get_tile_by_value(
-                    self.current_map.layout[current_hero_layout_x_pos][
-                        current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles:
+                    self.current_map.layout[self.current_hero_layout_x_pos][
+                        self.current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles:
                 for i in range(TILE_SIZE):
                     pygame.display.update()
                     self.current_map.player.rect.x += 1
                     pos_x -= 1
                     pygame.display.update()
-                    pygame.time.delay(15)
-        # bump_sound = pygame.mixer.Sound(bump_sound_dir)
+                    pygame.time.delay(10)
+            else:
+                play_sound(bump_sfx)
         if self.current_map.player.rect.x < 0:  # Simple Sides Collision
             self.current_map.player.rect.x = 0  # Reset Player Rect Coord
             play_sound(bump_sfx)
