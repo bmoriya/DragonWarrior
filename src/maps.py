@@ -5,7 +5,7 @@ from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, get_initial_character_location
 from src.config import TILE_SIZE, TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH, PLAY_MUSIC
-from src.player import Player
+from src.player import Player, get_tile_by_value
 
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
@@ -166,7 +166,7 @@ class TantegelThroneRoom(DragonWarriorMap):
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
 
-        layout_values = [Player.get_tile_by_value(tile) for row in self.layout for tile in row]
+        layout_values = [get_tile_by_value(tile) for row in self.layout for tile in row]
         tiles_to_map = ['ROOF',
                         'WALL',
                         'WOOD',

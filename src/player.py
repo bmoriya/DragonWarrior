@@ -3,6 +3,10 @@ from src.animated_sprite import AnimatedSprite
 from src.common import Direction
 
 
+def get_tile_by_value(position):
+    return maps.tile_key_keys[maps.tile_key_values.index(position)]
+
+
 class Player(AnimatedSprite):
 
     def __init__(self, center_point, down_img, left_img, up_img, right_img, direction=Direction.DOWN.value):
@@ -22,7 +26,3 @@ class Player(AnimatedSprite):
 
     def render(self, display):
         display.blit(self.image, (self.rect.x, self.rect.y))
-
-    @staticmethod
-    def get_tile_by_value(position):
-        return maps.tile_key_keys[maps.tile_key_values.index(position)]
