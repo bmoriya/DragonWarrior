@@ -88,7 +88,8 @@ tantegel_throne_room = [
 ]
 
 tantegel_courtyard = [
-
+    [0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 13, 14, 13, 13],
+    [0, 3, 3, 3, 3, 3, 0, 13, 14, 13, 14, 14, 13, 14, 13, 0, 3, 3, 3, 3, 3, 0, 13, 0, 3, 0, 13, 13, 13, 13]
 ]
 
 current_map = None
@@ -110,6 +111,9 @@ class DragonWarriorMap(object):
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
         self.tile_group_dict = {}
+
+    def load_map(self):
+        ...
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -293,3 +297,14 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.chest_group.draw(surface)
         self.door_group.draw(surface)
         self.brick_stairdn_group.draw(surface)
+
+
+class TantegelCourtyard(DragonWarriorMap):
+    def __init__(self):
+        super().__init__()
+        self.door_group = Group()
+        self.chest_group = Group()
+        self.brick_group = Group()
+        self.wood_group = Group()
+        self.wall_group = Group()
+        self.roof_group = Group()

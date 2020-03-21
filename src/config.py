@@ -1,6 +1,7 @@
 from os.path import join, pardir
-from win32api import GetSystemMetrics
 from sys import platform
+
+from win32api import GetSystemMetrics
 
 DATA_DIR = join(pardir, 'data')
 IMAGES_DIR = join(DATA_DIR, 'images')
@@ -31,3 +32,4 @@ NES_RES = (256, 240)
 WIN_WIDTH = NES_RES[0] * SCALE
 WIN_HEIGHT = NES_RES[1] * SCALE
 PLAY_MUSIC = False
+PLAY_SOUND = False

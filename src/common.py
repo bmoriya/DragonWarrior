@@ -6,7 +6,7 @@ import numpy as np
 import pygame
 
 from src import maps
-from src.config import SFX_DIR
+from src.config import SFX_DIR, PLAY_SOUND
 
 
 class Direction(Enum):
@@ -21,13 +21,14 @@ bump_sfx = join(SFX_DIR, '42 Dragon Quest 1 - Bumping into Walls (22khz mono).wa
 
 
 def play_sound(path='data/sound/sfx'):
-    global _sound_library
-    sound = _sound_library.get(path)
-    if sound is None:
-        canonicalized_path = path.replace('/', sep).replace('\\', sep)
-        sound = pygame.mixer.Sound(canonicalized_path)
-        _sound_library[path] = sound
-    sound.play()
+    if PLAY_SOUND:
+        global _sound_library
+        sound = _sound_library.get(path)
+        if sound is None:
+            canonicalized_path = path.replace('/', sep).replace('\\', sep)
+            sound = pygame.mixer.Sound(canonicalized_path)
+            _sound_library[path] = sound
+        sound.play()
 
 
 _image_library = {}
