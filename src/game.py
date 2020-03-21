@@ -81,8 +81,8 @@ class Game(object):
             # TODO: Smooth out movement even more.
             key = pygame.key.get_pressed()
             camera_pos_x, camera_pos_y = camera_pos
-            self.current_hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
-            self.current_hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
+            self.hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
+            self.hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
             camera_pos_x, camera_pos_y = self.move_player(camera_pos, key)
             # # TODO: implement actual function of B, A, Start, Select buttons.
             # if key[pygame.K_z]:
@@ -158,8 +158,7 @@ class Game(object):
         next_pos_x, next_pos_y = curr_pos_x, curr_pos_y
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
-            is_down_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos + 1][
-                                                 self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles
+            is_down_passable = self.check_if_passable(self.hero_layout_x_pos + 1, self.hero_layout_y_pos)
             if is_down_passable:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.y += 1
@@ -169,8 +168,7 @@ class Game(object):
                 play_sound(bump_sfx)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
-            is_left_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos][
-                                                 self.current_hero_layout_y_pos - 1]) not in self.current_map.current_map_impassable_tiles
+            is_left_passable = self.check_if_passable(self.hero_layout_x_pos, self.hero_layout_y_pos - 1)
             if is_left_passable:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.x -= 1
@@ -180,20 +178,18 @@ class Game(object):
                 play_sound(bump_sfx)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
-            is_up_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos - 1][
-                                                 self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles
+            is_up_passable = self.check_if_passable(self.hero_layout_x_pos - 1, self.hero_layout_y_pos)
             if is_up_passable:
-                for i in range(TILE_SIZE):
+                for x in range(TILE_SIZE):
                     self.current_map.player.rect.y -= 1
                     next_pos_y = curr_pos_y + TILE_SIZE
                     pygame.time.delay(10)
             else:
                 play_sound(bump_sfx)
         if key[pygame.K_RIGHT]:
-            self.current_map.player.direction = Direction.RIGHT.value  # Turn character to face right
-            is_right_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos][
-                                                 self.current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles
-            if is_right_passable:  # Check for collisions
+            self.current_map.player.direction = Direction.RIGHT.value
+            is_right_passable = self.check_if_passable(self.hero_layout_x_pos, self.hero_layout_y_pos + 1)
+            if is_right_passable:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.x += 1
                     next_pos_x = curr_pos_x - TILE_SIZE
@@ -211,6 +207,10 @@ class Game(object):
         # for reference:
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
         return next_pos_x, next_pos_y
+
+    def check_if_passable(self, x_offset, y_offset):
+        return Player.get_tile_by_value(
+            self.current_map.layout[x_offset][y_offset]) not in self.current_map.current_map_impassable_tiles
 
     def handle_tb_sides_collision(self, curr_pos_y, next_pos_y):
         max_bound = self.current_map.height
