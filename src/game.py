@@ -158,9 +158,9 @@ class Game(object):
         next_pos_x, next_pos_y = curr_pos_x, curr_pos_y
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
-            if Player.get_tile_by_value(
-                    self.current_map.layout[self.current_hero_layout_x_pos + 1][
-                        self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
+            is_down_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos + 1][
+                                                 self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles
+            if is_down_passable:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.y += 1
                     next_pos_y = curr_pos_y - TILE_SIZE
@@ -169,8 +169,9 @@ class Game(object):
                 play_sound(bump_sfx)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
-            if Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos][
-                                            self.current_hero_layout_y_pos - 1]) not in self.current_map.current_map_impassable_tiles:
+            is_left_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos][
+                                                 self.current_hero_layout_y_pos - 1]) not in self.current_map.current_map_impassable_tiles
+            if is_left_passable:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.x -= 1
                     next_pos_x = curr_pos_x + TILE_SIZE
@@ -179,9 +180,9 @@ class Game(object):
                 play_sound(bump_sfx)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
-            if Player.get_tile_by_value(
-                    self.current_map.layout[self.current_hero_layout_x_pos - 1][
-                        self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
+            is_up_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos - 1][
+                                                 self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles
+            if is_up_passable:
                 for i in range(TILE_SIZE):
                     self.current_map.player.rect.y -= 1
                     next_pos_y = curr_pos_y + TILE_SIZE
@@ -190,9 +191,9 @@ class Game(object):
                 play_sound(bump_sfx)
         if key[pygame.K_RIGHT]:
             self.current_map.player.direction = Direction.RIGHT.value  # Turn character to face right
-            if Player.get_tile_by_value(
-                    self.current_map.layout[self.current_hero_layout_x_pos][
-                        self.current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles:  # Check for collisions
+            is_right_passable = Player.get_tile_by_value(self.current_map.layout[self.current_hero_layout_x_pos][
+                                                 self.current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles
+            if is_right_passable:  # Check for collisions
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.x += 1
                     next_pos_x = curr_pos_x - TILE_SIZE
@@ -205,25 +206,39 @@ class Game(object):
                 play_sound(bump_sfx)
 
         # Sides collision
-        if self.current_map.player.rect.x < 0:  # Simple Sides Collision
-            self.current_map.player.rect.x = 0  # Reset Player Rect Coord
-            play_sound(bump_sfx)
-            next_pos_x = curr_pos_x
-        elif self.current_map.player.rect.x > self.current_map.width - TILE_SIZE:
-            self.current_map.player.rect.x = self.current_map.width - TILE_SIZE
-            play_sound(bump_sfx)
-            next_pos_x = curr_pos_x
-        if self.current_map.player.rect.y < 0:
-            self.current_map.player.rect.y = 0
-            play_sound(bump_sfx)
-            next_pos_y = curr_pos_y
-        elif self.current_map.player.rect.y > self.current_map.height - TILE_SIZE:
-            self.current_map.player.rect.y = self.current_map.height - TILE_SIZE
-            play_sound(bump_sfx)
-            next_pos_y = curr_pos_y
+        next_pos_x = self.handle_lr_sides_collision(curr_pos_x, next_pos_x)
+        next_pos_y = self.handle_tb_sides_collision(curr_pos_y, next_pos_y)
         # for reference:
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
         return next_pos_x, next_pos_y
+
+    def handle_tb_sides_collision(self, curr_pos_y, next_pos_y):
+        max_bound = self.current_map.height
+        min_bound = 0
+        player_pos = self.current_map.player.rect.y
+        if player_pos < min_bound:
+            self.current_map.player.rect.y = min_bound
+            play_sound(bump_sfx)
+            next_pos_y = curr_pos_y
+        elif player_pos > max_bound - TILE_SIZE:
+            self.current_map.player.rect.y = max_bound - TILE_SIZE
+            play_sound(bump_sfx)
+            next_pos_y = curr_pos_y
+        return next_pos_y
+
+    def handle_lr_sides_collision(self, curr_pos_x, next_pos_x):
+        max_bound = self.current_map.width
+        min_bound = 0
+        player_pos = self.current_map.player.rect.x
+        if player_pos < min_bound:  # Simple Sides Collision
+            self.current_map.player.rect.x = min_bound  # Reset Player Rect Coord
+            play_sound(bump_sfx)
+            next_pos_x = curr_pos_x
+        elif player_pos > max_bound - TILE_SIZE:
+            self.current_map.player.rect.x = max_bound - TILE_SIZE
+            play_sound(bump_sfx)
+            next_pos_x = curr_pos_x
+        return next_pos_x
 
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
         if roaming_character.direction == Direction.DOWN.value:
