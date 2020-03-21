@@ -47,55 +47,31 @@ class Game(object):
         if maps.current_map is None:
             maps.current_map = maps.TantegelThroneRoom
         self.map_tiles = []
-
         self.bigmap_width = None
         self.bigmap_height = None
         self.bigmap = None
-
         self.current_map_width = None
         self.current_map_height = None
-
         self.background = None
         self.current_map = None
         self.king_lorik_images = None
-
         self.left_face_guard_images = None
-
         self.right_face_guard_images = None
-
         self.roaming_guard_images = None
         self.unarmed_hero_images = None
         self.load_images()
-
         self.map_tilesheet = None
 
     def main(self):
         self.load_current_map()
-
-        # Move to map class
-        # self.init_groups()
-        # self.current_map = tantegel_throne_room
-        # self.load_map()
-
         # Make the big scrollable map
         self.make_bigmap()
-
-        # self.current_map.draw_map(self.bigmap)
-        # for sprites in self.current_map.character_sprites:
-        #     sprites.draw(self.bigmap)
-
         self.background = Surface(self.screen.get_size()).convert()
-
-        self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
-        self.current_map.roaming_guard.left_images = self.roaming_guard_images[Direction.LEFT.value]
-        self.current_map.roaming_guard.up_images = self.roaming_guard_images[Direction.UP.value]
-        self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
+        self.get_roaming_guard_images()
 
         initial_hero_location = get_initial_character_location(self.current_map.layout, 'HERO')
-        # camera_pos = self.ORIGIN[0], self.ORIGIN[1]
         # TODO: Fix the initial camera_pos calculation.
-        camera_pos = np.negative(initial_hero_location.take(0) * TILE_SIZE / 2), np.negative(
-            initial_hero_location.take(1) * TILE_SIZE / 4.333333333333333)
+        camera_pos = self.get_initial_camera_position(initial_hero_location)
         while True:
             self.clock.tick(self.FPS)
             for event in get():
@@ -107,30 +83,27 @@ class Game(object):
             camera_pos_x, camera_pos_y = camera_pos
             self.current_hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
             self.current_hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
-            camera_pos_x, camera_pos_y = self.move_player(camera_pos, key, camera_pos_x, camera_pos_y)
-
-            # TODO: implement actual function of B, A, Start, Select buttons.
-            if key[pygame.K_z]:
-                # B button
-                print("You pressed the z key.")
-            if key[pygame.K_y]:
-                # A button
-                print("You pressed the y key.")
-            if key[pygame.K_SPACE]:
-                # Start button
-                print("You pressed the space bar.")
-            if key[pygame.K_ESCAPE]:
-                # Select button
-                print("You pressed the escape key.")
+            camera_pos_x, camera_pos_y = self.move_player(camera_pos, key)
+            # # TODO: implement actual function of B, A, Start, Select buttons.
+            # if key[pygame.K_z]:
+            #     # B button
+            #     print("You pressed the z key.")
+            # if key[pygame.K_y]:
+            #     # A button
+            #     print("You pressed the y key.")
+            # if key[pygame.K_SPACE]:
+            #     # Start button
+            #     print("You pressed the space bar.")
+            # if key[pygame.K_ESCAPE]:
+            #     # Select button
+            #     print("You pressed the escape key.")
             camera_pos = int(camera_pos_x), int(camera_pos_y)
-
             # For debugging purposes, this prints out the current tile that the hero is standing on.
             # print(Player.get_tile_by_value(self.current_map.layout[self.current_map.player.rect.y // TILE_SIZE][
             #                                    self.current_map.player.rect.x // TILE_SIZE]))
 
             # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
             # camera_pos = -160, -96
-
             self.current_map.draw_map(self.bigmap)
             for sprites in self.current_map.character_sprites:
                 sprites.clear(self.screen, self.background)
@@ -169,8 +142,20 @@ class Game(object):
             # self.screen.blit(self.background, self.ORIGIN)
             flip()
 
-    def move_player(self, camera_pos, key, pos_x, pos_y):
+    def get_initial_camera_position(self, initial_hero_location):
+        return np.negative(initial_hero_location.take(0) * TILE_SIZE / 2), np.negative(
+            initial_hero_location.take(1) * TILE_SIZE / 4.333333333333333)
+
+    def get_roaming_guard_images(self):
+        self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
+        self.current_map.roaming_guard.left_images = self.roaming_guard_images[Direction.LEFT.value]
+        self.current_map.roaming_guard.up_images = self.roaming_guard_images[Direction.UP.value]
+        self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
+
+    def move_player(self, camera_pos, key):
         # TODO: Move only if button is pressed for 0.5 seconds.
+        curr_pos_x, curr_pos_y = camera_pos
+        next_pos_x, next_pos_y = curr_pos_x, curr_pos_y
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
             if Player.get_tile_by_value(
@@ -178,7 +163,7 @@ class Game(object):
                         self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.y += 1
-                    pos_y -= 1
+                    next_pos_y = curr_pos_y - TILE_SIZE
                     pygame.time.delay(10)
             else:
                 play_sound(bump_sfx)
@@ -188,7 +173,7 @@ class Game(object):
                                             self.current_hero_layout_y_pos - 1]) not in self.current_map.current_map_impassable_tiles:
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.x -= 1
-                    pos_x += 1
+                    next_pos_x = curr_pos_x + TILE_SIZE
                     pygame.time.delay(10)
             else:
                 play_sound(bump_sfx)
@@ -199,42 +184,46 @@ class Game(object):
                         self.current_hero_layout_y_pos]) not in self.current_map.current_map_impassable_tiles:
                 for i in range(TILE_SIZE):
                     self.current_map.player.rect.y -= 1
-                    pos_y += 1
+                    next_pos_y = curr_pos_y + TILE_SIZE
                     pygame.time.delay(10)
             else:
                 play_sound(bump_sfx)
         if key[pygame.K_RIGHT]:
-            self.current_map.player.direction = Direction.RIGHT.value
+            self.current_map.player.direction = Direction.RIGHT.value  # Turn character to face right
             if Player.get_tile_by_value(
                     self.current_map.layout[self.current_hero_layout_x_pos][
-                        self.current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles:
-                for i in range(TILE_SIZE):
-                    pygame.display.update()
+                        self.current_hero_layout_y_pos + 1]) not in self.current_map.current_map_impassable_tiles:  # Check for collisions
+                for x in range(TILE_SIZE):
                     self.current_map.player.rect.x += 1
-                    pos_x -= 1
-                    pygame.display.update()
+                    next_pos_x = curr_pos_x - TILE_SIZE
                     pygame.time.delay(10)
+                #  THIS MOVES SMOOTHLY
+                # self.current_map.player.rect.x += 1  # increment
+                # curr_pos_x -= 1
+                # pygame.time.delay(10)
             else:
                 play_sound(bump_sfx)
+
+        # Sides collision
         if self.current_map.player.rect.x < 0:  # Simple Sides Collision
             self.current_map.player.rect.x = 0  # Reset Player Rect Coord
             play_sound(bump_sfx)
-            pos_x = camera_pos[0]  # Reset Camera Pos Coord
+            next_pos_x = curr_pos_x
         elif self.current_map.player.rect.x > self.current_map.width - TILE_SIZE:
             self.current_map.player.rect.x = self.current_map.width - TILE_SIZE
             play_sound(bump_sfx)
-            pos_x = camera_pos[0]
+            next_pos_x = curr_pos_x
         if self.current_map.player.rect.y < 0:
             self.current_map.player.rect.y = 0
             play_sound(bump_sfx)
-            pos_y = camera_pos[1]
+            next_pos_y = curr_pos_y
         elif self.current_map.player.rect.y > self.current_map.height - TILE_SIZE:
             self.current_map.player.rect.y = self.current_map.height - TILE_SIZE
             play_sound(bump_sfx)
-            pos_y = camera_pos[1]
+            next_pos_y = curr_pos_y
         # for reference:
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
-        return pos_x, pos_y
+        return next_pos_x, next_pos_y
 
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
         if roaming_character.direction == Direction.DOWN.value:
