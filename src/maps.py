@@ -94,8 +94,46 @@ tantegel_courtyard = [
 
 current_map = None
 
-
 # Working on class refactoring of maps
+tiles_to_map = ['ROOF',
+                'WALL',
+                'WOOD',
+                'BRICK',
+                'CHEST',
+                'DOOR',
+                'BRICK_STAIRDN',
+                'BRICK_STAIRUP',
+                'BARRIER',
+                'WEAPON_SIGN',
+                'INN_SIGN',
+                'CASTLE',
+                'TOWN',
+                'GRASS',
+                'TREES',
+                'HILLS',
+                'MOUNTAINS',
+                'CAVE',
+                'GRASS_STAIRDN',
+                'SAND',
+                'MARSH',
+                'BRIDGE',
+                'WATER',
+                'BOTTOM_COAST',
+                'BOTTOM_LEFT_COAST',
+                'LEFT_COAST',
+                'TOP_LEFT_COAST',
+                'TOP_COAST',
+                'TOP_RIGHT_COAST',
+                'RIGHT_COAST',
+                'BOTTOM_RIGHT_COAST',
+                'BOTTOM_TOP_LEFT_COAST',
+                'BOTTOM_TOP_COAST',
+                'BOTTOM_TOP_RIGHT_COAST',
+                'HERO',
+                'KING_LORIK',
+                'LEFT_FACE_GUARD',
+                'RIGHT_FACE_GUARD',
+                'ROAMING_GUARD']
 
 
 class DragonWarriorMap(object):
@@ -112,8 +150,51 @@ class DragonWarriorMap(object):
         self.height = len(self.layout * TILE_SIZE)
         self.tile_group_dict = {}
 
-    def load_map(self):
-        ...
+        self.roof_group = Group()  # 0
+        self.wall_group = Group()  # 1
+        self.wood_group = Group()  # 2
+        self.brick_group = Group()  # 3
+        self.chest_group = Group()  # 4
+        self.door_group = Group()  # 5
+        self.brick_stairdn_group = Group()  # 6
+        self.brick_stairup_group = Group()  # 7
+        self.barrier_group = Group()  # 8
+        self.weapon_sign_group = Group()  # 9
+        self.inn_sign_group = Group()  # 10
+        self.castle_group = Group()  # 11
+        self.town_group = Group()  # 12
+        self.grass_group = Group()  # 13
+        self.trees_group = Group()  # 14
+        self.hills_group = Group()  # 15
+        self.mountains_group = Group()  # 16
+        self.cave_group = Group()  # 17
+        self.grass_stairdn_group = Group()  # 18
+        self.sand_group = Group()  # 19
+        self.marsh_group = Group()  # 20
+        self.bridge_group = Group()  # 21
+        self.water_group = Group()  # 22
+        self.bottom_coast_group = Group()  # 23
+        self.bottom_left_coast_group = Group()  # 24
+        self.left_coast_group = Group()  # 25
+        self.top_left_coast_group = Group()  # 26
+        self.top_coast_group = Group()  # 27
+        self.top_right_coast_group = Group()  # 28
+        self.right_coast_group = Group()  # 29
+        self.bottom_right_coast_group = Group()  # 30
+        self.bottom_top_left_coast_group = Group()  # 31
+        self.bottom_top_coast_group = Group()  # 32
+        self.bottom_top_right_coast_group = Group()  # 33
+
+        self.tile_groups = [self.roof_group, self.wall_group, self.wood_group, self.brick_group, self.chest_group,
+                            self.door_group, self.brick_stairdn_group, self.brick_stairup_group, self.barrier_group,
+                            self.weapon_sign_group, self.inn_sign_group, self.castle_group, self.town_group,
+                            self.grass_group, self.trees_group, self.hills_group, self.mountains_group, self.cave_group,
+                            self.grass_stairdn_group, self.sand_group, self.marsh_group, self.bridge_group,
+                            self.water_group, self.bottom_coast_group, self.bottom_left_coast_group,
+                            self.left_coast_group, self.top_left_coast_group, self.top_coast_group,
+                            self.top_right_coast_group, self.right_coast_group, self.bottom_right_coast_group,
+                            self.bottom_top_left_coast_group, self.bottom_top_coast_group,
+                            self.bottom_top_right_coast_group]
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -130,14 +211,6 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.right_face_guard_sprites = RenderUpdates()
         self.left_face_guard_sprites = RenderUpdates()
         self.king_lorik_sprites = RenderUpdates()
-        self.brick_stairdn_group = Group()
-        self.door_group = Group()
-        self.chest_group = Group()
-        self.brick_group = Group()
-        self.wood_group = Group()
-        self.wall_group = Group()
-        self.roof_group = Group()
-
         self.map_tiles = map_tiles
         self.hero_images = hero_images
         self.player_sprites = None
@@ -171,47 +244,8 @@ class TantegelThroneRoom(DragonWarriorMap):
         y_offset = TILE_SIZE / 2
 
         layout_values = [get_tile_by_value(tile) for row in self.layout for tile in row]
-        tiles_to_map = ['ROOF',
-                        'WALL',
-                        'WOOD',
-                        'BRICK',
-                        'CHEST',
-                        'DOOR',
-                        'BRICK_STAIRDN',
-                        'BRICK_STAIRUP',
-                        'BARRIER',
-                        'WEAPON_SIGN',
-                        'INN_SIGN',
-                        'CASTLE',
-                        'TOWN',
-                        'GRASS',
-                        'TREES',
-                        'HILLS',
-                        'MOUNTAINS',
-                        'CAVE',
-                        'GRASS_STAIRDN',
-                        'SAND',
-                        'MARSH',
-                        'BRIDGE',
-                        'WATER',
-                        'BOTTOM_COAST',
-                        'BOTTOM_LEFT_COAST',
-                        'LEFT_COAST',
-                        'TOP_LEFT_COAST',
-                        'TOP_COAST',
-                        'TOP_RIGHT_COAST',
-                        'RIGHT_COAST',
-                        'BOTTOM_RIGHT_COAST',
-                        'BOTTOM_TOP_LEFT_COAST',
-                        'BOTTOM_TOP_COAST',
-                        'BOTTOM_TOP_RIGHT_COAST',
-                        'HERO',
-                        'KING_LORIK',
-                        'LEFT_FACE_GUARD',
-                        'RIGHT_FACE_GUARD',
-                        'ROAMING_GUARD']
-        self.tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tiles_to_map)
-        self.current_map_impassable_tiles = tuple(set(self.tiles_in_current_loaded_map) & set(impassable_tiles))
+        tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tiles_to_map)
+        self.current_map_impassable_tiles = tuple(set(tiles_in_current_loaded_map) & set(impassable_tiles))
 
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
@@ -290,21 +324,11 @@ class TantegelThroneRoom(DragonWarriorMap):
         """
         Draw static sprites on the big map.
         """
-        self.roof_group.draw(surface)
-        self.wall_group.draw(surface)
-        self.wood_group.draw(surface)
-        self.brick_group.draw(surface)
-        self.chest_group.draw(surface)
-        self.door_group.draw(surface)
-        self.brick_stairdn_group.draw(surface)
+        for group in self.tile_groups:
+            group.draw(surface)
 
 
 class TantegelCourtyard(DragonWarriorMap):
     def __init__(self):
         super().__init__()
-        self.door_group = Group()
-        self.chest_group = Group()
-        self.brick_group = Group()
-        self.wood_group = Group()
-        self.wall_group = Group()
-        self.roof_group = Group()
+        self.layout = TantegelCourtyard
