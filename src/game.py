@@ -165,19 +165,19 @@ class Game(object):
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
             if not self.collide(self.hero_layout_x_pos + 1, self.hero_layout_y_pos):
-                next_pos_y = self.move_vertically(curr_pos_y, next_pos_y, -1)
+                _, next_pos_y = self.move(curr_pos_x, next_pos_x, 0, curr_pos_y, next_pos_y, -1)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
             if not self.collide(self.hero_layout_x_pos, self.hero_layout_y_pos - 1):
-                next_pos_x = self.move_horizontally(curr_pos_x, next_pos_x, -1)
+                next_pos_x, _ = self.move(curr_pos_x, next_pos_x, -1, curr_pos_y, next_pos_y, 0)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
             if not self.collide(self.hero_layout_x_pos - 1, self.hero_layout_y_pos):
-                next_pos_y = self.move_vertically(curr_pos_y, next_pos_y, 1)
+                _, next_pos_y = self.move(curr_pos_x, next_pos_x, 0, curr_pos_y, next_pos_y, 1)
         if key[pygame.K_RIGHT]:
             self.current_map.player.direction = Direction.RIGHT.value
             if not self.collide(self.hero_layout_x_pos, self.hero_layout_y_pos + 1):
-                next_pos_x = self.move_horizontally(curr_pos_x, next_pos_x, 1)
+                next_pos_x, _ = self.move(curr_pos_x, next_pos_x, 1, curr_pos_y, next_pos_y, 0)
                 #  THIS MOVES SMOOTHLY
                 # self.current_map.player.rect.x += 1  # increment
                 # curr_pos_x -= 1
@@ -190,19 +190,14 @@ class Game(object):
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
         self.camera_pos = next_pos_x, next_pos_y
 
-    def move_horizontally(self, curr_pos_x, next_pos_x, delta_x):
+    def move(self, curr_pos_x, next_pos_x, delta_x, curr_pos_y, next_pos_y, delta_y):
         for x in range(TILE_SIZE):
             self.current_map.player.rect.x += delta_x
             next_pos_x = curr_pos_x + TILE_SIZE * -delta_x
-            pygame.time.delay(10)
-        return next_pos_x
-
-    def move_vertically(self, curr_pos_y, next_pos_y, delta_y):
-        for x in range(TILE_SIZE):
             self.current_map.player.rect.y += -delta_y
             next_pos_y = curr_pos_y + TILE_SIZE * delta_y
             pygame.time.delay(10)
-        return next_pos_y
+        return next_pos_x, next_pos_y
 
     def collide(self, x_offset, y_offset):
         play_sound(bump_sfx)
