@@ -51,4 +51,7 @@ class TestGame(TestCase):
 
     def test_move_player(self):
         key = pygame.key.get_pressed()
-        self.assertEquals(self.game.move_player(key), None)
+        self.assertEqual(self.game.move_player(key), None)
+
+    def test_get_tile_by_coordinates(self):
+        self.assertEqual(self.game.get_tile_by_coordinates(0, 0), 'ROOF')

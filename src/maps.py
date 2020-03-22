@@ -52,7 +52,7 @@ tile_key = {
     'ROAMING_GUARD': 38
 }
 
-impassable_tiles = (
+all_impassable_tiles = (
     'ROOF', 'WALL', 'WOOD', 'DOOR', 'BARRIER', 'WEAPON_SIGN', 'INN_SIGN', 'MOUNTAINS', 'WATER', 'BOTTOM_COAST',
     'BOTTOM_LEFT_COAST', 'LEFT_COAST', 'TOP_LEFT_COAST', 'TOP_COAST', 'TOP_RIGHT_COAST', 'RIGHT_COAST',
     'BOTTOM_RIGHT_COAST', 'BOTTOM_TOP_LEFT_COAST', 'BOTTOM_TOP_COAST', 'BOTTOM_TOP_RIGHT_COAST', 'KING_LORIK',
@@ -138,7 +138,7 @@ tiles_to_map = ['ROOF',
 
 class DragonWarriorMap(object):
     def __init__(self):
-        self.current_map_impassable_tiles = None
+        self.impassable_tiles = None
         self.center_pt = None
         self.player = None
         self.player_sprites = None
@@ -245,7 +245,7 @@ class TantegelThroneRoom(DragonWarriorMap):
 
         layout_values = [get_tile_by_value(tile) for row in self.layout for tile in row]
         tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tiles_to_map)
-        self.current_map_impassable_tiles = tuple(set(tiles_in_current_loaded_map) & set(impassable_tiles))
+        self.impassable_tiles = tuple(set(tiles_in_current_loaded_map) & set(all_impassable_tiles))
 
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):

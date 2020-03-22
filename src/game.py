@@ -76,8 +76,10 @@ class Game(object):
         self.make_bigmap()
         self.background = Surface(self.screen.get_size()).convert()
         self.get_roaming_guard_images()
-
         initial_hero_location = get_initial_character_location(self.current_map.layout, 'HERO')
+        self.hero_layout_x_pos = initial_hero_location.take(0)
+        self.hero_layout_y_pos = initial_hero_location.take(1)
+
         # TODO: Fix the initial camera_pos calculation.
         self.camera_pos = get_initial_camera_position(initial_hero_location)
         while True:
@@ -147,10 +149,13 @@ class Game(object):
         #     # Select button
         #     print("You pressed the escape key.")
         # For debugging purposes, this prints out the current tile that the hero is standing on.
-        # print(Player.get_tile_by_value(self.current_map.layout[self.current_map.player.rect.y // TILE_SIZE][
-        #                                    self.current_map.player.rect.x // TILE_SIZE]))
+        # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
+        #                                    self.current_map.player.rect.x // TILE_SIZE))
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
+
+    def get_tile_by_coordinates(self, y, x):
+        return get_tile_by_value(self.current_map.layout[y][x])
 
     def get_roaming_guard_images(self):
         self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
@@ -164,24 +169,20 @@ class Game(object):
         next_pos_x, next_pos_y = curr_pos_x, curr_pos_y
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
-            if not self.collide(self.hero_layout_x_pos + 1, self.hero_layout_y_pos):
-                _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=-1)
+            _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=-1)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
-            if not self.collide(self.hero_layout_x_pos, self.hero_layout_y_pos - 1):
-                next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=-1, delta_y=0)
+            next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=-1, delta_y=0)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
-            if not self.collide(self.hero_layout_x_pos - 1, self.hero_layout_y_pos):
-                _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=1)
+            _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=1)
         if key[pygame.K_RIGHT]:
             self.current_map.player.direction = Direction.RIGHT.value
-            if not self.collide(self.hero_layout_x_pos, self.hero_layout_y_pos + 1):
-                next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=1, delta_y=0)
-                #  THIS MOVES SMOOTHLY
-                # self.current_map.player.rect.x += 1  # increment
-                # curr_pos_x -= 1
-                # pygame.time.delay(10)
+            next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=1, delta_y=0)
+            #  THIS MOVES SMOOTHLY
+            # self.current_map.player.rect.x += 1  # increment
+            # curr_pos_x -= 1
+            # pygame.time.delay(10)
 
         # Sides collision
         next_pos_x = self.handle_lr_sides_collision(curr_pos_x, next_pos_x)
@@ -194,22 +195,24 @@ class Game(object):
         # TODO: Refactor move method to not have as many parameters.
         next_pos_x = curr_pos_x
         next_pos_y = curr_pos_y
-        for x in range(TILE_SIZE):
-
-            self.current_map.player.rect.x += delta_x
-            next_pos_x = curr_pos_x + TILE_SIZE * -delta_x
-
-            self.current_map.player.rect.y += -delta_y
-            next_pos_y = curr_pos_y + TILE_SIZE * delta_y
-
-            pygame.time.delay(10)
+        if not self.collide((self.current_map.player.rect.y // TILE_SIZE) + -delta_y,
+                            (self.current_map.player.rect.x // TILE_SIZE) + delta_x):
+            for x in range(TILE_SIZE):
+                self.current_map.player.rect.x += delta_x
+                next_pos_x = curr_pos_x + TILE_SIZE * -delta_x
+                self.current_map.player.rect.y += -delta_y
+                next_pos_y = curr_pos_y + TILE_SIZE * delta_y
+                pygame.time.delay(10)
         return next_pos_x, next_pos_y
 
-    def collide(self, x_offset, y_offset):
-        play_sound(bump_sfx)
-        return get_tile_by_value(
-            self.current_map.layout[x_offset][
-                y_offset]) in self.current_map.current_map_impassable_tiles if self.current_map.current_map_impassable_tiles else False
+    def collide(self, delta_x, delta_y):
+        if self.current_map.impassable_tiles:
+            if get_tile_by_value(self.current_map.layout[delta_x][delta_y]) in self.current_map.impassable_tiles:
+                # TODO: Slow down the bump sound effect.
+                play_sound(bump_sfx)
+                return True
+            else:
+                return False
 
     def handle_tb_sides_collision(self, curr_pos_y, next_pos_y):
         max_bound = self.current_map.height
@@ -242,22 +245,22 @@ class Game(object):
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
         if roaming_character.direction == Direction.DOWN.value:
             if get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
-                                     roaming_character_y_pos]) not in maps.impassable_tiles:
+                                     roaming_character_y_pos]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.y += TILE_SIZE
                 pos_y -= 1
         elif roaming_character.direction == Direction.LEFT.value:
             if get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
-                                     roaming_character_y_pos - 1]) not in maps.impassable_tiles:
+                                     roaming_character_y_pos - 1]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.x -= TILE_SIZE
                 pos_x -= 1
         elif roaming_character.direction == Direction.UP.value:
             if get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
-                                     roaming_character_y_pos]) not in maps.impassable_tiles:
+                                     roaming_character_y_pos]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.y -= TILE_SIZE
                 pos_y += 1
         elif roaming_character.direction == Direction.RIGHT.value:
             if get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
-                                     roaming_character_y_pos + 1]) not in maps.impassable_tiles:
+                                     roaming_character_y_pos + 1]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.x += TILE_SIZE
                 pos_x += 1
         else:
