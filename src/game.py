@@ -59,6 +59,9 @@ class Game(object):
         self.current_map_height = None
         self.background = None
         self.current_map = None
+
+        self.curr_pos_x, self.curr_pos_y = None, None
+
         self.king_lorik_images = None
         self.left_face_guard_images = None
         self.right_face_guard_images = None
@@ -136,18 +139,19 @@ class Game(object):
         self.hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
         self.move_player(key)
         # # TODO: implement actual function of B, A, Start, Select buttons.
-        # if key[pygame.K_z]:
-        #     # B button
-        #     print("You pressed the z key.")
-        # if key[pygame.K_y]:
-        #     # A button
-        #     print("You pressed the y key.")
-        # if key[pygame.K_SPACE]:
-        #     # Start button
-        #     print("You pressed the space bar.")
-        # if key[pygame.K_ESCAPE]:
-        #     # Select button
-        #     print("You pressed the escape key.")
+        if key[pygame.K_z]:
+            # B button
+            print("You pressed the z key.")
+        if key[pygame.K_y]:
+            # A button
+            print("You pressed the y key.")
+        if key[pygame.K_SPACE]:
+            # Start button
+            print("You pressed the space bar.")
+        if key[pygame.K_ESCAPE]:
+            # Select button
+            print("You pressed the escape key.")
+
         # For debugging purposes, this prints out the current tile that the hero is standing on.
         # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
         #                                    self.current_map.player.rect.x // TILE_SIZE))
@@ -164,44 +168,43 @@ class Game(object):
         self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
 
     def move_player(self, key):
-        # TODO: Move only if button is pressed for 0.5 seconds.
-        curr_pos_x, curr_pos_y = self.camera_pos
-        next_pos_x, next_pos_y = curr_pos_x, curr_pos_y
+        self.curr_pos_x, self.curr_pos_y = self.camera_pos
+        next_pos_x, next_pos_y = self.curr_pos_x, self.curr_pos_y
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
-            _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=-1)
+            _, next_pos_y = self.move(delta_x=0, delta_y=-1)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
-            next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=-1, delta_y=0)
+            next_pos_x, _ = self.move(delta_x=-1, delta_y=0)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
-            _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=1)
+            _, next_pos_y = self.move(delta_x=0, delta_y=1)
         if key[pygame.K_RIGHT]:
             self.current_map.player.direction = Direction.RIGHT.value
-            next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=1, delta_y=0)
+            next_pos_x, _ = self.move(delta_x=1, delta_y=0)
             #  THIS MOVES SMOOTHLY
             # self.current_map.player.rect.x += 1  # increment
             # curr_pos_x -= 1
             # pygame.time.delay(10)
 
         # Sides collision
-        next_pos_x = self.handle_lr_sides_collision(curr_pos_x, next_pos_x)
-        next_pos_y = self.handle_tb_sides_collision(curr_pos_y, next_pos_y)
+        next_pos_x = self.handle_lr_sides_collision(next_pos_x)
+        next_pos_y = self.handle_tb_sides_collision(next_pos_y)
         # for reference:
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
         self.camera_pos = next_pos_x, next_pos_y
 
-    def move(self, curr_pos_x, curr_pos_y, delta_x, delta_y):
+    def move(self, delta_x, delta_y):
         # TODO: Refactor move method to not have as many parameters.
-        next_pos_x = curr_pos_x
-        next_pos_y = curr_pos_y
+        next_pos_x = self.curr_pos_x
+        next_pos_y = self.curr_pos_y
         if not self.collide((self.current_map.player.rect.y // TILE_SIZE) + -delta_y,
                             (self.current_map.player.rect.x // TILE_SIZE) + delta_x):
             for x in range(TILE_SIZE):
                 self.current_map.player.rect.x += delta_x
-                next_pos_x = curr_pos_x + TILE_SIZE * -delta_x
+                next_pos_x = self.curr_pos_x + TILE_SIZE * -delta_x
                 self.current_map.player.rect.y += -delta_y
-                next_pos_y = curr_pos_y + TILE_SIZE * delta_y
+                next_pos_y = self.curr_pos_y + TILE_SIZE * delta_y
                 pygame.time.delay(10)
         return next_pos_x, next_pos_y
 
@@ -214,32 +217,32 @@ class Game(object):
             else:
                 return False
 
-    def handle_tb_sides_collision(self, curr_pos_y, next_pos_y):
+    def handle_tb_sides_collision(self, next_pos_y):
         max_bound = self.current_map.height
         min_bound = 0
         player_pos = self.current_map.player.rect.y
         if player_pos < min_bound:
             self.current_map.player.rect.y = min_bound
             play_sound(bump_sfx)
-            next_pos_y = curr_pos_y
+            next_pos_y = self.curr_pos_y
         elif player_pos > max_bound - TILE_SIZE:
             self.current_map.player.rect.y = max_bound - TILE_SIZE
             play_sound(bump_sfx)
-            next_pos_y = curr_pos_y
+            next_pos_y = self.curr_pos_y
         return next_pos_y
 
-    def handle_lr_sides_collision(self, curr_pos_x, next_pos_x):
+    def handle_lr_sides_collision(self, next_pos_x):
         max_bound = self.current_map.width
         min_bound = 0
         player_pos = self.current_map.player.rect.x
         if player_pos < min_bound:  # Simple Sides Collision
             self.current_map.player.rect.x = min_bound  # Reset Player Rect Coord
             play_sound(bump_sfx)
-            next_pos_x = curr_pos_x
+            next_pos_x = self.curr_pos_x
         elif player_pos > max_bound - TILE_SIZE:
             self.current_map.player.rect.x = max_bound - TILE_SIZE
             play_sound(bump_sfx)
-            next_pos_x = curr_pos_x
+            next_pos_x = self.curr_pos_x
         return next_pos_x
 
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
