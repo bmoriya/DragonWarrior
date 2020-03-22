@@ -20,7 +20,10 @@ def create_key_mock(pressed_key):
 
 
 class TestMap(DragonWarriorMap):
-    pass
+    def __init__(self):
+        super().__init__()
+        self.layout = [[0, 0],
+                       [0, 34]]
 
 
 class TestGame(TestCase):

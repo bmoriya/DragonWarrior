@@ -20,8 +20,8 @@ from src.player import get_tile_by_value
 
 
 def get_initial_camera_position(initial_hero_location):
-    return np.negative(initial_hero_location.take(0) * TILE_SIZE / 2), np.negative(
-        initial_hero_location.take(1) * TILE_SIZE / 4.333333333333333)
+    return int(np.negative(initial_hero_location.take(0) * TILE_SIZE / 2)), int(np.negative(
+        initial_hero_location.take(1) * TILE_SIZE / 4.333333333333333))
 
 
 class Game(object):
@@ -165,19 +165,19 @@ class Game(object):
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
             if not self.collide(self.hero_layout_x_pos + 1, self.hero_layout_y_pos):
-                _, next_pos_y = self.move(curr_pos_x, next_pos_x, 0, curr_pos_y, next_pos_y, -1)
+                _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=-1)
         if key[pygame.K_LEFT]:
             self.current_map.player.direction = Direction.LEFT.value
             if not self.collide(self.hero_layout_x_pos, self.hero_layout_y_pos - 1):
-                next_pos_x, _ = self.move(curr_pos_x, next_pos_x, -1, curr_pos_y, next_pos_y, 0)
+                next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=-1, delta_y=0)
         if key[pygame.K_UP]:
             self.current_map.player.direction = Direction.UP.value
             if not self.collide(self.hero_layout_x_pos - 1, self.hero_layout_y_pos):
-                _, next_pos_y = self.move(curr_pos_x, next_pos_x, 0, curr_pos_y, next_pos_y, 1)
+                _, next_pos_y = self.move(curr_pos_x, curr_pos_y, delta_x=0, delta_y=1)
         if key[pygame.K_RIGHT]:
             self.current_map.player.direction = Direction.RIGHT.value
             if not self.collide(self.hero_layout_x_pos, self.hero_layout_y_pos + 1):
-                next_pos_x, _ = self.move(curr_pos_x, next_pos_x, 1, curr_pos_y, next_pos_y, 0)
+                next_pos_x, _ = self.move(curr_pos_x, curr_pos_y, delta_x=1, delta_y=0)
                 #  THIS MOVES SMOOTHLY
                 # self.current_map.player.rect.x += 1  # increment
                 # curr_pos_x -= 1
@@ -190,12 +190,18 @@ class Game(object):
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
         self.camera_pos = next_pos_x, next_pos_y
 
-    def move(self, curr_pos_x, next_pos_x, delta_x, curr_pos_y, next_pos_y, delta_y):
+    def move(self, curr_pos_x, curr_pos_y, delta_x, delta_y):
+        # TODO: Refactor move method to not have as many parameters.
+        next_pos_x = curr_pos_x
+        next_pos_y = curr_pos_y
         for x in range(TILE_SIZE):
+
             self.current_map.player.rect.x += delta_x
             next_pos_x = curr_pos_x + TILE_SIZE * -delta_x
+
             self.current_map.player.rect.y += -delta_y
             next_pos_y = curr_pos_y + TILE_SIZE * delta_y
+
             pygame.time.delay(10)
         return next_pos_x, next_pos_y
 
