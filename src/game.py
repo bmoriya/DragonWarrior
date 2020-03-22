@@ -68,6 +68,7 @@ class Game(object):
         self.map_tilesheet = None
         self.hero_layout_x_pos = None
         self.hero_layout_y_pos = None
+        self.camera_pos = None
 
     def main(self):
         self.load_current_map()
@@ -78,10 +79,10 @@ class Game(object):
 
         initial_hero_location = get_initial_character_location(self.current_map.layout, 'HERO')
         # TODO: Fix the initial camera_pos calculation.
-        camera_pos = get_initial_camera_position(initial_hero_location)
+        self.camera_pos = get_initial_camera_position(initial_hero_location)
         while True:
             self.clock.tick(self.FPS)
-            camera_pos = self.get_events(camera_pos)
+            self.get_events()
             self.current_map.draw_map(self.bigmap)
             for sprites in self.current_map.character_sprites:
                 sprites.clear(self.screen, self.background)
@@ -92,7 +93,7 @@ class Game(object):
                 character.animate()
             for sprites in self.current_map.character_sprites:
                 sprites.draw(self.background)
-            self.screen.blit(self.background, camera_pos)
+            self.screen.blit(self.background, self.camera_pos)
             # self.screen.blit(self.background, self.ORIGIN)
             flip()
 
@@ -122,7 +123,7 @@ class Game(object):
             # roaming character sides collision
             self.handle_roaming_character_map_edge_side_collision(roaming_character)
 
-    def get_events(self, camera_pos):
+    def get_events(self):
         for event in get():
             if event.type == QUIT:
                 quit()
@@ -131,7 +132,7 @@ class Game(object):
         key = pygame.key.get_pressed()
         self.hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
         self.hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
-        camera_pos_x, camera_pos_y = self.move_player(camera_pos, key)
+        self.move_player(key)
         # # TODO: implement actual function of B, A, Start, Select buttons.
         # if key[pygame.K_z]:
         #     # B button
@@ -145,13 +146,11 @@ class Game(object):
         # if key[pygame.K_ESCAPE]:
         #     # Select button
         #     print("You pressed the escape key.")
-        camera_pos = int(camera_pos_x), int(camera_pos_y)
         # For debugging purposes, this prints out the current tile that the hero is standing on.
         # print(Player.get_tile_by_value(self.current_map.layout[self.current_map.player.rect.y // TILE_SIZE][
         #                                    self.current_map.player.rect.x // TILE_SIZE]))
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
-        return camera_pos
 
     def get_roaming_guard_images(self):
         self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
@@ -159,15 +158,16 @@ class Game(object):
         self.current_map.roaming_guard.up_images = self.roaming_guard_images[Direction.UP.value]
         self.current_map.roaming_guard.right_images = self.roaming_guard_images[Direction.RIGHT.value]
 
-    def move_player(self, camera_pos, key):
+    def move_player(self, key):
         # TODO: Move only if button is pressed for 0.5 seconds.
-        curr_pos_x, curr_pos_y = camera_pos
+        curr_pos_x, curr_pos_y = self.camera_pos
         next_pos_x, next_pos_y = curr_pos_x, curr_pos_y
         if key[pygame.K_DOWN]:
             self.current_map.player.direction = Direction.DOWN.value
             if not self.collide(self.hero_layout_x_pos + 1, self.hero_layout_y_pos):
                 for x in range(TILE_SIZE):
                     self.current_map.player.rect.y += 1
+                    next_pos_x = curr_pos_x
                     next_pos_y = curr_pos_y - TILE_SIZE
                     pygame.time.delay(10)
         if key[pygame.K_LEFT]:
@@ -201,7 +201,7 @@ class Game(object):
         next_pos_y = self.handle_tb_sides_collision(curr_pos_y, next_pos_y)
         # for reference:
         # self.current_map.height - TILE_SIZE is equal to WIN_HEIGHT - ((WIN_HEIGHT // 23) * 1.5)
-        return next_pos_x, next_pos_y
+        self.camera_pos = next_pos_x, next_pos_y
 
     def collide(self, x_offset, y_offset):
         play_sound(bump_sfx)
