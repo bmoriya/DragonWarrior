@@ -138,6 +138,7 @@ tiles_to_map = ['ROOF',
 
 class DragonWarriorMap(object):
     def __init__(self):
+        self.current_map_impassable_tiles = None
         self.center_pt = None
         self.player = None
         self.player_sprites = None
@@ -232,7 +233,6 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.height = len(self.layout * TILE_SIZE)
         self.music_file_path = TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
         self.tiles_in_current_loaded_map = None
-        self.current_map_impassable_tiles = None
         if PLAY_MUSIC:
             mixer.music.load(self.music_file_path)
             mixer.music.play(-1)
