@@ -198,8 +198,8 @@ class Game(object):
         # TODO: Refactor move method to not have as many parameters.
         next_pos_x = self.curr_pos_x
         next_pos_y = self.curr_pos_y
-        if not self.collide((self.current_map.player.rect.y // TILE_SIZE) + -delta_y,
-                            (self.current_map.player.rect.x // TILE_SIZE) + delta_x):
+        if not self.did_collide((self.current_map.player.rect.y // TILE_SIZE) + -delta_y,
+                                (self.current_map.player.rect.x // TILE_SIZE) + delta_x):
             for x in range(TILE_SIZE):
                 self.current_map.player.rect.x += delta_x
                 next_pos_x = self.curr_pos_x + TILE_SIZE * -delta_x
@@ -208,14 +208,13 @@ class Game(object):
                 pygame.time.delay(10)
         return next_pos_x, next_pos_y
 
-    def collide(self, delta_x, delta_y):
-        if self.current_map.impassable_tiles:
-            if get_tile_by_value(self.current_map.layout[delta_x][delta_y]) in self.current_map.impassable_tiles:
-                # TODO: Slow down the bump sound effect.
-                play_sound(bump_sfx)
-                return True
-            else:
-                return False
+    def did_collide(self, delta_x, delta_y):
+        if self.current_map.impassable_tiles and get_tile_by_value(
+                self.current_map.layout[delta_x][delta_y]) in self.current_map.impassable_tiles:
+            # TODO: Slow down the bump sound effect.
+            play_sound(bump_sfx)
+            return True
+        return False
 
     def handle_tb_sides_collision(self, next_pos_y):
         max_bound = self.current_map.height
