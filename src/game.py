@@ -87,20 +87,25 @@ class Game(object):
         self.camera_pos = get_initial_camera_position(initial_hero_location)
         while True:
             self.clock.tick(self.FPS)
-            self.get_events()
-            self.current_map.draw_map(self.bigmap)
-            for sprites in self.current_map.character_sprites:
-                sprites.clear(self.screen, self.background)
-            self.screen.fill(self.BACK_FILL_COLOR)
-            self.background = self.get_background()
-            self.move_roaming_characters()
-            for character in self.current_map.characters:
-                character.animate()
-            for sprites in self.current_map.character_sprites:
-                sprites.draw(self.background)
-            self.screen.blit(self.background, self.camera_pos)
-            # self.screen.blit(self.background, self.ORIGIN)
-            flip()
+            self.events()
+            self.draw()
+            self.update()
+
+    def draw(self):
+        self.current_map.draw_map(self.bigmap)
+        for sprites in self.current_map.character_sprites:
+            sprites.clear(self.screen, self.background)
+        self.screen.fill(self.BACK_FILL_COLOR)
+        self.background = self.get_background()
+        for character in self.current_map.characters:
+            character.animate()
+        for sprites in self.current_map.character_sprites:
+            sprites.draw(self.background)
+
+    def update(self):
+        self.screen.blit(self.background, self.camera_pos)
+        # self.screen.blit(self.background, self.ORIGIN)
+        flip()
 
     def get_background(self):
         return self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
@@ -113,11 +118,6 @@ class Game(object):
             roaming_character_x_pos = roaming_character.rect.y // TILE_SIZE
             roaming_character_y_pos = roaming_character.rect.x // TILE_SIZE
             now = get_ticks()
-            # Useful for debugging roaming characters:
-            # print(
-            #     Player.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][roaming_character_y_pos]))
-            # print("roaming_character_x_pos: " + str(roaming_character_x_pos))
-            # print("roaming_character_y_pos: " + str(roaming_character_y_pos))
             if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
                 self.last_roaming_character_clock_check = now
                 roaming_character.direction = random.randrange(4)
@@ -128,7 +128,7 @@ class Game(object):
             # roaming character sides collision
             self.handle_roaming_character_map_edge_side_collision(roaming_character)
 
-    def get_events(self):
+    def events(self):
         for event in get():
             if event.type == QUIT:
                 quit()
@@ -137,6 +137,7 @@ class Game(object):
         key = pygame.key.get_pressed()
         self.hero_layout_x_pos = self.current_map.player.rect.y // TILE_SIZE
         self.hero_layout_y_pos = self.current_map.player.rect.x // TILE_SIZE
+        self.move_roaming_characters()
         self.move_player(key)
         # # TODO: implement actual function of B, A, Start, Select buttons.
         if key[pygame.K_z]:
