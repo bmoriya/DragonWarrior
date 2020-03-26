@@ -207,19 +207,19 @@ class TantegelThroneRoom(DragonWarriorMap):
                 self.center_pt = [(x * TILE_SIZE) + x_offset,
                                   (y * TILE_SIZE) + y_offset]
                 if self.layout[y][x] == self.tile_key['ROOF']['val']:
-                    self.add_tile(tile_type=self.tile_key['ROOF']['val'], tile_group=self.roof_group)
+                    self.add_tile(tile_value=self.tile_key['ROOF']['val'], tile_group=self.roof_group)
                 elif self.layout[y][x] == self.tile_key['WALL']['val']:
-                    self.add_tile(tile_type=self.tile_key['WALL']['val'], tile_group=self.wall_group)
+                    self.add_tile(tile_value=self.tile_key['WALL']['val'], tile_group=self.wall_group)
                 elif self.layout[y][x] == self.tile_key['WOOD']['val']:
-                    self.add_tile(tile_type=self.tile_key['WOOD']['val'], tile_group=self.wood_group)
+                    self.add_tile(tile_value=self.tile_key['WOOD']['val'], tile_group=self.wood_group)
                 elif self.layout[y][x] == self.tile_key['BRICK']['val']:
-                    self.add_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                    self.add_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
                 elif self.layout[y][x] == self.tile_key['CHEST']['val']:
-                    self.add_tile(tile_type=self.tile_key['CHEST']['val'], tile_group=self.chest_group)
+                    self.add_tile(tile_value=self.tile_key['CHEST']['val'], tile_group=self.chest_group)
                 elif self.layout[y][x] == self.tile_key['DOOR']['val']:
-                    self.add_tile(tile_type=self.tile_key['DOOR']['val'], tile_group=self.door_group)
+                    self.add_tile(tile_value=self.tile_key['DOOR']['val'], tile_group=self.door_group)
                 elif self.layout[y][x] == self.tile_key['BRICK_STAIRDN']['val']:
-                    self.add_tile(tile_type=self.tile_key['BRICK_STAIRDN']['val'], tile_group=self.brick_stairdn_group)
+                    self.add_tile(tile_value=self.tile_key['BRICK_STAIRDN']['val'], tile_group=self.brick_stairdn_group)
                 elif self.layout[y][x] == self.tile_key['HERO']['val']:
                     self.player = Player(center_point=self.center_pt,
                                          down_img=self.hero_images[Direction.DOWN.value],
@@ -229,22 +229,22 @@ class TantegelThroneRoom(DragonWarriorMap):
                     # Make player start facing up if in Tantegel Throne Room, else face down.
                     if isinstance(current_loaded_map, TantegelThroneRoom):
                         self.player.direction = Direction.UP.value
-                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                    self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
                 elif self.layout[y][x] == self.tile_key['KING_LORIK']['val']:
                     self.king_lorik = AnimatedSprite(self.center_pt, 0,
                                                      self.king_lorik_images[0], name='KING_LORIK')
                     self.king_lorik_sprites.add(self.king_lorik)
-                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                    self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
                 elif self.layout[y][x] == self.tile_key['LEFT_FACE_GUARD']['val']:
                     self.left_face_guard = AnimatedSprite(self.center_pt, 0,
                                                           self.left_face_guard_images[0], name='LEFT_FACE_GUARD')
                     self.left_face_guard_sprites.add(self.left_face_guard)
-                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                    self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
                 elif self.layout[y][x] == self.tile_key['RIGHT_FACE_GUARD']['val']:
                     self.right_face_guard = AnimatedSprite(self.center_pt, 0,
                                                            self.right_face_guard_images[0], name='RIGHT_FACE_GUARD')
                     self.right_face_guard_sprites.add(self.right_face_guard)
-                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                    self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
                 elif self.layout[y][x] == self.tile_key['ROAMING_GUARD']['val']:
                     self.roaming_guard = AnimatedSprite(self.center_pt, 0,
                                                         self.roaming_guard_images[0], name='ROAMING_GUARD')
@@ -252,10 +252,10 @@ class TantegelThroneRoom(DragonWarriorMap):
                         character_name=self.roaming_guard.name)
                     self.roaming_guard_sprites.add(self.roaming_guard)
                     self.roaming_characters.append(self.roaming_guard)
-                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                    self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
 
         self.player_sprites = RenderUpdates(self.player)
-        self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+        self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
         self.characters = [self.player,
                            self.king_lorik,
                            self.left_face_guard,
@@ -267,12 +267,12 @@ class TantegelThroneRoom(DragonWarriorMap):
                                   self.right_face_guard_sprites,
                                   self.roaming_guard_sprites]
 
-    def set_underlying_tile(self, tile_type, tile_group):
-        tile = BaseSprite(self.center_pt, self.map_tiles[tile_type][0])
+    def set_underlying_tile(self, tile_value, tile_group):
+        tile = BaseSprite(self.center_pt, self.map_tiles[tile_value][0])
         tile_group.add(tile)
 
-    def add_tile(self, tile_type, tile_group):
-        tile = BaseSprite(self.center_pt, self.map_tiles[tile_type][0])
+    def add_tile(self, tile_value, tile_group):
+        tile = BaseSprite(self.center_pt, self.map_tiles[tile_value][0])
         tile_group.add(tile)
 
     def draw_map(self, surface):
