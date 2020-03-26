@@ -94,46 +94,8 @@ tantegel_courtyard = [
 
 current_map = None
 
+
 # Working on class refactoring of maps
-tiles_to_map = ['ROOF',
-                'WALL',
-                'WOOD',
-                'BRICK',
-                'CHEST',
-                'DOOR',
-                'BRICK_STAIRDN',
-                'BRICK_STAIRUP',
-                'BARRIER',
-                'WEAPON_SIGN',
-                'INN_SIGN',
-                'CASTLE',
-                'TOWN',
-                'GRASS',
-                'TREES',
-                'HILLS',
-                'MOUNTAINS',
-                'CAVE',
-                'GRASS_STAIRDN',
-                'SAND',
-                'MARSH',
-                'BRIDGE',
-                'WATER',
-                'BOTTOM_COAST',
-                'BOTTOM_LEFT_COAST',
-                'LEFT_COAST',
-                'TOP_LEFT_COAST',
-                'TOP_COAST',
-                'TOP_RIGHT_COAST',
-                'RIGHT_COAST',
-                'BOTTOM_RIGHT_COAST',
-                'BOTTOM_TOP_LEFT_COAST',
-                'BOTTOM_TOP_COAST',
-                'BOTTOM_TOP_RIGHT_COAST',
-                'HERO',
-                'KING_LORIK',
-                'LEFT_FACE_GUARD',
-                'RIGHT_FACE_GUARD',
-                'ROAMING_GUARD']
 
 
 class DragonWarriorMap(object):
@@ -244,7 +206,7 @@ class TantegelThroneRoom(DragonWarriorMap):
         y_offset = TILE_SIZE / 2
 
         layout_values = [get_tile_by_value(tile) for row in self.layout for tile in row]
-        tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tiles_to_map)
+        tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tile_key.keys())
         self.impassable_tiles = tuple(set(tiles_in_current_loaded_map) & set(all_impassable_tiles))
 
         for y in range(len(self.layout)):

@@ -124,8 +124,6 @@ class Game(object):
                 self.move_roaming_character(roaming_character.position.take(0), roaming_character.position.take(1),
                                             roaming_character, roaming_character_x_pos,
                                             roaming_character_y_pos)
-
-            # roaming character sides collision
             self.handle_roaming_character_map_edge_side_collision(roaming_character)
 
     def events(self):
@@ -187,7 +185,6 @@ class Game(object):
             # self.current_map.player.rect.x += 1  # increment
             # curr_pos_x -= 1
             # pygame.time.delay(10)
-
         # Sides collision
         next_pos_x = self.handle_lr_sides_collision(next_pos_x)
         next_pos_y = self.handle_tb_sides_collision(next_pos_y)
@@ -196,7 +193,6 @@ class Game(object):
         self.camera_pos = next_pos_x, next_pos_y
 
     def move(self, delta_x, delta_y):
-        # TODO: Refactor move method to not have as many parameters.
         next_pos_x = self.curr_pos_x
         next_pos_y = self.curr_pos_y
         if not self.did_collide((self.current_map.player.rect.y // TILE_SIZE) + -delta_y,
