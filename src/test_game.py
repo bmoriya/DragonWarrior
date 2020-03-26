@@ -5,7 +5,7 @@ from pygame.imageext import load_extended
 from pygame.transform import scale
 
 from src.config import UNARMED_HERO_PATH, SCALE
-from src.game import Game
+from src.game import Game, get_initial_camera_position
 from src.maps import DragonWarriorMap
 from src.player import Player
 
@@ -33,6 +33,7 @@ class TestGame(TestCase):
         self.game.camera_pos = 0, 0
         self.center_pt = 0, 0
         self.game.current_map = TestMap()
+        self.initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
         unarmed_hero_sheet = load_extended(UNARMED_HERO_PATH)
         unarmed_hero_sheet = scale(unarmed_hero_sheet,
                                    (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
@@ -48,6 +49,9 @@ class TestGame(TestCase):
         pygame.key.get_pressed = create_key_mock(pygame.K_UP)
         pygame.key.get_pressed = create_key_mock(pygame.K_DOWN)
         pygame.key.get_pressed = create_key_mock(pygame.K_LEFT)
+
+    # def test_get_initial_camera_position(self):
+    #     self.assertEqual(get_initial_camera_position(self.initial_hero_location), [[0, 0]])
 
     def test_move_player(self):
         key = pygame.key.get_pressed()
