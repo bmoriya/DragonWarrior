@@ -2,10 +2,8 @@
 from enum import Enum
 from os.path import join, sep
 
-import numpy as np
 import pygame
 
-from src import maps
 from src.config import SFX_DIR, PLAY_SOUND
 
 
@@ -42,9 +40,3 @@ def get_image(path):
         image = pygame.image.load(canonicalized_path)
         _image_library[path] = image
     return image
-
-
-def get_initial_character_location(current_map_layout, character_name):
-    layout_numpy_array = np.array(current_map_layout)
-    hero_layout_position = np.asarray(np.where(layout_numpy_array == maps.tile_key[character_name])).T
-    return hero_layout_position

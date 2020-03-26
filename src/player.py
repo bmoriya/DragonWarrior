@@ -1,10 +1,5 @@
-from src import maps
 from src.animated_sprite import AnimatedSprite
 from src.common import Direction
-
-
-def get_tile_by_value(position):
-    return maps.tile_key_keys[maps.tile_key_values.index(position)]
 
 
 class Player(AnimatedSprite):

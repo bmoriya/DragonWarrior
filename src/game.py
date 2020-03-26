@@ -12,11 +12,10 @@ from pygame.time import get_ticks
 from pygame.transform import scale
 
 from src import maps
-from src.common import Direction, get_initial_character_location, play_sound, bump_sfx
+from src.common import Direction, play_sound, bump_sfx
 from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_FACE_GUARD_PATH, \
     RIGHT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
 from src.maps import TantegelThroneRoom
-from src.player import get_tile_by_value
 
 
 def get_initial_camera_position(initial_hero_location):
@@ -79,7 +78,7 @@ class Game(object):
         self.make_bigmap()
         self.background = Surface(self.screen.get_size()).convert()
         self.get_roaming_guard_images()
-        initial_hero_location = get_initial_character_location(self.current_map.layout, 'HERO')
+        initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_x_pos = initial_hero_location.take(0)
         self.hero_layout_y_pos = initial_hero_location.take(1)
 
@@ -158,7 +157,7 @@ class Game(object):
         # camera_pos = -160, -96
 
     def get_tile_by_coordinates(self, y, x):
-        return get_tile_by_value(self.current_map.layout[y][x])
+        return self.current_map.get_tile_by_value(self.current_map.layout[y][x])
 
     def get_roaming_guard_images(self):
         self.current_map.roaming_guard.down_images = self.roaming_guard_images[Direction.DOWN.value]
@@ -206,7 +205,7 @@ class Game(object):
         return next_pos_x, next_pos_y
 
     def did_collide(self, delta_x, delta_y):
-        if self.current_map.impassable_tiles and get_tile_by_value(
+        if self.current_map.impassable_tiles and self.current_map.get_tile_by_value(
                 self.current_map.layout[delta_x][delta_y]) in self.current_map.impassable_tiles:
             # TODO: Slow down the bump sound effect.
             play_sound(bump_sfx)
@@ -243,22 +242,22 @@ class Game(object):
 
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
         if roaming_character.direction == Direction.DOWN.value:
-            if get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
+            if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
                                      roaming_character_y_pos]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.y += TILE_SIZE
                 pos_y -= 1
         elif roaming_character.direction == Direction.LEFT.value:
-            if get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
+            if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
                                      roaming_character_y_pos - 1]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.x -= TILE_SIZE
                 pos_x -= 1
         elif roaming_character.direction == Direction.UP.value:
-            if get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
+            if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
                                      roaming_character_y_pos]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.y -= TILE_SIZE
                 pos_y += 1
         elif roaming_character.direction == Direction.RIGHT.value:
-            if get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
+            if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
                                      roaming_character_y_pos + 1]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.x += TILE_SIZE
                 pos_x += 1

@@ -1,65 +1,22 @@
+from collections import OrderedDict
+
+import numpy as np
 from pygame import mixer
 from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import Direction, get_initial_character_location
+from src.common import Direction
 from src.config import TILE_SIZE, TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH, PLAY_MUSIC
-from src.player import Player, get_tile_by_value
-
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
-
-tile_key = {
-    'ROOF': 0,
-    'WALL': 1,
-    'WOOD': 2,
-    'BRICK': 3,
-    'CHEST': 4,
-    'DOOR': 5,
-    'BRICK_STAIRDN': 6,
-    'BRICK_STAIRUP': 7,
-    'BARRIER': 8,
-    'WEAPON_SIGN': 9,
-    'INN_SIGN': 10,
-    'CASTLE': 11,
-    'TOWN': 12,
-    'GRASS': 13,
-    'TREES': 14,
-    'HILLS': 15,
-    'MOUNTAINS': 16,
-    'CAVE': 17,
-    'GRASS_STAIRDN': 18,
-    'SAND': 19,
-    'MARSH': 20,
-    'BRIDGE': 21,
-    'WATER': 22,
-    'BOTTOM_COAST': 23,
-    'BOTTOM_LEFT_COAST': 24,
-    'LEFT_COAST': 25,
-    'TOP_LEFT_COAST': 26,
-    'TOP_COAST': 27,
-    'TOP_RIGHT_COAST': 28,
-    'RIGHT_COAST': 29,
-    'BOTTOM_RIGHT_COAST': 30,
-    'BOTTOM_TOP_LEFT_COAST': 31,
-    'BOTTOM_TOP_COAST': 32,
-    'BOTTOM_TOP_RIGHT_COAST': 33,
-    'HERO': 34,
-    'KING_LORIK': 35,
-    'LEFT_FACE_GUARD': 36,
-    'RIGHT_FACE_GUARD': 37,
-    'ROAMING_GUARD': 38
-}
+from src.player import Player
 
 all_impassable_tiles = (
     'ROOF', 'WALL', 'WOOD', 'DOOR', 'BARRIER', 'WEAPON_SIGN', 'INN_SIGN', 'MOUNTAINS', 'WATER', 'BOTTOM_COAST',
     'BOTTOM_LEFT_COAST', 'LEFT_COAST', 'TOP_LEFT_COAST', 'TOP_COAST', 'TOP_RIGHT_COAST', 'RIGHT_COAST',
     'BOTTOM_RIGHT_COAST', 'BOTTOM_TOP_LEFT_COAST', 'BOTTOM_TOP_COAST', 'BOTTOM_TOP_RIGHT_COAST', 'KING_LORIK',
     'LEFT_FACE_GUARD', 'RIGHT_FACE_GUARD')
-
-tile_key_keys = list(tile_key.keys())
-tile_key_values = list(tile_key.values())
 
 tantegel_throne_room = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -98,7 +55,7 @@ current_map = None
 # Working on class refactoring of maps
 
 
-class DragonWarriorMap(object):
+class DragonWarriorMap:
     def __init__(self):
         self.impassable_tiles = None
         self.center_pt = None
@@ -148,16 +105,55 @@ class DragonWarriorMap(object):
         self.bottom_top_coast_group = Group()  # 32
         self.bottom_top_right_coast_group = Group()  # 33
 
-        self.tile_groups = [self.roof_group, self.wall_group, self.wood_group, self.brick_group, self.chest_group,
-                            self.door_group, self.brick_stairdn_group, self.brick_stairup_group, self.barrier_group,
-                            self.weapon_sign_group, self.inn_sign_group, self.castle_group, self.town_group,
-                            self.grass_group, self.trees_group, self.hills_group, self.mountains_group, self.cave_group,
-                            self.grass_stairdn_group, self.sand_group, self.marsh_group, self.bridge_group,
-                            self.water_group, self.bottom_coast_group, self.bottom_left_coast_group,
-                            self.left_coast_group, self.top_left_coast_group, self.top_coast_group,
-                            self.top_right_coast_group, self.right_coast_group, self.bottom_right_coast_group,
-                            self.bottom_top_left_coast_group, self.bottom_top_coast_group,
-                            self.bottom_top_right_coast_group]
+        self.tile_key = OrderedDict([
+            ('ROOF', {'val': 0, 'group': self.roof_group}),
+            ('WALL', {'val': 1, 'group': self.wall_group}),
+            ('WOOD', {'val': 2, 'group': self.wood_group}),
+            ('BRICK', {'val': 3, 'group': self.brick_group}),
+            ('CHEST', {'val': 4, 'group': self.chest_group}),
+            ('DOOR', {'val': 5, 'group': self.door_group}),
+            ('BRICK_STAIRDN', {'val': 6, 'group': self.brick_stairdn_group}),
+            ('BRICK_STAIRUP', {'val': 7, 'group': self.brick_stairup_group}),
+            ('BARRIER', {'val': 8, 'group': self.barrier_group}),
+            ('WEAPON_SIGN', {'val': 9, 'group': self.weapon_sign_group}),
+            ('INN_SIGN', {'val': 10, 'group': self.inn_sign_group}),
+            ('CASTLE', {'val': 11, 'group': self.castle_group}),
+            ('TOWN', {'val': 12, 'group': self.town_group}),
+            ('GRASS', {'val': 13, 'group': self.grass_group}),
+            ('TREES', {'val': 14, 'group': self.trees_group}),
+            ('HILLS', {'val': 15, 'group': self.hills_group}),
+            ('MOUNTAINS', {'val': 16, 'group': self.mountains_group}),
+            ('CAVE', {'val': 17, 'group': self.cave_group}),
+            ('GRASS_STAIRDN', {'val': 18, 'group': self.grass_stairdn_group}),
+            ('SAND', {'val': 19, 'group': self.sand_group}),
+            ('MARSH', {'val': 20, 'group': self.marsh_group}),
+            ('BRIDGE', {'val': 21, 'group': self.bridge_group}),
+            ('WATER', {'val': 22, 'group': self.water_group}),
+            ('BOTTOM_COAST', {'val': 23, 'group': self.bottom_coast_group}),
+            ('BOTTOM_LEFT_COAST', {'val': 24, 'group': self.bottom_left_coast_group}),
+            ('LEFT_COAST', {'val': 25, 'group': self.left_coast_group}),
+            ('TOP_LEFT_COAST', {'val': 26, 'group': self.top_left_coast_group}),
+            ('TOP_COAST', {'val': 27, 'group': self.top_coast_group}),
+            ('TOP_RIGHT_COAST', {'val': 28, 'group': self.top_right_coast_group}),
+            ('RIGHT_COAST', {'val': 29, 'group': self.right_coast_group}),
+            ('BOTTOM_RIGHT_COAST', {'val': 30, 'group': self.bottom_right_coast_group}),
+            ('BOTTOM_TOP_LEFT_COAST', {'val': 31, 'group': self.bottom_top_left_coast_group}),
+            ('BOTTOM_TOP_COAST', {'val': 32, 'group': self.bottom_top_coast_group}),
+            ('BOTTOM_TOP_RIGHT_COAST', {'val': 33, 'group': self.bottom_top_right_coast_group}),
+            ('HERO', {'val': 34}),
+            ('KING_LORIK', {'val': 35}),
+            ('LEFT_FACE_GUARD', {'val': 36}),
+            ('RIGHT_FACE_GUARD', {'val': 37}),
+            ('ROAMING_GUARD', {'val': 38}),
+        ])
+
+    def get_tile_by_value(self, position):
+        return list(self.tile_key.keys())[position]
+
+    def get_initial_character_location(self, character_name):
+        layout_numpy_array = np.array(self.layout)
+        hero_layout_position = np.asarray(np.where(layout_numpy_array == self.tile_key[character_name]['val'])).T
+        return hero_layout_position
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -169,14 +165,12 @@ class TantegelThroneRoom(DragonWarriorMap):
                  roaming_guard_images):
 
         super().__init__()
-        self.current_map = TantegelThroneRoom
         self.roaming_guard_sprites = RenderUpdates()
         self.right_face_guard_sprites = RenderUpdates()
         self.left_face_guard_sprites = RenderUpdates()
         self.king_lorik_sprites = RenderUpdates()
         self.map_tiles = map_tiles
         self.hero_images = hero_images
-        self.player_sprites = None
         self.king_lorik = None
         self.left_face_guard = None
         self.right_face_guard = None
@@ -205,29 +199,28 @@ class TantegelThroneRoom(DragonWarriorMap):
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
 
-        layout_values = [get_tile_by_value(tile) for row in self.layout for tile in row]
-        tiles_in_current_loaded_map = filter(lambda n: n in layout_values, tile_key.keys())
+        layout_values = [self.get_tile_by_value(tile) for row in self.layout for tile in row]
+        tiles_in_current_loaded_map = list(filter(lambda n: n in layout_values, list(self.tile_key.keys())))
         self.impassable_tiles = tuple(set(tiles_in_current_loaded_map) & set(all_impassable_tiles))
-
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
                 self.center_pt = [(x * TILE_SIZE) + x_offset,
                                   (y * TILE_SIZE) + y_offset]
-                if self.layout[y][x] == tile_key['ROOF']:
-                    self.add_tile(tile_type=tile_key['ROOF'], tile_group=self.roof_group)
-                elif self.layout[y][x] == tile_key['WALL']:
-                    self.add_tile(tile_type=tile_key['WALL'], tile_group=self.wall_group)
-                elif self.layout[y][x] == tile_key['WOOD']:
-                    self.add_tile(tile_type=tile_key['WOOD'], tile_group=self.wood_group)
-                elif self.layout[y][x] == tile_key['BRICK']:
-                    self.add_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
-                elif self.layout[y][x] == tile_key['CHEST']:
-                    self.add_tile(tile_type=tile_key['CHEST'], tile_group=self.chest_group)
-                elif self.layout[y][x] == tile_key['DOOR']:
-                    self.add_tile(tile_type=tile_key['DOOR'], tile_group=self.door_group)
-                elif self.layout[y][x] == tile_key['BRICK_STAIRDN']:
-                    self.add_tile(tile_type=tile_key['BRICK_STAIRDN'], tile_group=self.brick_stairdn_group)
-                elif self.layout[y][x] == tile_key['HERO']:
+                if self.layout[y][x] == self.tile_key['ROOF']['val']:
+                    self.add_tile(tile_type=self.tile_key['ROOF']['val'], tile_group=self.roof_group)
+                elif self.layout[y][x] == self.tile_key['WALL']['val']:
+                    self.add_tile(tile_type=self.tile_key['WALL']['val'], tile_group=self.wall_group)
+                elif self.layout[y][x] == self.tile_key['WOOD']['val']:
+                    self.add_tile(tile_type=self.tile_key['WOOD']['val'], tile_group=self.wood_group)
+                elif self.layout[y][x] == self.tile_key['BRICK']['val']:
+                    self.add_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                elif self.layout[y][x] == self.tile_key['CHEST']['val']:
+                    self.add_tile(tile_type=self.tile_key['CHEST']['val'], tile_group=self.chest_group)
+                elif self.layout[y][x] == self.tile_key['DOOR']['val']:
+                    self.add_tile(tile_type=self.tile_key['DOOR']['val'], tile_group=self.door_group)
+                elif self.layout[y][x] == self.tile_key['BRICK_STAIRDN']['val']:
+                    self.add_tile(tile_type=self.tile_key['BRICK_STAIRDN']['val'], tile_group=self.brick_stairdn_group)
+                elif self.layout[y][x] == self.tile_key['HERO']['val']:
                     self.player = Player(center_point=self.center_pt,
                                          down_img=self.hero_images[Direction.DOWN.value],
                                          left_img=self.hero_images[Direction.LEFT.value],
@@ -236,33 +229,33 @@ class TantegelThroneRoom(DragonWarriorMap):
                     # Make player start facing up if in Tantegel Throne Room, else face down.
                     if isinstance(current_loaded_map, TantegelThroneRoom):
                         self.player.direction = Direction.UP.value
-                    self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
-                elif self.layout[y][x] == tile_key['KING_LORIK']:
+                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                elif self.layout[y][x] == self.tile_key['KING_LORIK']['val']:
                     self.king_lorik = AnimatedSprite(self.center_pt, 0,
                                                      self.king_lorik_images[0], name='KING_LORIK')
                     self.king_lorik_sprites.add(self.king_lorik)
-                    self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
-                elif self.layout[y][x] == tile_key['LEFT_FACE_GUARD']:
+                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                elif self.layout[y][x] == self.tile_key['LEFT_FACE_GUARD']['val']:
                     self.left_face_guard = AnimatedSprite(self.center_pt, 0,
                                                           self.left_face_guard_images[0], name='LEFT_FACE_GUARD')
                     self.left_face_guard_sprites.add(self.left_face_guard)
-                    self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
-                elif self.layout[y][x] == tile_key['RIGHT_FACE_GUARD']:
+                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                elif self.layout[y][x] == self.tile_key['RIGHT_FACE_GUARD']['val']:
                     self.right_face_guard = AnimatedSprite(self.center_pt, 0,
                                                            self.right_face_guard_images[0], name='RIGHT_FACE_GUARD')
                     self.right_face_guard_sprites.add(self.right_face_guard)
-                    self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
-                elif self.layout[y][x] == tile_key['ROAMING_GUARD']:
+                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+                elif self.layout[y][x] == self.tile_key['ROAMING_GUARD']['val']:
                     self.roaming_guard = AnimatedSprite(self.center_pt, 0,
                                                         self.roaming_guard_images[0], name='ROAMING_GUARD')
-                    self.roaming_guard.position = get_initial_character_location(current_map_layout=self.layout,
-                                                                                 character_name=self.roaming_guard.name)
+                    self.roaming_guard.position = self.get_initial_character_location(
+                        character_name=self.roaming_guard.name)
                     self.roaming_guard_sprites.add(self.roaming_guard)
                     self.roaming_characters.append(self.roaming_guard)
-                    self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
+                    self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
 
         self.player_sprites = RenderUpdates(self.player)
-        self.set_underlying_tile(tile_type=tile_key['BRICK'], tile_group=self.brick_group)
+        self.set_underlying_tile(tile_type=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
         self.characters = [self.player,
                            self.king_lorik,
                            self.left_face_guard,
@@ -286,8 +279,10 @@ class TantegelThroneRoom(DragonWarriorMap):
         """
         Draw static sprites on the big map.
         """
-        for group in self.tile_groups:
-            group.draw(surface)
+        for col_dict in self.tile_key.values():
+            group = col_dict.get('group')
+            if group is not None:
+                group.draw(surface)
 
 
 class TantegelCourtyard(DragonWarriorMap):
