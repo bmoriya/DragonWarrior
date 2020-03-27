@@ -1,13 +1,12 @@
 from collections import OrderedDict
 
 import numpy as np
-from pygame import mixer
 from pygame.sprite import Group, RenderUpdates
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import Direction
-from src.config import TILE_SIZE, TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH, PLAY_MUSIC
+from src.common import Direction, tantegel_castle_throne_room_music, play_music
+from src.config import TILE_SIZE
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
 from src.player import Player
@@ -50,9 +49,6 @@ tantegel_courtyard = [
 ]
 
 current_map = None
-
-
-# Working on class refactoring of maps
 
 
 class DragonWarriorMap:
@@ -155,6 +151,15 @@ class DragonWarriorMap:
         hero_layout_position = np.asarray(np.where(layout_numpy_array == self.tile_key[character_name]['val'])).T
         return hero_layout_position
 
+    def draw_map(self, surface):
+        """
+        Draw static sprites on the big map.
+        """
+        for col_dict in self.tile_key.values():
+            group = col_dict.get('group')
+            if group is not None:
+                group.draw(surface)
+
 
 class TantegelThroneRoom(DragonWarriorMap):
     """
@@ -187,11 +192,9 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.layout = tantegel_throne_room
         self.width = len(self.layout[0] * TILE_SIZE)
         self.height = len(self.layout * TILE_SIZE)
-        self.music_file_path = TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH
         self.tiles_in_current_loaded_map = None
-        if PLAY_MUSIC:
-            mixer.music.load(self.music_file_path)
-            mixer.music.play(-1)
+        self.music_file_path = tantegel_castle_throne_room_music
+        play_music(self.music_file_path)
 
     def load_map(self):
         current_loaded_map = self
@@ -274,15 +277,6 @@ class TantegelThroneRoom(DragonWarriorMap):
     def add_tile(self, tile_value, tile_group):
         tile = BaseSprite(self.center_pt, self.map_tiles[tile_value][0])
         tile_group.add(tile)
-
-    def draw_map(self, surface):
-        """
-        Draw static sprites on the big map.
-        """
-        for col_dict in self.tile_key.values():
-            group = col_dict.get('group')
-            if group is not None:
-                group.draw(surface)
 
 
 class TantegelCourtyard(DragonWarriorMap):

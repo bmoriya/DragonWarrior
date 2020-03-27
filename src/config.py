@@ -16,8 +16,6 @@ RIGHT_FACE_GUARD_PATH = join(IMAGES_DIR, 'right_face_guard.png')
 LEFT_FACE_GUARD_PATH = join(IMAGES_DIR, 'left_face_guard.png')
 ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
 
-TANTEGEL_CASTLE_THRONE_ROOM_MUSIC_PATH = join(MUSIC_DIR, '02_Dragon_Quest_1_-_Tantegel_Castle_(22khz_mono).ogg')
-
 if platform == 'win32':
     CURRENT_SCREEN_RESOLUTION_WIDTH = GetSystemMetrics(0)
     CURRENT_SCREEN_RESOLUTION_HEIGHT = GetSystemMetrics(1)
@@ -31,5 +29,5 @@ TILE_SIZE = 16 * SCALE
 NES_RES = (256, 240)
 WIN_WIDTH = NES_RES[0] * SCALE
 WIN_HEIGHT = NES_RES[1] * SCALE
-PLAY_MUSIC = False
-PLAY_SOUND = False
+MUSIC_ENABLED = False
+SOUND_ENABLED = False
