@@ -4,9 +4,10 @@ import pygame
 from pygame.imageext import load_extended
 from pygame.transform import scale
 
-from src.config import UNARMED_HERO_PATH, SCALE
+from src.config import SCALE
+from src.common import UNARMED_HERO_PATH
 from src.game import Game, get_initial_camera_position
-from src.maps import DragonWarriorMap
+from src.maps import DragonWarriorMap, parse_animated_spritesheet
 from src.player import Player
 
 
@@ -37,7 +38,7 @@ class TestGame(TestCase):
         unarmed_hero_sheet = load_extended(UNARMED_HERO_PATH)
         unarmed_hero_sheet = scale(unarmed_hero_sheet,
                                    (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
-        self.hero_images = self.game.parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
+        self.hero_images = parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
         self.game.current_map.player = Player(center_point=self.center_pt,
                                               down_img=self.hero_images[0],
                                               left_img=self.hero_images[1],

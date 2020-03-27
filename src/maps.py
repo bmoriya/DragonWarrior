@@ -2,11 +2,12 @@ from collections import OrderedDict
 
 import numpy as np
 from pygame.sprite import Group, RenderUpdates
+from pygame.transform import scale
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import Direction, tantegel_castle_throne_room_music, play_music
-from src.config import TILE_SIZE
+from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image
+from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
 from src.player import Player
@@ -166,10 +167,14 @@ class TantegelThroneRoom(DragonWarriorMap):
     This is the first map in the game.
     """
 
-    def __init__(self, map_tiles, hero_images, king_lorik_images, left_face_guard_images, right_face_guard_images,
-                 roaming_guard_images):
+    def __init__(self, map_tiles, hero_images, left_face_guard_images, right_face_guard_images, roaming_guard_images):
 
         super().__init__()
+        king_lorik_sheet = get_image(KING_LORIK_PATH)
+        king_lorik_sheet = scale(king_lorik_sheet,
+                                 (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
+        king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
+
         self.roaming_guard_sprites = RenderUpdates()
         self.right_face_guard_sprites = RenderUpdates()
         self.left_face_guard_sprites = RenderUpdates()
@@ -280,6 +285,41 @@ class TantegelThroneRoom(DragonWarriorMap):
 
 
 class TantegelCourtyard(DragonWarriorMap):
+    layout = None
+
     def __init__(self):
         super().__init__()
-        self.layout = TantegelCourtyard
+        self.layout = tantegel_courtyard
+
+
+def parse_animated_spritesheet(sheet, is_roaming=False):
+    """
+    Parses spritesheets and creates image lists. If is_roaming is True
+    the sprite will have four lists of images, one for each direction. If
+    is_roaming is False then there will be one list of 2 images.
+    """
+    sheet.set_colorkey(COLOR_KEY)
+    sheet.convert_alpha()
+    # width, height = sheet.get_size()
+
+    facing_down = []
+    facing_left = []
+    facing_up = []
+    facing_right = []
+
+    for i in range(0, 2):
+
+        rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+        facing_down.append(sheet.subsurface(rect))
+
+        if is_roaming:
+            rect = ((i + 2) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+            facing_left.append(sheet.subsurface(rect))
+
+            rect = ((i + 4) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+            facing_up.append(sheet.subsurface(rect))
+
+            rect = ((i + 6) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+            facing_right.append(sheet.subsurface(rect))
+
+    return facing_down, facing_left, facing_up, facing_right

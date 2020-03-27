@@ -4,7 +4,7 @@ from os.path import join, sep
 
 import pygame
 
-from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR
+from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR
 
 
 class Direction(Enum):
@@ -45,6 +45,12 @@ def play_music(path='data/sound/music'):
 
 
 _image_library = {}
+MAP_TILES_PATH = join(IMAGES_DIR, 'tileset.png')
+UNARMED_HERO_PATH = join(IMAGES_DIR, 'unarmed_hero.png')
+KING_LORIK_PATH = join(IMAGES_DIR, 'king_lorik.png')
+RIGHT_FACE_GUARD_PATH = join(IMAGES_DIR, 'right_face_guard.png')
+LEFT_FACE_GUARD_PATH = join(IMAGES_DIR, 'left_face_guard.png')
+ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
 
 
 def get_image(path):

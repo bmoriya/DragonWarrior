@@ -6,16 +6,15 @@ import pygame
 from pygame import init, Surface, QUIT, USEREVENT, time, quit
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
-from pygame.image import load_extended
 from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
 
 from src import maps
-from src.common import Direction, play_sound, bump_sfx
-from src.config import MAP_TILES_PATH, UNARMED_HERO_PATH, KING_LORIK_PATH, LEFT_FACE_GUARD_PATH, \
-    RIGHT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
-from src.maps import TantegelThroneRoom
+from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, RIGHT_FACE_GUARD_PATH, \
+    LEFT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, get_image, KING_LORIK_PATH
+from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
+from src.maps import TantegelThroneRoom, parse_animated_spritesheet, TantegelCourtyard
 
 
 def get_initial_camera_position(initial_hero_location):
@@ -29,7 +28,6 @@ class Game(object):
     WIN_WIDTH = NES_RES[0] * SCALE
     WIN_HEIGHT = NES_RES[1] * SCALE
 
-    COLOR_KEY = (0, 128, 128)
     ORIGIN = (0, 0)
     BLACK = (0, 0, 0)
     BACK_FILL_COLOR = BLACK
@@ -61,7 +59,6 @@ class Game(object):
 
         self.curr_pos_x, self.curr_pos_y = None, None
 
-        self.king_lorik_images = None
         self.left_face_guard_images = None
         self.right_face_guard_images = None
         self.roaming_guard_images = None
@@ -103,7 +100,6 @@ class Game(object):
 
     def update(self):
         self.screen.blit(self.background, self.camera_pos)
-        # self.screen.blit(self.background, self.ORIGIN)
         flip()
 
     def get_background(self):
@@ -243,22 +239,22 @@ class Game(object):
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
         if roaming_character.direction == Direction.DOWN.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
-                                     roaming_character_y_pos]) not in self.current_map.impassable_tiles:
+                                                      roaming_character_y_pos]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.y += TILE_SIZE
                 pos_y -= 1
         elif roaming_character.direction == Direction.LEFT.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
-                                     roaming_character_y_pos - 1]) not in self.current_map.impassable_tiles:
+                                                      roaming_character_y_pos - 1]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.x -= TILE_SIZE
                 pos_x -= 1
         elif roaming_character.direction == Direction.UP.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
-                                     roaming_character_y_pos]) not in self.current_map.impassable_tiles:
+                                                      roaming_character_y_pos]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.y -= TILE_SIZE
                 pos_y += 1
         elif roaming_character.direction == Direction.RIGHT.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
-                                     roaming_character_y_pos + 1]) not in self.current_map.impassable_tiles:
+                                                      roaming_character_y_pos + 1]) not in self.current_map.impassable_tiles:
                 roaming_character.rect.x += TILE_SIZE
                 pos_x += 1
         else:
@@ -281,9 +277,9 @@ class Game(object):
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.king_lorik_images,
-                                              self.left_face_guard_images, self.right_face_guard_images,
-                                              self.roaming_guard_images)
+        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.left_face_guard_images,
+                                              self.right_face_guard_images, self.roaming_guard_images)
+        # self.current_map = TantegelCourtyard
         self.current_map.width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
         self.current_map.load_map()
@@ -292,15 +288,15 @@ class Game(object):
         """Load all the images for the game graphics.
         """
         # Load the map tile spritesheet
-        self.map_tilesheet = load_extended(MAP_TILES_PATH).convert()
+        self.map_tilesheet = get_image(MAP_TILES_PATH).convert()
         # Load unarmed hero images
-        unarmed_hero_sheet = load_extended(UNARMED_HERO_PATH)
+        unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
         # Load King Lorik images
-        king_lorik_sheet = load_extended(KING_LORIK_PATH)
+        king_lorik_sheet = get_image(KING_LORIK_PATH)
         # Guard images.
-        left_face_guard_sheet = load_extended(LEFT_FACE_GUARD_PATH)
-        right_face_guard_sheet = load_extended(RIGHT_FACE_GUARD_PATH)
-        roaming_guard_sheet = load_extended(ROAMING_GUARD_PATH)
+        left_face_guard_sheet = get_image(LEFT_FACE_GUARD_PATH)
+        right_face_guard_sheet = get_image(RIGHT_FACE_GUARD_PATH)
+        roaming_guard_sheet = get_image(ROAMING_GUARD_PATH)
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,
@@ -325,16 +321,16 @@ class Game(object):
         self.parse_map_tiles()
 
         # Get the images for the initial hero sprites
-        self.unarmed_hero_images = self.parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
+        self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
 
         # Get images for the King
-        self.king_lorik_images = self.parse_animated_spritesheet(king_lorik_sheet)
+        self.king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
 
-        self.left_face_guard_images = self.parse_animated_spritesheet(left_face_guard_sheet)
+        self.left_face_guard_images = parse_animated_spritesheet(left_face_guard_sheet)
 
-        self.right_face_guard_images = self.parse_animated_spritesheet(right_face_guard_sheet)
+        self.right_face_guard_images = parse_animated_spritesheet(right_face_guard_sheet)
 
-        self.roaming_guard_images = self.parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
+        self.roaming_guard_images = parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
 
     def parse_map_tiles(self):
 
@@ -347,38 +343,6 @@ class Game(object):
             for y in range(0, height // TILE_SIZE):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(self.map_tilesheet.subsurface(rect))
-
-    def parse_animated_spritesheet(self, sheet, is_roaming=False):
-        """
-        Parses spritesheets and creates image lists. If is_roaming is True
-        the sprite will have four lists of images, one for each direction. If
-        is_roaming is False then there will be one list of 2 images.
-        """
-        sheet.set_colorkey(self.COLOR_KEY)
-        sheet.convert_alpha()
-        # width, height = sheet.get_size()
-
-        facing_down = []
-        facing_left = []
-        facing_up = []
-        facing_right = []
-
-        for i in range(0, 2):
-
-            rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_down.append(sheet.subsurface(rect))
-
-            if is_roaming:
-                rect = ((i + 2) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-                facing_left.append(sheet.subsurface(rect))
-
-                rect = ((i + 4) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-                facing_up.append(sheet.subsurface(rect))
-
-                rect = ((i + 6) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-                facing_right.append(sheet.subsurface(rect))
-
-        return facing_down, facing_left, facing_up, facing_right
 
 
 def run():
