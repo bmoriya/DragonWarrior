@@ -3,7 +3,7 @@ import sys
 
 import numpy as np
 import pygame
-from pygame import init, Surface, QUIT, USEREVENT, time, quit
+from pygame import init, Surface, USEREVENT, time, quit, FULLSCREEN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
 from pygame.time import Clock
@@ -13,8 +13,8 @@ from pygame.transform import scale
 from src import maps
 from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, RIGHT_FACE_GUARD_PATH, \
     LEFT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, get_image, KING_LORIK_PATH
-from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE
-from src.maps import TantegelThroneRoom, parse_animated_spritesheet, TantegelCourtyard
+from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
+from src.maps import TantegelThroneRoom, parse_animated_spritesheet
 
 
 def get_initial_camera_position(initial_hero_location):
@@ -40,7 +40,10 @@ class Game(object):
         init()
 
         # Create the game window.
-        self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
+        if FULLSCREEN_ENABLED:
+            self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT), FULLSCREEN)
+        else:
+            self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
         set_caption(self.GAME_TITLE)
         self.clock = Clock()
         self.last_roaming_character_clock_check = get_ticks()
@@ -123,7 +126,7 @@ class Game(object):
 
     def events(self):
         for event in get():
-            if event.type == QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.K_LCTRL and event.key == pygame.K_ESCAPE):
                 quit()
                 sys.exit()
         # TODO: Smooth out movement even more.

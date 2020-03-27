@@ -189,7 +189,6 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.left_face_guard_images = left_face_guard_images
         self.right_face_guard_images = right_face_guard_images
         self.roaming_guard_images = roaming_guard_images
-        self.roaming_characters = []
 
         self.characters = []
         self.character_sprites = []
@@ -230,10 +229,10 @@ class TantegelThroneRoom(DragonWarriorMap):
                     self.add_tile(tile_value=self.tile_key['BRICK_STAIRDN']['val'], tile_group=self.brick_stairdn_group)
                 elif self.layout[y][x] == self.tile_key['HERO']['val']:
                     self.player = Player(center_point=self.center_pt,
-                                         down_img=self.hero_images[Direction.DOWN.value],
-                                         left_img=self.hero_images[Direction.LEFT.value],
-                                         up_img=self.hero_images[Direction.UP.value],
-                                         right_img=self.hero_images[Direction.RIGHT.value])
+                                         down_images=self.hero_images[Direction.DOWN.value],
+                                         left_images=self.hero_images[Direction.LEFT.value],
+                                         up_images=self.hero_images[Direction.UP.value],
+                                         right_images=self.hero_images[Direction.RIGHT.value])
                     # Make player start facing up if in Tantegel Throne Room, else face down.
                     if isinstance(current_loaded_map, TantegelThroneRoom):
                         self.player.direction = Direction.UP.value

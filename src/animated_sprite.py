@@ -3,30 +3,27 @@ from src.common import Direction
 
 
 class AnimatedSprite(BaseSprite):
-
     def __init__(self, center_point, direction,
-                 down_img=None, left_img=None, up_img=None, right_img=None, name=None):
-        BaseSprite.__init__(self, center_point, down_img[0])
+                 down_images=None, left_images=None, up_images=None, right_images=None, name=None):
+        BaseSprite.__init__(self, center_point, down_images[0])
 
         self.name = name
-
-        if right_img is None:
-            right_img = []
-        if up_img is None:
-            up_img = []
-        if left_img is None:
-            left_img = []
-        if down_img is None:
-            down_img = []
+        if down_images is None:
+            down_images = []
+        if left_images is None:
+            left_images = []
+        if up_images is None:
+            up_images = []
+        if right_images is None:
+            right_images = []
         self.current_frame = 0
         self.max_frame = 1
         self.frame_count = 0
         self.frame_delay = 2
-
-        self.down_images = down_img
-        self.left_images = left_img
-        self.up_images = up_img
-        self.right_images = right_img
+        self.down_images = down_images
+        self.left_images = left_images
+        self.up_images = up_images
+        self.right_images = right_images
         self.direction = direction
         self.center_point = center_point
 
@@ -36,10 +33,8 @@ class AnimatedSprite(BaseSprite):
             if self.frame_count > self.frame_delay:
                 self.frame_count = 0
                 self.current_frame += 1
-
             if self.current_frame > self.max_frame:
                 self.current_frame = 0
-
         if self.direction == Direction.DOWN.value:
             self.image = self.down_images[self.current_frame]
         elif self.direction == Direction.LEFT.value:
