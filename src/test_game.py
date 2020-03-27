@@ -22,8 +22,8 @@ def create_key_mock(pressed_key):
 class TestMap(DragonWarriorMap):
     def __init__(self):
         super().__init__()
-        self.layout = [[0, 0],
-                       [0, 34]]
+        self.layout = [[34, 0],
+                       [1, 2]]
 
 
 class TestGame(TestCase):
@@ -50,12 +50,28 @@ class TestGame(TestCase):
         pygame.key.get_pressed = create_key_mock(pygame.K_DOWN)
         pygame.key.get_pressed = create_key_mock(pygame.K_LEFT)
 
-    # def test_get_initial_camera_position(self):
-    #     self.assertEqual(get_initial_camera_position(self.initial_hero_location), [[0, 0]])
+    def test_get_initial_camera_position(self):
+        initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
+        self.assertEqual(get_initial_camera_position(initial_hero_location), (0, 0))
+        self.game.current_map.layout = [[1, 0],
+                                        [34, 2]]
+        initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
+        self.assertEqual(get_initial_camera_position(initial_hero_location), (-16, 0))
+        self.game.current_map.layout = [[1, 34],
+                                        [0, 2]]
+        initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
+        self.assertEqual(get_initial_camera_position(initial_hero_location), (0, -7))
+        self.game.current_map.layout = [[1, 0],
+                                        [2, 34]]
+        initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
+        self.assertEqual(get_initial_camera_position(initial_hero_location), (-16, -7))
 
     def test_move_player(self):
         key = pygame.key.get_pressed()
         self.assertEqual(self.game.move_player(key), None)
 
     def test_get_tile_by_coordinates(self):
-        self.assertEqual(self.game.get_tile_by_coordinates(0, 0), 'ROOF')
+        self.assertEqual(self.game.get_tile_by_coordinates(0, 0), 'HERO')
+        self.assertEqual(self.game.get_tile_by_coordinates(0, 1), 'ROOF')
+        self.assertEqual(self.game.get_tile_by_coordinates(1, 0), 'WALL')
+        self.assertEqual(self.game.get_tile_by_coordinates(1, 1), 'WOOD')
