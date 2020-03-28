@@ -4,6 +4,7 @@ import pygame
 from pygame.imageext import load_extended
 from pygame.transform import scale
 
+from src.animated_sprite import AnimatedSprite
 from src.common import UNARMED_HERO_PATH, Direction
 from src.config import SCALE
 from src.game import Game, get_initial_camera_position
@@ -84,5 +85,8 @@ class TestGame(TestCase):
     #     self.game.current_map.layout = [[3, 1, 3],
     #                                     [1, 38, 1],
     #                                     [34, 1, 3]]
-    #     self.game.current_map.move_roaming_characters()
-    #     self.assertEqual(initial_roaming_guard_position, )
+    #     self.roaming_guard = AnimatedSprite(self.center_pt, 0,
+    #                                         self.roaming_guard_images[0], name='ROAMING_GUARD')
+    #     self.game.current_map.roaming_characters.append(self.roaming_guard)
+    #     self.game.move_roaming_characters()
+    #     self.assertEqual(initial_roaming_guard_position, )  # current roaming guard position)
