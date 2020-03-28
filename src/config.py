@@ -1,5 +1,6 @@
 from os.path import join, pardir
 
+REPLIT_DATA_DIR = './data'
 DATA_DIR = join(pardir, 'data')
 IMAGES_DIR = join(DATA_DIR, 'images')
 SOUND_DIR = join(DATA_DIR, 'sound')
