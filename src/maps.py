@@ -188,7 +188,7 @@ class TantegelThroneRoom(DragonWarriorMap):
     This is the first map in the game.
     """
 
-    def __init__(self, map_tiles, hero_images, left_face_guard_images, right_face_guard_images, roaming_guard_images):
+    def __init__(self, map_tiles, hero_images, guard_images):
 
         super().__init__()
         king_lorik_sheet = get_image(KING_LORIK_PATH)
@@ -207,9 +207,7 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.right_face_guard = None
         self.roaming_guard = None
         self.king_lorik_images = king_lorik_images
-        self.left_face_guard_images = left_face_guard_images
-        self.right_face_guard_images = right_face_guard_images
-        self.guard_images = roaming_guard_images
+        self.guard_images = guard_images
 
         self.character_sprites = []
 

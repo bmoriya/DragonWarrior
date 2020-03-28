@@ -320,8 +320,7 @@ class Game(object):
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.left_face_guard_images,
-                                              self.right_face_guard_images, self.roaming_guard_images)
+        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
         # self.current_map = TantegelCourtyard
         self.current_map.width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
