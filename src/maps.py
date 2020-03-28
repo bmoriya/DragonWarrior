@@ -158,12 +158,16 @@ class DragonWarriorMap:
             ('BOTTOM_TOP_LEFT_COAST', {'val': 31, 'group': self.bottom_top_left_coast_group}),
             ('BOTTOM_TOP_COAST', {'val': 32, 'group': self.bottom_top_coast_group}),
             ('BOTTOM_TOP_RIGHT_COAST', {'val': 33, 'group': self.bottom_top_right_coast_group}),
+        ])
+
+        self.character_key = OrderedDict([
             ('HERO', {'val': 34}),
             ('KING_LORIK', {'val': 35}),
             ('LEFT_FACE_GUARD', {'val': 36}),
             ('RIGHT_FACE_GUARD', {'val': 37}),
             ('ROAMING_GUARD', {'val': 38}),
         ])
+        self.tile_character_key = self.tile_key.update(self.character_key)
 
     def get_tile_by_value(self, position):
         return list(self.tile_key.keys())[position]
@@ -181,6 +185,7 @@ class DragonWarriorMap:
             group = col_dict.get('group')
             if group is not None:
                 group.draw(surface)
+
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -248,15 +253,15 @@ class TantegelThroneRoom(DragonWarriorMap):
                                   self.roaming_guard_sprites]
 
     def map_character_tiles(self, current_loaded_map, x, y):
-        if self.layout[y][x] == self.tile_key['HERO']['val']:
+        if self.layout[y][x] == self.character_key['HERO']['val']:
             self.map_player(current_loaded_map)
-        elif self.layout[y][x] == self.tile_key['KING_LORIK']['val']:
+        elif self.layout[y][x] == self.character_key['KING_LORIK']['val']:
             self.king_lorik = AnimatedSprite(self.center_pt, Direction.DOWN.value,
                                              self.king_lorik_images[0], name='KING_LORIK')
             self.king_lorik_sprites.add(self.king_lorik)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
             # TODO: change LEFT_FACE_GUARD and RIGHT_FACE_GUARD into one GUARD character.
-        elif self.layout[y][x] == self.tile_key['LEFT_FACE_GUARD']['val']:
+        elif self.layout[y][x] == self.character_key['LEFT_FACE_GUARD']['val']:
             self.left_face_guard = AnimatedSprite(self.center_pt, Direction.LEFT.value,
                                                   self.guard_images[Direction.DOWN.value],
                                                   self.guard_images[Direction.LEFT.value],
@@ -264,7 +269,7 @@ class TantegelThroneRoom(DragonWarriorMap):
                                                   self.guard_images[Direction.RIGHT.value], name='LEFT_FACE_GUARD')
             self.left_face_guard_sprites.add(self.left_face_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
-        elif self.layout[y][x] == self.tile_key['RIGHT_FACE_GUARD']['val']:
+        elif self.layout[y][x] == self.character_key['RIGHT_FACE_GUARD']['val']:
             self.right_face_guard = AnimatedSprite(self.center_pt, Direction.RIGHT.value,
                                                    self.guard_images[Direction.DOWN.value],
                                                    self.guard_images[Direction.LEFT.value],
@@ -272,7 +277,7 @@ class TantegelThroneRoom(DragonWarriorMap):
                                                    self.guard_images[Direction.RIGHT.value], name='RIGHT_FACE_GUARD')
             self.right_face_guard_sprites.add(self.right_face_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
-        elif self.layout[y][x] == self.tile_key['ROAMING_GUARD']['val']:
+        elif self.layout[y][x] == self.character_key['ROAMING_GUARD']['val']:
             self.roaming_guard = AnimatedSprite(self.center_pt, 0,
                                                 self.guard_images[Direction.DOWN.value],
                                                 self.guard_images[Direction.LEFT.value],
