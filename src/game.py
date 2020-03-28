@@ -89,13 +89,13 @@ class Game(object):
         width_midpoint = len(self.current_map.layout[0]) / 2
         height_midpoint = len(self.current_map.layout) / 2
         if self.hero_layout_row <= height_midpoint and self.hero_layout_column <= width_midpoint:
-            self.camera_pos = get_initial_camera_position(((self.hero_layout_column - width_midpoint)*10, (self.hero_layout_row - height_midpoint)*2))
+            self.camera_pos = get_initial_camera_position((int((self.hero_layout_column - width_midpoint)*10), (int(self.hero_layout_row - height_midpoint)*2)))
         elif self.hero_layout_row <= height_midpoint and self.hero_layout_column >= width_midpoint:
-            self.camera_pos = get_initial_camera_position((self.hero_layout_row - width_midpoint, self.hero_layout_column - width_midpoint))
+            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
         elif self.hero_layout_row >= height_midpoint and self.hero_layout_column <= width_midpoint:
-            self.camera_pos = get_initial_camera_position((self.hero_layout_row - width_midpoint, self.hero_layout_column - width_midpoint))
+            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
         elif self.hero_layout_row >= height_midpoint and self.hero_layout_column >= width_midpoint:
-            self.camera_pos = get_initial_camera_position((self.hero_layout_row - width_midpoint, self.hero_layout_column - width_midpoint))
+            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
         else:
             self.camera_pos = get_initial_camera_position((width_midpoint - self.hero_layout_row,
                                                            height_midpoint - self.hero_layout_column))

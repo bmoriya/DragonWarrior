@@ -258,17 +258,26 @@ class TantegelThroneRoom(DragonWarriorMap):
             # TODO: change LEFT_FACE_GUARD and RIGHT_FACE_GUARD into one GUARD character.
         elif self.layout[y][x] == self.tile_key['LEFT_FACE_GUARD']['val']:
             self.left_face_guard = AnimatedSprite(self.center_pt, Direction.LEFT.value,
-                                                  self.guard_images[0], self.guard_images[1], self.guard_images[2], self.guard_images[3], name='LEFT_FACE_GUARD')
+                                                  self.guard_images[Direction.DOWN.value],
+                                                  self.guard_images[Direction.LEFT.value],
+                                                  self.guard_images[Direction.UP.value],
+                                                  self.guard_images[Direction.RIGHT.value], name='LEFT_FACE_GUARD')
             self.left_face_guard_sprites.add(self.left_face_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
         elif self.layout[y][x] == self.tile_key['RIGHT_FACE_GUARD']['val']:
             self.right_face_guard = AnimatedSprite(self.center_pt, Direction.RIGHT.value,
-                                                   self.guard_images[0], self.guard_images[1], self.guard_images[2], self.guard_images[3], name='RIGHT_FACE_GUARD')
+                                                   self.guard_images[Direction.DOWN.value],
+                                                   self.guard_images[Direction.LEFT.value],
+                                                   self.guard_images[Direction.UP.value],
+                                                   self.guard_images[Direction.RIGHT.value], name='RIGHT_FACE_GUARD')
             self.right_face_guard_sprites.add(self.right_face_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
         elif self.layout[y][x] == self.tile_key['ROAMING_GUARD']['val']:
             self.roaming_guard = AnimatedSprite(self.center_pt, 0,
-                                                self.guard_images[0], self.guard_images[1], self.guard_images[2], self.guard_images[3], name='ROAMING_GUARD')
+                                                self.guard_images[Direction.DOWN.value],
+                                                self.guard_images[Direction.LEFT.value],
+                                                self.guard_images[Direction.UP.value],
+                                                self.guard_images[Direction.RIGHT.value], name='ROAMING_GUARD')
             self.roaming_guard.position = self.get_initial_character_location(
                 character_name=self.roaming_guard.name)
             self.roaming_guard_sprites.add(self.roaming_guard)
