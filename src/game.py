@@ -56,10 +56,11 @@ class Game(object):
         self.bigmap_width = None
         self.bigmap_height = None
         self.bigmap = None
-        self.current_map_width = None
         self.current_map_height = None
         self.background = None
         self.current_map = None
+        self.next_tile = None
+        self.next_tile_checked = False
 
         self.left_face_guard_images = None
         self.right_face_guard_images = None
@@ -84,7 +85,22 @@ class Game(object):
         self.hero_layout_column = initial_hero_location.take(1)
 
         # TODO: Fix the initial camera_pos calculation.
-        self.camera_pos = get_initial_camera_position((len(self.current_map.layout[0]) // 2 - self.hero_layout_column, len(self.current_map.layout) // 2 - self.hero_layout_row))
+
+        width_midpoint = len(self.current_map.layout[0]) / 2
+        height_midpoint = len(self.current_map.layout) / 2
+        if self.hero_layout_row <= height_midpoint and self.hero_layout_column <= width_midpoint:
+            self.camera_pos = get_initial_camera_position(((self.hero_layout_column - width_midpoint)*10, (self.hero_layout_row - height_midpoint)*2))
+        elif self.hero_layout_row <= height_midpoint and self.hero_layout_column >= width_midpoint:
+            self.camera_pos = get_initial_camera_position((self.hero_layout_row - width_midpoint, self.hero_layout_column - width_midpoint))
+        elif self.hero_layout_row >= height_midpoint and self.hero_layout_column <= width_midpoint:
+            self.camera_pos = get_initial_camera_position((self.hero_layout_row - width_midpoint, self.hero_layout_column - width_midpoint))
+        elif self.hero_layout_row >= height_midpoint and self.hero_layout_column >= width_midpoint:
+            self.camera_pos = get_initial_camera_position((self.hero_layout_row - width_midpoint, self.hero_layout_column - width_midpoint))
+        else:
+            self.camera_pos = get_initial_camera_position((width_midpoint - self.hero_layout_row,
+                                                           height_midpoint - self.hero_layout_column))
+        # AIMING FOR -5, -3 (or -160, -96 when multiplied by TILE_SIZE) for Tantegel Throne Room
+        self.get_roaming_guard_images(self.roaming_guard_images)
         # self.camera_pos = 2 * TILE_SIZE, 4 * TILE_SIZE
         while True:
             self.clock.tick(self.FPS)
@@ -158,7 +174,8 @@ class Game(object):
         # camera_pos = -160, -96
 
     def get_tile_by_coordinates(self, row, column):
-        return self.current_map.get_tile_by_value(self.current_map.layout[row][column])
+        if row < len(self.current_map.layout) and column < len(self.current_map.layout[0]):
+            return self.current_map.get_tile_by_value(self.current_map.layout[row][column])
 
     def move_player(self, key):
         # block establishes direction if needed and whether to start
@@ -183,11 +200,13 @@ class Game(object):
                     self.current_map.player.direction == Direction.DOWN.value):
                 if curr_pos_y % TILE_SIZE == 0:
                     self.player_moving = False
+                    self.next_tile_checked = False
                     return
             elif (self.current_map.player.direction == Direction.LEFT.value or
                   self.current_map.player.direction == Direction.RIGHT.value):
                 if curr_pos_x % TILE_SIZE == 0:
                     self.player_moving = False
+                    self.next_tile_checked = False
                     return
 
         if self.current_map.player.direction == Direction.UP.value:
@@ -203,9 +222,11 @@ class Game(object):
         curr_cam_pos_x, curr_cam_pos_y = self.camera_pos
         next_cam_pos_x = curr_cam_pos_x
         next_cam_pos_y = curr_cam_pos_y
-        next_tile = self.get_next_tile()
-        print(next_tile)
-        if not self.did_collide(next_tile):
+        if not self.next_tile_checked:
+            self.next_tile = self.get_next_tile()
+            self.next_tile_checked = True
+        print(self.next_tile)
+        if not self.did_collide(self.next_tile):
             self.current_map.player.rect.x += delta_x
             next_cam_pos_x = curr_cam_pos_x + -delta_x
             self.current_map.player.rect.y += -delta_y
@@ -230,7 +251,6 @@ class Game(object):
 
     def did_collide(self, next_tile):
         return next_tile in self.current_map.impassable_tiles
-
 
     def handle_tb_sides_collision(self, next_pos_y):
         max_bound = self.current_map.height
@@ -367,6 +387,13 @@ class Game(object):
             for y in range(0, height // TILE_SIZE):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(self.map_tilesheet.subsurface(rect))
+
+    def get_roaming_guard_images(self, roaming_guard_images):
+        if self.current_map.roaming_guard in self.current_map.characters:
+            self.current_map.roaming_guard.down_images = roaming_guard_images[Direction.DOWN.value]
+            self.current_map.roaming_guard.left_images = roaming_guard_images[Direction.LEFT.value]
+            self.current_map.roaming_guard.up_images = roaming_guard_images[Direction.UP.value]
+            self.current_map.roaming_guard.right_images = roaming_guard_images[Direction.RIGHT.value]
 
 
 def run():
