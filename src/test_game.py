@@ -44,8 +44,8 @@ class TestGame(TestCase):
                                               left_images=self.hero_images[Direction.LEFT.value],
                                               up_images=self.hero_images[Direction.UP.value],
                                               right_images=self.hero_images[Direction.RIGHT.value])
-        self.game.hero_layout_x_pos = 0
-        self.game.hero_layout_y_pos = 0
+        self.game.hero_row = 0
+        self.game.hero_column = 0
         pygame.key.get_pressed = create_key_mock(pygame.K_RIGHT)
         pygame.key.get_pressed = create_key_mock(pygame.K_UP)
         pygame.key.get_pressed = create_key_mock(pygame.K_DOWN)
@@ -73,8 +73,8 @@ class TestGame(TestCase):
 
     def test_get_tile_by_coordinates(self):
         self.assertEqual(self.game.get_tile_by_coordinates(0, 0), 'HERO')
-        self.assertEqual(self.game.get_tile_by_coordinates(0, 1), 'ROOF')
-        self.assertEqual(self.game.get_tile_by_coordinates(1, 0), 'WALL')
+        self.assertEqual(self.game.get_tile_by_coordinates(1, 0), 'ROOF')
+        self.assertEqual(self.game.get_tile_by_coordinates(0, 1), 'WALL')
         self.assertEqual(self.game.get_tile_by_coordinates(1, 1), 'WOOD')
 
     # TODO: implement test_handle_roaming_character_map_edge_side_collision.
