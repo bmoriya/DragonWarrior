@@ -100,7 +100,6 @@ class Game(object):
             self.camera_pos = get_initial_camera_position((width_midpoint - self.hero_layout_row,
                                                            height_midpoint - self.hero_layout_column))
         # AIMING FOR -5, -3 (or -160, -96 when multiplied by TILE_SIZE) for Tantegel Throne Room
-        self.get_roaming_guard_images(self.roaming_guard_images)
         # self.camera_pos = 2 * TILE_SIZE, 4 * TILE_SIZE
         while True:
             self.clock.tick(self.FPS)
@@ -387,13 +386,6 @@ class Game(object):
             for y in range(0, height // TILE_SIZE):
                 rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
                 row.append(self.map_tilesheet.subsurface(rect))
-
-    def get_roaming_guard_images(self, roaming_guard_images):
-        if self.current_map.roaming_guard in self.current_map.characters:
-            self.current_map.roaming_guard.down_images = roaming_guard_images[Direction.DOWN.value]
-            self.current_map.roaming_guard.left_images = roaming_guard_images[Direction.LEFT.value]
-            self.current_map.roaming_guard.up_images = roaming_guard_images[Direction.UP.value]
-            self.current_map.roaming_guard.right_images = roaming_guard_images[Direction.RIGHT.value]
 
 
 def run():

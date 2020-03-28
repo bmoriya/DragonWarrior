@@ -209,7 +209,7 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.king_lorik_images = king_lorik_images
         self.left_face_guard_images = left_face_guard_images
         self.right_face_guard_images = right_face_guard_images
-        self.roaming_guard_images = roaming_guard_images
+        self.guard_images = roaming_guard_images
 
         self.character_sprites = []
 
@@ -251,15 +251,7 @@ class TantegelThroneRoom(DragonWarriorMap):
 
     def map_character_tiles(self, current_loaded_map, x, y):
         if self.layout[y][x] == self.tile_key['HERO']['val']:
-            self.player = Player(center_point=self.center_pt,
-                                 down_images=self.hero_images[Direction.DOWN.value],
-                                 left_images=self.hero_images[Direction.LEFT.value],
-                                 up_images=self.hero_images[Direction.UP.value],
-                                 right_images=self.hero_images[Direction.RIGHT.value])
-            # Make player start facing up if in Tantegel Throne Room, else face down.
-            if isinstance(current_loaded_map, TantegelThroneRoom):
-                self.player.direction = Direction.UP.value
-            self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+            self.map_player(current_loaded_map)
         elif self.layout[y][x] == self.tile_key['KING_LORIK']['val']:
             self.king_lorik = AnimatedSprite(self.center_pt, Direction.DOWN.value,
                                              self.king_lorik_images[0], name='KING_LORIK')
@@ -267,23 +259,34 @@ class TantegelThroneRoom(DragonWarriorMap):
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
             # TODO: change LEFT_FACE_GUARD and RIGHT_FACE_GUARD into one GUARD character.
         elif self.layout[y][x] == self.tile_key['LEFT_FACE_GUARD']['val']:
-            self.left_face_guard = AnimatedSprite(self.center_pt, Direction.DOWN.value,
-                                                  self.left_face_guard_images[0], name='LEFT_FACE_GUARD')
+            self.left_face_guard = AnimatedSprite(self.center_pt, Direction.LEFT.value,
+                                                  self.guard_images[0], self.guard_images[1], self.guard_images[2], self.guard_images[3], name='LEFT_FACE_GUARD')
             self.left_face_guard_sprites.add(self.left_face_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
         elif self.layout[y][x] == self.tile_key['RIGHT_FACE_GUARD']['val']:
-            self.right_face_guard = AnimatedSprite(self.center_pt, Direction.DOWN.value,
-                                                   self.right_face_guard_images[0], name='RIGHT_FACE_GUARD')
+            self.right_face_guard = AnimatedSprite(self.center_pt, Direction.RIGHT.value,
+                                                   self.guard_images[0], self.guard_images[1], self.guard_images[2], self.guard_images[3], name='RIGHT_FACE_GUARD')
             self.right_face_guard_sprites.add(self.right_face_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
         elif self.layout[y][x] == self.tile_key['ROAMING_GUARD']['val']:
             self.roaming_guard = AnimatedSprite(self.center_pt, 0,
-                                                self.roaming_guard_images[0], name='ROAMING_GUARD')
+                                                self.guard_images[0], self.guard_images[1], self.guard_images[2], self.guard_images[3], name='ROAMING_GUARD')
             self.roaming_guard.position = self.get_initial_character_location(
                 character_name=self.roaming_guard.name)
             self.roaming_guard_sprites.add(self.roaming_guard)
             self.roaming_characters.append(self.roaming_guard)
             self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+
+    def map_player(self, current_loaded_map):
+        self.player = Player(center_point=self.center_pt,
+                             down_images=self.hero_images[Direction.DOWN.value],
+                             left_images=self.hero_images[Direction.LEFT.value],
+                             up_images=self.hero_images[Direction.UP.value],
+                             right_images=self.hero_images[Direction.RIGHT.value])
+        # Make player start facing up if in Tantegel Throne Room, else face down.
+        if isinstance(current_loaded_map, TantegelThroneRoom):
+            self.player.direction = Direction.UP.value
+        self.set_underlying_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
 
     def map_floor_tiles(self, x, y):
         for tile, tile_dict in self.tile_key.items():
