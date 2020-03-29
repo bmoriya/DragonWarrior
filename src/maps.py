@@ -76,17 +76,32 @@ current_map = None
 
 
 class DragonWarriorMap:
-    def __init__(self):
-        self.impassable_tiles = None
-        self.center_pt = None
-        self.player = None
-        self.player_sprites = None
-        self.map_tiles = None
-        self.character_sprites = []
+    def __init__(self, map_tiles, hero_images, guard_images):
+        self.tiles_in_current_loaded_map = None
+
+        self.guard_images = guard_images
+        self.map_tiles = map_tiles
+        self.roaming_guard_sprites = RenderUpdates()
         self.roaming_characters = []
-        self.layout = [[]]
-        self.width = len(self.layout[0] * TILE_SIZE)
+
+        self.right_face_guard_sprites = RenderUpdates()
+        self.hero_images = hero_images
+        self.music_file_path = tantegel_castle_throne_room_music
+        self.layout = tantegel_throne_room
         self.height = len(self.layout * TILE_SIZE)
+        self.width = len(self.layout[0] * TILE_SIZE)
+        king_lorik_sheet = get_image(KING_LORIK_PATH)
+        king_lorik_sheet = scale(king_lorik_sheet,
+                                 (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
+        king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
+        self.king_lorik_images = king_lorik_images
+        self.left_face_guard_sprites = RenderUpdates()
+        self.left_face_guard = None
+        self.right_face_guard = None
+        self.king_lorik_sprites = RenderUpdates()
+        self.character_sprites = []
+        self.roaming_guard = None
+        self.king_lorik = None
         self.tile_group_dict = {}
 
         self.roof_group = Group()  # 0
@@ -187,42 +202,6 @@ class DragonWarriorMap:
             if group is not None:
                 group.draw(surface)
 
-
-class TantegelThroneRoom(DragonWarriorMap):
-    """
-    This is the first map in the game.
-    """
-
-    def __init__(self, map_tiles, hero_images, guard_images):
-
-        super().__init__()
-        king_lorik_sheet = get_image(KING_LORIK_PATH)
-        king_lorik_sheet = scale(king_lorik_sheet,
-                                 (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
-        king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
-
-        self.roaming_guard_sprites = RenderUpdates()
-        self.right_face_guard_sprites = RenderUpdates()
-        self.left_face_guard_sprites = RenderUpdates()
-        self.king_lorik_sprites = RenderUpdates()
-        self.map_tiles = map_tiles
-        self.hero_images = hero_images
-        self.king_lorik = None
-        self.left_face_guard = None
-        self.right_face_guard = None
-        self.roaming_guard = None
-        self.king_lorik_images = king_lorik_images
-        self.guard_images = guard_images
-
-        self.character_sprites = []
-
-        self.layout = tantegel_throne_room
-        self.width = len(self.layout[0] * TILE_SIZE)
-        self.height = len(self.layout * TILE_SIZE)
-        self.tiles_in_current_loaded_map = None
-        self.music_file_path = tantegel_castle_throne_room_music
-        play_music(self.music_file_path)
-
     def load_map(self):
         current_loaded_map = self
 
@@ -314,11 +293,19 @@ class TantegelThroneRoom(DragonWarriorMap):
         tile_group.add(tile)
 
 
-class TantegelCourtyard(DragonWarriorMap):
-    layout = None
+class TantegelThroneRoom(DragonWarriorMap):
+    """
+    This is the first map in the game.
+    """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, map_tiles, hero_images, guard_images):
+        super().__init__(map_tiles, hero_images, guard_images)
+        play_music(self.music_file_path)
+
+
+class TantegelCourtyard(DragonWarriorMap):
+    def __init__(self, map_tiles, hero_images, guard_images):
+        super().__init__(map_tiles, hero_images, guard_images)
         self.layout = tantegel_courtyard
 
 
