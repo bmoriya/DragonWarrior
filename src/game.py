@@ -11,8 +11,8 @@ from pygame.transform import scale
 
 from src import maps
 from src.camera import Camera
-from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, RIGHT_FACE_GUARD_PATH, \
-    LEFT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, get_image, KING_LORIK_PATH
+from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, ROAMING_GUARD_PATH, \
+    get_image, KING_LORIK_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from src.maps import TantegelThroneRoom, parse_animated_spritesheet, TantegelCourtyard
 
@@ -316,8 +316,6 @@ class Game:
         # Load King Lorik images
         king_lorik_sheet = get_image(KING_LORIK_PATH)
         # Guard images.
-        left_face_guard_sheet = get_image(LEFT_FACE_GUARD_PATH)
-        right_face_guard_sheet = get_image(RIGHT_FACE_GUARD_PATH)
         roaming_guard_sheet = get_image(ROAMING_GUARD_PATH)
 
         self.map_tilesheet = scale(self.map_tilesheet,
@@ -329,14 +327,6 @@ class Game:
         king_lorik_sheet = scale(king_lorik_sheet,
                                  (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
 
-        left_face_guard_sheet = scale(left_face_guard_sheet,
-                                      (left_face_guard_sheet.get_width() * SCALE,
-                                       left_face_guard_sheet.get_height() * SCALE))
-
-        right_face_guard_sheet = scale(right_face_guard_sheet,
-                                       (right_face_guard_sheet.get_width() * SCALE,
-                                        right_face_guard_sheet.get_height() * SCALE))
-
         roaming_guard_sheet = scale(roaming_guard_sheet,
                                     (roaming_guard_sheet.get_width() * SCALE, roaming_guard_sheet.get_height() * SCALE))
 
@@ -347,10 +337,6 @@ class Game:
 
         # Get images for the King
         self.king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
-
-        self.left_face_guard_images = parse_animated_spritesheet(left_face_guard_sheet)
-
-        self.right_face_guard_images = parse_animated_spritesheet(right_face_guard_sheet)
 
         self.roaming_guard_images = parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
 
