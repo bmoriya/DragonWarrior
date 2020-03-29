@@ -4,7 +4,7 @@ from os.path import join, sep
 
 import pygame
 
-from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR, COLOR_KEY, TILE_SIZE
+from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR
 
 
 class Direction(Enum):
@@ -61,36 +61,3 @@ def get_image(path):
         image = pygame.image.load(canonicalized_path)
         _image_library[path] = image
     return image
-
-
-def parse_animated_spritesheet(sheet, is_roaming=False):
-    """
-    Parses spritesheets and creates image lists. If is_roaming is True
-    the sprite will have four lists of images, one for each direction. If
-    is_roaming is False then there will be one list of 2 images.
-    """
-    sheet.set_colorkey(COLOR_KEY)
-    sheet.convert_alpha()
-    # width, height = sheet.get_size()
-
-    facing_down = []
-    facing_left = []
-    facing_up = []
-    facing_right = []
-
-    for i in range(0, 2):
-
-        rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-        facing_down.append(sheet.subsurface(rect))
-
-        if is_roaming:
-            rect = ((i + 2) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_left.append(sheet.subsurface(rect))
-
-            rect = ((i + 4) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_up.append(sheet.subsurface(rect))
-
-            rect = ((i + 6) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_right.append(sheet.subsurface(rect))
-
-    return facing_down, facing_left, facing_up, facing_right

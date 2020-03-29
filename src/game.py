@@ -10,10 +10,10 @@ from pygame.time import get_ticks
 from pygame.transform import scale
 
 from src import maps
-from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, ROAMING_GUARD_PATH, \
-    get_image, KING_LORIK_PATH, parse_animated_spritesheet
+from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, RIGHT_FACE_GUARD_PATH, \
+    LEFT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, get_image, KING_LORIK_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import TantegelThroneRoom
+from src.maps import TantegelThroneRoom, parse_animated_spritesheet
 
 
 def get_initial_camera_position(initial_hero_location):
@@ -62,6 +62,9 @@ class Game(object):
         self.next_tile = None
         self.next_tile_checked = False
 
+        self.left_face_guard_images = None
+        self.right_face_guard_images = None
+        self.roaming_guard_images = None
         self.unarmed_hero_images = None
         self.load_images()
         self.map_tilesheet = None
@@ -86,17 +89,13 @@ class Game(object):
         width_midpoint = len(self.current_map.layout[0]) / 2
         height_midpoint = len(self.current_map.layout) / 2
         if self.hero_layout_row <= height_midpoint and self.hero_layout_column <= width_midpoint:
-            self.camera_pos = get_initial_camera_position((int((self.hero_layout_column - width_midpoint) * 10),
-                                                           (int(self.hero_layout_row - height_midpoint) * 2)))
+            self.camera_pos = get_initial_camera_position((int((self.hero_layout_column - width_midpoint)*10), (int(self.hero_layout_row - height_midpoint)*2)))
         elif self.hero_layout_row <= height_midpoint and self.hero_layout_column >= width_midpoint:
-            self.camera_pos = get_initial_camera_position(
-                (int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
+            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
         elif self.hero_layout_row >= height_midpoint and self.hero_layout_column <= width_midpoint:
-            self.camera_pos = get_initial_camera_position(
-                (int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
+            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
         elif self.hero_layout_row >= height_midpoint and self.hero_layout_column >= width_midpoint:
-            self.camera_pos = get_initial_camera_position(
-                (int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
+            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
         else:
             self.camera_pos = get_initial_camera_position((width_midpoint - self.hero_layout_row,
                                                            height_midpoint - self.hero_layout_column))
@@ -321,7 +320,7 @@ class Game(object):
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
         # self.current_map = TantegelCourtyard
         self.current_map.width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
@@ -336,7 +335,10 @@ class Game(object):
         unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
         # Load King Lorik images
         king_lorik_sheet = get_image(KING_LORIK_PATH)
-
+        # Guard images.
+        left_face_guard_sheet = get_image(LEFT_FACE_GUARD_PATH)
+        right_face_guard_sheet = get_image(RIGHT_FACE_GUARD_PATH)
+        roaming_guard_sheet = get_image(ROAMING_GUARD_PATH)
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,
@@ -347,7 +349,16 @@ class Game(object):
         king_lorik_sheet = scale(king_lorik_sheet,
                                  (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
 
+        left_face_guard_sheet = scale(left_face_guard_sheet,
+                                      (left_face_guard_sheet.get_width() * SCALE,
+                                       left_face_guard_sheet.get_height() * SCALE))
 
+        right_face_guard_sheet = scale(right_face_guard_sheet,
+                                       (right_face_guard_sheet.get_width() * SCALE,
+                                        right_face_guard_sheet.get_height() * SCALE))
+
+        roaming_guard_sheet = scale(roaming_guard_sheet,
+                                    (roaming_guard_sheet.get_width() * SCALE, roaming_guard_sheet.get_height() * SCALE))
 
         self.parse_map_tiles()
 
@@ -357,6 +368,11 @@ class Game(object):
         # Get images for the King
         self.king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
 
+        self.left_face_guard_images = parse_animated_spritesheet(left_face_guard_sheet)
+
+        self.right_face_guard_images = parse_animated_spritesheet(right_face_guard_sheet)
+
+        self.roaming_guard_images = parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
 
     def parse_map_tiles(self):
 
