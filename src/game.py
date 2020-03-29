@@ -105,7 +105,7 @@ class Game:
 
     def get_background(self):
         return self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
-                                      self.current_map_height).convert()
+                                      self.current_map.height).convert()
 
     def move_roaming_characters(self):
         # TODO: Disable moving of roaming characters if a dialog box is open.
@@ -292,8 +292,8 @@ class Game:
             roaming_character.rect.x = self.current_map.width - TILE_SIZE
         if roaming_character.rect.y < 0:
             roaming_character.rect.y = 0
-        elif self.current_map.roaming_guard.rect.y > self.current_map_height - TILE_SIZE:
-            self.current_map.roaming_guard.rect.y = self.current_map_height - TILE_SIZE
+        elif self.current_map.roaming_guard.rect.y > self.current_map.height - TILE_SIZE:
+            self.current_map.roaming_guard.rect.y = self.current_map.height - TILE_SIZE
 
     def make_bigmap(self):
         self.bigmap_width = self.current_map.width
@@ -302,10 +302,8 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
-        # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
-        self.current_map.width = len(self.current_map.layout[0]) * TILE_SIZE
-        self.current_map_height = len(self.current_map.layout) * TILE_SIZE
+        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
+        self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
         self.current_map.load_map()
 
     def load_images(self):
