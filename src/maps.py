@@ -68,7 +68,8 @@ tantegel_throne_room = [
 
 tantegel_courtyard = [
     [0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 13, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 13, 14, 13, 13],
-    [0, 3, 3, 3, 3, 3, 0, 13, 14, 13, 14, 14, 13, 14, 13, 0, 3, 3, 3, 3, 3, 0, 13, 0, 3, 0, 13, 13, 13, 13]
+    [0, 3, 3, 3, 3, 3, 0, 13, 14, 13, 14, 14, 13, 14, 13, 0, 3, 3, 3, 3, 3, 0, 13, 0, 3, 0, 13, 13, 13, 13],
+    [0, 34, 3, 3, 3, 3, 0, 13, 14, 13, 14, 14, 13, 14, 13, 0, 3, 3, 3, 3, 3, 0, 13, 0, 3, 0, 13, 13, 13, 13],
 ]
 
 current_map = None
@@ -185,7 +186,6 @@ class DragonWarriorMap:
             group = col_dict.get('group')
             if group is not None:
                 group.draw(surface)
-
 
 
 class TantegelThroneRoom(DragonWarriorMap):

@@ -14,7 +14,7 @@ from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, RIGHT_FACE_GUARD_PATH, \
     LEFT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, get_image, KING_LORIK_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import TantegelThroneRoom, parse_animated_spritesheet
+from src.maps import TantegelThroneRoom, parse_animated_spritesheet, TantegelCourtyard
 
 
 class Game:
@@ -303,7 +303,7 @@ class Game:
 
     def load_current_map(self):
         self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
-        # self.current_map = TantegelCourtyard
+        # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
         self.current_map.width = len(self.current_map.layout[0]) * TILE_SIZE
         self.current_map_height = len(self.current_map.layout) * TILE_SIZE
         self.current_map.load_map()
