@@ -49,6 +49,7 @@ MAP_TILES_PATH = join(IMAGES_DIR, 'tileset.png')
 UNARMED_HERO_PATH = join(IMAGES_DIR, 'unarmed_hero.png')
 KING_LORIK_PATH = join(IMAGES_DIR, 'king_lorik.png')
 ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
+MAN_PATH = join(IMAGES_DIR, 'man.png')
 
 
 def get_image(path):

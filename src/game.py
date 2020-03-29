@@ -12,9 +12,9 @@ from pygame.transform import scale
 from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, ROAMING_GUARD_PATH, \
-    get_image, KING_LORIK_PATH
+    get_image, KING_LORIK_PATH, MAN_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import TantegelThroneRoom, parse_animated_spritesheet, TantegelCourtyard
+from src.maps import parse_animated_spritesheet, TantegelCourtyard, TantegelThroneRoom
 
 
 class Game:
@@ -292,8 +292,8 @@ class Game:
             roaming_character.rect.x = self.current_map.width - TILE_SIZE
         if roaming_character.rect.y < 0:
             roaming_character.rect.y = 0
-        elif self.current_map.roaming_guard.rect.y > self.current_map.height - TILE_SIZE:
-            self.current_map.roaming_guard.rect.y = self.current_map.height - TILE_SIZE
+        elif roaming_character.rect.y > self.current_map.height - TILE_SIZE:
+            roaming_character.rect.y = self.current_map.height - TILE_SIZE
 
     def make_bigmap(self):
         self.bigmap_width = self.current_map.width
@@ -302,8 +302,8 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
-        self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images)
+        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images, self.man_images)
+        self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images, self.man_images)
         self.current_map.load_map()
 
     def load_images(self):
@@ -315,8 +315,12 @@ class Game:
         unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
         # Load King Lorik images
         king_lorik_sheet = get_image(KING_LORIK_PATH)
-        # Guard images.
-        roaming_guard_sheet = get_image(ROAMING_GUARD_PATH)
+
+        king_lorik_sheet = scale(king_lorik_sheet,
+                                 (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
+
+        self.king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
+
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,
@@ -324,21 +328,16 @@ class Game:
         unarmed_hero_sheet = scale(unarmed_hero_sheet,
                                    (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
 
-        king_lorik_sheet = scale(king_lorik_sheet,
-                                 (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
-
-        roaming_guard_sheet = scale(roaming_guard_sheet,
-                                    (roaming_guard_sheet.get_width() * SCALE, roaming_guard_sheet.get_height() * SCALE))
-
         self.parse_map_tiles()
 
         # Get the images for the initial hero sprites
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
 
-        # Get images for the King
-        self.king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
+        man_sheet = get_image(MAN_PATH)
 
-        self.roaming_guard_images = parse_animated_spritesheet(roaming_guard_sheet, is_roaming=True)
+        man_sheet = scale(man_sheet, (man_sheet.get_width() * SCALE, man_sheet.get_height() * SCALE))
+
+        self.man_images = parse_animated_spritesheet(man_sheet, is_roaming=True)
 
     def parse_map_tiles(self):
 

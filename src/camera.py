@@ -1,3 +1,4 @@
+from src.config import TILE_SIZE
 from src.maps import TantegelThroneRoom, TantegelCourtyard
 
 
@@ -25,11 +26,11 @@ class Camera:
         # self.y = int((hero_location[1] - self.map_height) * TILE_SIZE)
         # TODO: Figure out math and remove these hardcoded values.
         if isinstance(self.current_map, TantegelThroneRoom):
-            self.x = -160
-            self.y = -96
+            self.x = -5 * TILE_SIZE
+            self.y = -3 * TILE_SIZE
         elif isinstance(self.current_map, TantegelCourtyard):
-            self.x = 0
-            self.y = 0
+            self.x = -3 * TILE_SIZE
+            self.y = 0 * TILE_SIZE
 
     def get_pos(self):
         return self.x, self.y
