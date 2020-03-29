@@ -4,7 +4,7 @@ import pygame
 from pygame.imageext import load_extended
 from pygame.transform import scale
 
-from src.camera import get_initial_camera_position, Camera
+from src.camera import Camera
 from src.common import UNARMED_HERO_PATH, Direction
 from src.config import SCALE
 from src.game import Game
@@ -34,8 +34,10 @@ class TestGame(TestCase):
         self.game = Game()
         self.game.camera_pos = 0, 0
         self.center_pt = 0, 0
-        self.game.current_map = TestMap(None, None, )
+        self.game.current_map = TestMap(None, None, None)
+
         self.initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
+        self.camera = Camera(self.game.current_map, self.initial_hero_location, speed=1)
         unarmed_hero_sheet = load_extended(UNARMED_HERO_PATH)
         unarmed_hero_sheet = scale(unarmed_hero_sheet,
                                    (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
@@ -54,19 +56,19 @@ class TestGame(TestCase):
 
     def test_get_initial_camera_position(self):
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(Camera.set_camera_position(initial_hero_location), (0, 0))
+        self.assertEqual(self.camera.set_camera_position(initial_hero_location, self.game.current_map), (0, 0))
         self.game.current_map.layout = [[1, 0],
                                         [34, 2]]
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(Camera.set_camera_position(initial_hero_location), (-16, 0))
+        self.assertEqual(self.camera.set_camera_position(initial_hero_location, self.game.current_map), (-16, 0))
         self.game.current_map.layout = [[1, 34],
                                         [0, 2]]
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(Camera.set_camera_position(initial_hero_location), (0, -7))
+        self.assertEqual(self.camera.set_camera_position(initial_hero_location, self.game.current_map), (0, -7))
         self.game.current_map.layout = [[1, 0],
                                         [2, 34]]
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(Camera.set_camera_position(initial_hero_location), (-16, -7))
+        self.assertEqual(self.camera.set_camera_position(initial_hero_location, self.game.current_map), (-16, -7))
 
     def test_move_player_return_value(self):
         key = pygame.key.get_pressed()

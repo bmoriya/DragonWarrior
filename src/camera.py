@@ -1,13 +1,17 @@
+from src.maps import TantegelThroneRoom, TantegelCourtyard
+
+
 class Camera:
-    def __init__(self, hero_position, map_width, map_height, speed):
-        self.map_width = map_width
-        self.map_height = map_height
+    def __init__(self, hero_position, current_map, speed):
+        self.current_map = current_map
+        self.map_width = current_map.width
+        self.map_height = current_map.height
         self.x = None
         self.y = None
-        self.set_camera_position(hero_position)
+        self.set_camera_position(hero_position, None)
         Camera.speed = speed
 
-    def set_camera_position(self, hero_location):
+    def set_camera_position(self, hero_location, current_map):
         # TODO(ELF): move into Camera class.
         # top_left_x = hero_location[0] * TILE_SIZE
         # top_left_y = hero_location[1] * TILE_SIZE
@@ -20,8 +24,12 @@ class Camera:
         # self.x = int((hero_location[0] - self.map_width) * TILE_SIZE)
         # self.y = int((hero_location[1] - self.map_height) * TILE_SIZE)
         # TODO: Figure out math and remove these hardcoded values.
-        self.x = -160
-        self.y = -96
+        if isinstance(self.current_map, TantegelThroneRoom):
+            self.x = -160
+            self.y = -96
+        elif isinstance(self.current_map, TantegelCourtyard):
+            self.x = 0
+            self.y = 0
 
     def get_pos(self):
         return self.x, self.y
