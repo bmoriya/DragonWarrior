@@ -4,8 +4,8 @@ from src.common import Direction
 
 class Player(AnimatedSprite):
 
-    def __init__(self, center_point, down_images, left_images, up_images, right_images, direction=Direction.DOWN.value):
-        AnimatedSprite.__init__(self, center_point, direction, down_images, left_images, up_images, right_images)
+    def __init__(self, center_point, direction, down_images=None):
+        AnimatedSprite.__init__(center_point, direction, None)
         self.index = 0
 
     def set_center_point(self, center_point):
