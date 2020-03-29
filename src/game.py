@@ -10,20 +10,14 @@ from pygame.time import get_ticks
 from pygame.transform import scale
 
 from src import maps
+from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, RIGHT_FACE_GUARD_PATH, \
     LEFT_FACE_GUARD_PATH, ROAMING_GUARD_PATH, get_image, KING_LORIK_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from src.maps import TantegelThroneRoom, parse_animated_spritesheet
 
 
-def get_initial_camera_position(initial_hero_location):
-    top_left_x = initial_hero_location[0] * TILE_SIZE
-    top_left_y = initial_hero_location[1] * TILE_SIZE
-    return top_left_x, top_left_y
-    # return WIN_WIDTH // TILE_SIZE, WIN_HEIGHT // TILE_SIZE
-
-
-class Game(object):
+class Game:
     FPS = 60
     GAME_TITLE = "Dragon Warrior"
     WIN_WIDTH = NES_RES[0] * SCALE
@@ -58,7 +52,6 @@ class Game(object):
         self.bigmap = None
         self.current_map_height = None
         self.background = None
-        self.current_map = None
         self.next_tile = None
         self.next_tile_checked = False
 
@@ -68,39 +61,27 @@ class Game(object):
         self.unarmed_hero_images = None
         self.load_images()
         self.map_tilesheet = None
-        self.camera_pos = None
 
         self.hero_layout_row = None
         self.hero_layout_column = None
         self.player_moving = False
         self.speed = 2
 
-    def main(self):
         self.load_current_map()
         # Make the big scrollable map
+        # TODO(ELF): Refactor these into the actual values and remove the None assignments that they replace.
         self.make_bigmap()
         self.background = Surface(self.screen.get_size()).convert()
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row = initial_hero_location.take(0)
         self.hero_layout_column = initial_hero_location.take(1)
+        hero_row = int(self.hero_layout_row)
+        hero_col = int(self.hero_layout_column)
+        map_width = len(self.current_map.layout[0])
+        map_height = len(self.current_map.layout)
+        self.camera = Camera(hero_position=(hero_row, hero_col), map_width=map_width, map_height=map_height)
 
-        # TODO: Fix the initial camera_pos calculation.
-
-        width_midpoint = len(self.current_map.layout[0]) / 2
-        height_midpoint = len(self.current_map.layout) / 2
-        if self.hero_layout_row <= height_midpoint and self.hero_layout_column <= width_midpoint:
-            self.camera_pos = get_initial_camera_position((int((self.hero_layout_column - width_midpoint)*10), (int(self.hero_layout_row - height_midpoint)*2)))
-        elif self.hero_layout_row <= height_midpoint and self.hero_layout_column >= width_midpoint:
-            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
-        elif self.hero_layout_row >= height_midpoint and self.hero_layout_column <= width_midpoint:
-            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
-        elif self.hero_layout_row >= height_midpoint and self.hero_layout_column >= width_midpoint:
-            self.camera_pos = get_initial_camera_position((int(self.hero_layout_row - width_midpoint), int(self.hero_layout_column - width_midpoint)))
-        else:
-            self.camera_pos = get_initial_camera_position((width_midpoint - self.hero_layout_row,
-                                                           height_midpoint - self.hero_layout_column))
-        # AIMING FOR -5, -3 (or -160, -96 when multiplied by TILE_SIZE) for Tantegel Throne Room
-        # self.camera_pos = 2 * TILE_SIZE, 4 * TILE_SIZE
+    def main(self):
         while True:
             self.clock.tick(self.FPS)
             self.events()
@@ -119,7 +100,7 @@ class Game(object):
             sprites.draw(self.background)
 
     def update(self):
-        self.screen.blit(self.background, self.camera_pos)
+        self.screen.blit(self.background, self.camera.get_pos())
         flip()
 
     def get_background(self):
@@ -180,7 +161,7 @@ class Game(object):
         # block establishes direction if needed and whether to start
         # or stop moving
         # TODO ED separate dependency of camera pos and player pos
-        curr_pos_x, curr_pos_y = self.camera_pos
+        curr_pos_x, curr_pos_y = self.camera.get_pos()
 
         if not self.player_moving:
             if key[pygame.K_UP]:
@@ -218,7 +199,7 @@ class Game(object):
             self.move(delta_x=self.speed, delta_y=0)
 
     def move(self, delta_x, delta_y):
-        curr_cam_pos_x, curr_cam_pos_y = self.camera_pos
+        curr_cam_pos_x, curr_cam_pos_y = self.camera.get_pos()
         next_cam_pos_x = curr_cam_pos_x
         next_cam_pos_y = curr_cam_pos_y
         if not self.next_tile_checked:
@@ -236,7 +217,7 @@ class Game(object):
 
         next_cam_pos_x = self.handle_lr_sides_collision(next_cam_pos_x, delta_x)
         next_cam_pos_y = self.handle_tb_sides_collision(next_cam_pos_y)
-        self.camera_pos = next_cam_pos_x, next_cam_pos_y
+        self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
 
     def get_next_tile(self):
         if self.current_map.player.direction == Direction.UP.value:

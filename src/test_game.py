@@ -4,10 +4,10 @@ import pygame
 from pygame.imageext import load_extended
 from pygame.transform import scale
 
-from src.animated_sprite import AnimatedSprite
+from src.camera import get_initial_camera_position, Camera
 from src.common import UNARMED_HERO_PATH, Direction
 from src.config import SCALE
-from src.game import Game, get_initial_camera_position
+from src.game import Game
 from src.maps import DragonWarriorMap, parse_animated_spritesheet
 from src.player import Player
 
@@ -54,19 +54,19 @@ class TestGame(TestCase):
 
     def test_get_initial_camera_position(self):
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(get_initial_camera_position(initial_hero_location), (0, 0))
+        self.assertEqual(Camera.set_camera_position(initial_hero_location), (0, 0))
         self.game.current_map.layout = [[1, 0],
                                         [34, 2]]
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(get_initial_camera_position(initial_hero_location), (-16, 0))
+        self.assertEqual(Camera.set_camera_position(initial_hero_location), (-16, 0))
         self.game.current_map.layout = [[1, 34],
                                         [0, 2]]
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(get_initial_camera_position(initial_hero_location), (0, -7))
+        self.assertEqual(Camera.set_camera_position(initial_hero_location), (0, -7))
         self.game.current_map.layout = [[1, 0],
                                         [2, 34]]
         initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.assertEqual(get_initial_camera_position(initial_hero_location), (-16, -7))
+        self.assertEqual(Camera.set_camera_position(initial_hero_location), (-16, -7))
 
     def test_move_player_return_value(self):
         key = pygame.key.get_pressed()
