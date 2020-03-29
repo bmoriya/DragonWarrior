@@ -1,13 +1,11 @@
-from src.config import TILE_SIZE
-
-
 class Camera:
-    def __init__(self, hero_position, map_width, map_height):
+    def __init__(self, hero_position, map_width, map_height, speed):
         self.map_width = map_width
         self.map_height = map_height
         self.x = None
         self.y = None
         self.set_camera_position(hero_position)
+        Camera.speed = speed
 
     def set_camera_position(self, hero_location):
         # TODO(ELF): move into Camera class.
@@ -21,7 +19,7 @@ class Camera:
 
         # self.x = int((hero_location[0] - self.map_width) * TILE_SIZE)
         # self.y = int((hero_location[1] - self.map_height) * TILE_SIZE)
-        #TODO: Figure out math and remove these hardcoded values.
+        # TODO: Figure out math and remove these hardcoded values.
         self.x = -160
         self.y = -96
 
@@ -53,3 +51,7 @@ class Camera:
 
         # AIMING FOR -5, -3 (or -160, -96 when multiplied by TILE_SIZE) for Tantegel Throne Room
         # self.camera_pos = 2 * TILE_SIZE, 4 * TILE_SIZE
+
+    def move(self, direction):
+        # TODO: Migrate game move method here.
+        pass

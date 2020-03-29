@@ -79,7 +79,7 @@ class Game:
         hero_col = int(self.hero_layout_column)
         map_width = len(self.current_map.layout[0])
         map_height = len(self.current_map.layout)
-        self.camera = Camera(hero_position=(hero_row, hero_col), map_width=map_width, map_height=map_height)
+        self.camera = Camera(hero_position=(hero_row, hero_col), map_width=map_width, map_height=map_height, speed=None)
 
     def main(self):
         while True:
@@ -189,6 +189,7 @@ class Game:
                     self.next_tile_checked = False
                     return
 
+        self.camera.move(self.current_map.player.direction)
         if self.current_map.player.direction == Direction.UP.value:
             self.move(delta_x=0, delta_y=self.speed)
         elif self.current_map.player.direction == Direction.DOWN.value:
