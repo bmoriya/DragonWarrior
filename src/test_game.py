@@ -22,8 +22,8 @@ def create_key_mock(pressed_key):
 
 
 class TestMap(DragonWarriorMap):
-    def __init__(self, map_tiles, hero_images, guard_images, man_images):
-        super().__init__(None, None, None, None)
+    def __init__(self, map_tiles, hero_images):
+        super().__init__(None, None)
         self.layout = [[34, 0],
                        [1, 2]]
 
@@ -34,7 +34,7 @@ class TestGame(TestCase):
         self.game = Game()
         self.game.camera_pos = 0, 0
         self.center_pt = 0, 0
-        self.game.current_map = TestMap(None, None, None, None)
+        self.game.current_map = TestMap(map_tiles=None, hero_images=None)
 
         self.initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
         self.camera = Camera(self.game.current_map, self.initial_hero_location, speed=1)

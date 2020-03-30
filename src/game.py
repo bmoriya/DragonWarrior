@@ -11,8 +11,7 @@ from pygame.transform import scale
 
 from src import maps
 from src.camera import Camera
-from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, ROAMING_GUARD_PATH, \
-    get_image, KING_LORIK_PATH, MAN_PATH
+from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from src.maps import parse_animated_spritesheet, TantegelCourtyard, TantegelThroneRoom
 
@@ -164,13 +163,13 @@ class Game:
         curr_pos_x, curr_pos_y = self.camera.get_pos()
 
         if not self.player_moving:
-            if key[pygame.K_UP]:
+            if key[pygame.K_UP] or key[pygame.K_w]:
                 self.current_map.player.direction = Direction.UP.value
-            elif key[pygame.K_DOWN]:
+            elif key[pygame.K_DOWN] or key[pygame.K_s]:
                 self.current_map.player.direction = Direction.DOWN.value
-            elif key[pygame.K_LEFT]:
+            elif key[pygame.K_LEFT] or key[pygame.K_a]:
                 self.current_map.player.direction = Direction.LEFT.value
-            elif key[pygame.K_RIGHT]:
+            elif key[pygame.K_RIGHT] or key[pygame.K_d]:
                 self.current_map.player.direction = Direction.RIGHT.value
             else:  # player not moving and no moving key pressed
                 return
@@ -302,8 +301,8 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images, self.man_images)
-        self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images, self.roaming_guard_images, self.man_images)
+        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
 
     def load_images(self):
@@ -313,14 +312,6 @@ class Game:
         self.map_tilesheet = get_image(MAP_TILES_PATH).convert()
         # Load unarmed hero images
         unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
-        # Load King Lorik images
-        king_lorik_sheet = get_image(KING_LORIK_PATH)
-
-        king_lorik_sheet = scale(king_lorik_sheet,
-                                 (king_lorik_sheet.get_width() * SCALE, king_lorik_sheet.get_height() * SCALE))
-
-        self.king_lorik_images = parse_animated_spritesheet(king_lorik_sheet)
-
 
         self.map_tilesheet = scale(self.map_tilesheet,
                                    (self.map_tilesheet.get_width() * SCALE,
@@ -332,12 +323,6 @@ class Game:
 
         # Get the images for the initial hero sprites
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
-
-        man_sheet = get_image(MAN_PATH)
-
-        man_sheet = scale(man_sheet, (man_sheet.get_width() * SCALE, man_sheet.get_height() * SCALE))
-
-        self.man_images = parse_animated_spritesheet(man_sheet, is_roaming=True)
 
     def parse_map_tiles(self):
 

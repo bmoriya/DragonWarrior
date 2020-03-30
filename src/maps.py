@@ -7,7 +7,7 @@ from pygame.transform import scale
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
-    ROAMING_GUARD_PATH, MAN_PATH
+    ROAMING_GUARD_PATH, MAN_PATH, village_music
 from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
@@ -38,17 +38,19 @@ test_map = [
     [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
 ]
 
+roof_line = [0] * 27
+
 tantegel_throne_room = [
     # Using the following dims: coord maps will be 0,0 top left and positive axes towards
     # bottom right.
 
     # 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 0
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 1
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 2
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 3
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 4
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 5
+    roof_line,  # 0
+    roof_line,  # 1
+    roof_line,  # 2
+    roof_line,  # 3
+    roof_line,  # 4
+    roof_line,  # 5
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],  # 6
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 4, 3, 1, 0, 0, 0, 0, 0, 0, 0],  # 7
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 2, 2, 2, 2, 2, 2, 3, 1, 0, 0, 0, 0, 0, 0, 0],  # 8
@@ -59,20 +61,24 @@ tantegel_throne_room = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],  # 13
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 3, 6, 1, 0, 0, 0, 0, 0, 0, 0],  # 14
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],  # 15
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 16
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 17
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 18
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 19
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 20
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 21
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 22
+    roof_line,  # 16
+    roof_line,  # 17
+    roof_line,  # 18
+    roof_line,  # 19
+    roof_line,  # 20
+    roof_line,  # 21
+    roof_line,  # 22
 ]
 
+grass_line = [13] * 34
+
 tantegel_courtyard = [
-    # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
-    [13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13, 13, 13],
-    [13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 3, 1, 13, 13, 13, 13, 13],
-    [13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 2, 1, 13, 13, 13, 13, 13],
+    [13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13, 13,
+     13],
+    [13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 3, 1, 13, 13, 13, 13,
+     13],
+    [13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 2, 1, 13, 13, 13, 13,
+     13],
     [13, 13, 13, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 14, 14, 13, 13, 13, 13],
     [13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 14, 14, 14, 13, 13, 13, 13, 13],
     [13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13],
@@ -94,34 +100,77 @@ tantegel_courtyard = [
     [13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13],
     [13, 13, 13, 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 22, 13, 13],
     [13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13],
-    [13, 13, 13, 1, 3, 22, 22, 3, 3, 1, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13],
-    [13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13],
-    [13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 2, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13],
-    [13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13],
+    [13, 13, 13, 1, 3, 22, 22, 3, 3, 1, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+     13],
+    [13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+     13],
+    [13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 2, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+     13],
+    [13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22,
+     13, 13],
     [13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13],
-    [13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22, 22, 22, 22, 22,
+    [13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22, 22,
+     22, 22, 22,
      6, 13],
-
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
 ]
 
 current_map = None
 
 
+def parse_animated_spritesheet(sheet, is_roaming=False):
+    """
+    Parses spritesheets and creates image lists. If is_roaming is True
+    the sprite will have four lists of images, one for each direction. If
+    is_roaming is False then there will be one list of 2 images.
+    """
+    sheet.set_colorkey(COLOR_KEY)
+    sheet.convert_alpha()
+    # width, height = sheet.get_size()
+
+    facing_down = []
+    facing_left = []
+    facing_up = []
+    facing_right = []
+
+    for i in range(0, 2):
+
+        rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+        facing_down.append(sheet.subsurface(rect))
+
+        if is_roaming:
+            rect = ((i + 2) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+            facing_left.append(sheet.subsurface(rect))
+
+            rect = ((i + 4) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+            facing_up.append(sheet.subsurface(rect))
+
+            rect = ((i + 6) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
+            facing_right.append(sheet.subsurface(rect))
+
+    return facing_down, facing_left, facing_up, facing_right
+
+
 class DragonWarriorMap:
-    def __init__(self, map_tiles, hero_images, guard_images, man_images):
+    def __init__(self, map_tiles, hero_images):
 
         self.player = None
         self.player_sprites = None
         self.characters = []
         self.tiles_in_current_loaded_map = None
         self.layout = [[]]
-        self.guard_images = guard_images
-        self.man_images = man_images
         self.map_tiles = map_tiles
         self.roaming_characters = []
 
         self.hero_images = hero_images
-        self.music_file_path = tantegel_castle_throne_room_music
+
         self.down_face_guard = None
         self.down_face_guard_sprites = RenderUpdates()
 
@@ -220,6 +269,9 @@ class DragonWarriorMap:
             ('WISE_MAN', {'val': 43}),
             ('SOLDIER', {'val': 44}),
             ('MERCHANT', {'val': 45}),
+            ('PRINCESS_GWAELIN', {'val': 46}),
+            ('DRAGONLORD', {'val': 47}),
+
         ])
         self.tile_character_key = self.tile_key.update(self.character_key)
 
@@ -288,6 +340,10 @@ class DragonWarriorMap:
             self.map_four_sided_npc(direction=Direction.DOWN.value, name='ROAMING_GUARD',
                                     underlying_tile='BRICK',
                                     image_path=ROAMING_GUARD_PATH, is_roaming=True)
+        elif self.layout[y][x] == self.character_key['WISE_MAN']['val']:
+            self.map_four_sided_npc(direction=Direction.DOWN.value, name='WISE_MAN',
+                                    underlying_tile='BRICK',
+                                    image_path=ROAMING_GUARD_PATH, is_roaming=True)
 
     def map_four_sided_npc(self, direction, name, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
@@ -352,56 +408,32 @@ class DragonWarriorMap:
         tile_group.add(tile)
 
 
+class TestMap(DragonWarriorMap):
+
+    def __init__(self, map_tiles, hero_images):
+        super().__init__(map_tiles, hero_images)
+        self.layout = test_map
+        self.music_file_path = village_music
+        play_music(self.music_file_path)
+
+
 class TantegelThroneRoom(DragonWarriorMap):
     """
     This is the first map in the game.
     """
 
-    def __init__(self, map_tiles, hero_images, guard_images, man_images):
-        super().__init__(map_tiles, hero_images, guard_images, man_images)
+    def __init__(self, map_tiles, hero_images):
+        super().__init__(map_tiles, hero_images)
         self.layout = tantegel_throne_room
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
+        self.music_file_path = tantegel_castle_throne_room_music
         play_music(self.music_file_path)
 
 
 class TantegelCourtyard(DragonWarriorMap):
-    def __init__(self, map_tiles, hero_images, guard_images, man_images):
-        super().__init__(map_tiles, hero_images, guard_images, man_images)
+    def __init__(self, map_tiles, hero_images):
+        super().__init__(map_tiles, hero_images)
         self.layout = tantegel_courtyard
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
-        play_music(self.music_file_path)
-
-
-def parse_animated_spritesheet(sheet, is_roaming=False):
-    """
-    Parses spritesheets and creates image lists. If is_roaming is True
-    the sprite will have four lists of images, one for each direction. If
-    is_roaming is False then there will be one list of 2 images.
-    """
-    sheet.set_colorkey(COLOR_KEY)
-    sheet.convert_alpha()
-    # width, height = sheet.get_size()
-
-    facing_down = []
-    facing_left = []
-    facing_up = []
-    facing_right = []
-
-    for i in range(0, 2):
-
-        rect = (i * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-        facing_down.append(sheet.subsurface(rect))
-
-        if is_roaming:
-            rect = ((i + 2) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_left.append(sheet.subsurface(rect))
-
-            rect = ((i + 4) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_up.append(sheet.subsurface(rect))
-
-            rect = ((i + 6) * TILE_SIZE, 0, TILE_SIZE, TILE_SIZE)
-            facing_right.append(sheet.subsurface(rect))
-
-    return facing_down, facing_left, facing_up, facing_right
