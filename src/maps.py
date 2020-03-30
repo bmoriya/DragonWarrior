@@ -53,7 +53,7 @@ all_characters_values = [dict['val'] for dict in character_key.values()]
 all_characters_values.insert(0, 3)
 all_characters_values.append(3)
 
-brick_line = [3] * 16
+brick_line = tuple([3] * 16)
 test_map = [
     brick_line,
     [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3],
@@ -72,7 +72,7 @@ test_map = [
     brick_line
 ]
 
-roof_line = [0] * 27
+roof_line = tuple([0] * 27)
 
 tantegel_throne_room = [
     # Using the following dims: coord maps will be 0,0 top left and positive axes towards
@@ -104,7 +104,7 @@ tantegel_throne_room = [
     roof_line,  # 22
 ]
 
-grass_line = [13] * 36
+grass_line = tuple([13] * 36)
 
 tantegel_courtyard = [
     grass_line,
