@@ -52,7 +52,12 @@ UNARMED_HERO_PATH = join(IMAGES_DIR, 'unarmed_hero.png')
 KING_LORIK_PATH = join(IMAGES_DIR, 'king_lorik.png')
 ROAMING_GUARD_PATH = join(IMAGES_DIR, 'roaming_guard.png')
 MAN_PATH = join(IMAGES_DIR, 'man.png')
-
+WOMAN_PATH = join(IMAGES_DIR, 'woman.png')
+WISE_MAN_PATH = join(IMAGES_DIR, 'wise_man.png')
+SOLDIER_PATH = join(IMAGES_DIR, 'soldier.png')
+MERCHANT_PATH = join(IMAGES_DIR, 'merchant.png')
+PRINCESS_GWAELIN_PATH = join(IMAGES_DIR, 'princess_gwaelin.png')
+DRAGONLORD_PATH = join(IMAGES_DIR, 'dragonlord.png')
 
 def get_image(path):
     global _image_library

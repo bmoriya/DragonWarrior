@@ -7,7 +7,8 @@ from pygame.transform import scale
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
-    ROAMING_GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music
+    ROAMING_GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
+    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH
 from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
@@ -98,7 +99,7 @@ tantegel_courtyard = [
     [13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 14, 14, 3, 3, 3, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13],
     [13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13],
     [13, 13, 13, 1, 3, 40, 3, 1, 3, 1, 14, 13, 3, 3, 3, 3, 13, 14, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13],
-    [13, 13, 13, 1, 4, 3, 4, 5, 3, 1, 13, 13, 3, 3, 3, 3, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13],
+    [13, 13, 13, 1, 4, 3, 4, 5, 3, 1, 13, 42, 3, 3, 3, 3, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13],
     [13, 13, 13, 1, 3, 4, 3, 1, 3, 1, 13, 13, 3, 3, 3, 3, 13, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13],
     [13, 13, 13, 1, 4, 3, 4, 1, 3, 1, 13, 3, 3, 3, 3, 3, 3, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13],
     [13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 13, 3, 22, 22, 22, 22, 3, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 13, 13, 13],
@@ -283,7 +284,6 @@ class DragonWarriorMap:
             ('MERCHANT', {'val': 45}),
             ('PRINCESS_GWAELIN', {'val': 46}),
             ('DRAGONLORD', {'val': 47}),
-
         ])
         self.tile_character_key = self.tile_key.update(self.character_key)
 
@@ -326,8 +326,7 @@ class DragonWarriorMap:
         if self.layout[y][x] == self.character_key['HERO']['val']:
             self.map_player(current_loaded_map)
         elif self.layout[y][x] == self.character_key['KING_LORIK']['val']:
-            self.map_non_roaming_character(path=KING_LORIK_PATH, name='KING_LORIK')
-            self.add_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+            self.map_two_sided_npc(path=KING_LORIK_PATH, name='KING_LORIK', underlying_tile='BRICK')
         elif self.layout[y][x] == self.character_key['DOWN_FACE_GUARD']['val']:
             self.map_four_sided_npc(direction=Direction.DOWN.value, name='DOWN_FACE_GUARD',
                                     underlying_tile='BRICK',
@@ -344,18 +343,36 @@ class DragonWarriorMap:
             self.map_four_sided_npc(direction=Direction.RIGHT.value, name='RIGHT_FACE_GUARD',
                                     underlying_tile='BRICK',
                                     image_path=ROAMING_GUARD_PATH)
-        elif self.layout[y][x] == self.character_key['MAN']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='MAN',
-                                    underlying_tile='BRICK',
-                                    image_path=MAN_PATH)
         elif self.layout[y][x] == self.character_key['ROAMING_GUARD']['val']:
             self.map_four_sided_npc(direction=Direction.DOWN.value, name='ROAMING_GUARD',
                                     underlying_tile='BRICK',
                                     image_path=ROAMING_GUARD_PATH, is_roaming=True)
+        elif self.layout[y][x] == self.character_key['MAN']['val']:
+            self.map_four_sided_npc(direction=Direction.DOWN.value, name='MAN',
+                                    underlying_tile='BRICK',
+                                    image_path=MAN_PATH)
+        elif self.layout[y][x] == self.character_key['WOMAN']['val']:
+            self.map_four_sided_npc(direction=Direction.DOWN.value, name='WOMAN',
+                                    underlying_tile='GRASS',
+                                    image_path=WOMAN_PATH)
         elif self.layout[y][x] == self.character_key['WISE_MAN']['val']:
             self.map_four_sided_npc(direction=Direction.DOWN.value, name='WISE_MAN',
                                     underlying_tile='BRICK',
-                                    image_path=ROAMING_GUARD_PATH, is_roaming=True)
+                                    image_path=WISE_MAN_PATH, is_roaming=True)
+        elif self.layout[y][x] == self.character_key['SOLDIER']['val']:
+            self.map_four_sided_npc(direction=Direction.DOWN.value, name='SOLDIER',
+                                    underlying_tile='BRICK',
+                                    image_path=SOLDIER_PATH, is_roaming=True)
+        elif self.layout[y][x] == self.character_key['MERCHANT']['val']:
+            self.map_four_sided_npc(direction=Direction.DOWN.value, name='MERCHANT',
+                                    underlying_tile='BRICK',
+                                    image_path=MERCHANT_PATH, is_roaming=True)
+        elif self.layout[y][x] == self.character_key['PRINCESS_GWAELIN']['val']:
+            self.map_two_sided_npc(path=PRINCESS_GWAELIN_PATH, name='PRINCESS_GWAELIN', underlying_tile='BRICK')
+        elif self.layout[y][x] == self.character_key['DRAGONLORD']['val']:
+            self.map_four_sided_npc(direction=Direction.DOWN.value, name='DRAGONLORD',
+                                    underlying_tile='BRICK',
+                                    image_path=DRAGONLORD_PATH, is_roaming=True)
 
     def map_four_sided_npc(self, direction, name, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
@@ -377,7 +394,7 @@ class DragonWarriorMap:
         self.characters.append(character)
         self.character_sprites.append(character_sprites)
 
-    def map_non_roaming_character(self, path, name):
+    def map_two_sided_npc(self, path, name, underlying_tile):
         sprites = RenderUpdates()
         sheet = get_image(path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
@@ -387,8 +404,9 @@ class DragonWarriorMap:
         sprites.add(character)
         self.characters.append(character)
         self.character_sprites.append(sprites)
+        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'], tile_group=self.tile_key[underlying_tile]['group'])
 
-    def map_player(self, current_loaded_map):
+    def map_player(self, current_loaded_map, underlying_tile='BRICK'):
         self.player = Player(center_point=self.center_pt,
                              down_images=self.hero_images[Direction.DOWN.value],
                              left_images=self.hero_images[Direction.LEFT.value],
@@ -398,7 +416,7 @@ class DragonWarriorMap:
         self.player_sprites = RenderUpdates(self.player)
         if isinstance(current_loaded_map, TantegelThroneRoom):
             self.player.direction = Direction.UP.value
-        self.add_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
+        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'], tile_group=self.tile_key[underlying_tile]['group'])
         self.characters.append(self.player)
         self.character_sprites.append(self.player_sprites)
 

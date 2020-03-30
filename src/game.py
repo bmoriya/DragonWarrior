@@ -13,7 +13,7 @@ from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import parse_animated_spritesheet, TantegelCourtyard, TestMap
+from src.maps import parse_animated_spritesheet, TestMap, TantegelCourtyard, TantegelThroneRoom
 
 
 class Game:
@@ -300,9 +300,9 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
         # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
-        self.current_map = TestMap(self.map_tiles, self.unarmed_hero_images)
+        # self.current_map = TestMap(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
 
     def load_images(self):
