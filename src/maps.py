@@ -7,8 +7,8 @@ from pygame.transform import scale
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
-    ROAMING_GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
-    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH
+    GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
+    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH
 from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
@@ -83,43 +83,72 @@ tantegel_courtyard = [
     grass_line,
     grass_line,
     grass_line,
-    [13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13, 13,
+    [13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13,
+     13,
      13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 45, 1, 13, 13, 13, 13,
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 45, 1, 13, 13, 13,
+     13,
      13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 2, 1, 13, 13, 13, 13,
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 2, 1, 13, 13, 13,
+     13,
      13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 14, 14, 13, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 14, 14, 14, 13, 13, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 3, 36, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 7, 34, 3, 3, 3, 3, 1, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 41, 3, 3, 3, 1, 3, 38, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 14, 14, 3, 3, 3, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 40, 3, 1, 3, 1, 14, 13, 3, 3, 3, 3, 13, 14, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 4, 3, 4, 5, 3, 1, 13, 42, 3, 3, 3, 3, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 4, 3, 1, 3, 1, 13, 13, 3, 3, 3, 3, 13, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 4, 3, 4, 1, 3, 1, 13, 3, 3, 3, 3, 3, 3, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 13, 3, 22, 22, 22, 22, 3, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 22, 8, 8, 22, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 22, 8, 8, 22, 3, 3, 3, 3, 3, 3, 3, 3, 1, 8, 8, 8, 8, 8, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 1, 1, 3, 3, 1, 1, 1, 3, 22, 22, 22, 22, 3, 1, 1, 3, 3, 3, 3, 3, 1, 8, 8, 8, 8, 8, 1, 13, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 1, 39, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 22, 13, 13, 13],
-    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13, 13],
+    [13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 14, 14, 13, 13, 13,
+     13, 13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 14, 14, 14, 13, 13, 13, 13,
+     13, 13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13,
+     13, 13],
+    [13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 3, 36, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 7, 34, 3, 3, 3, 3, 1, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 41, 3, 3, 3, 1, 3, 38, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 14, 14, 3, 3, 3, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13,
+     13, 13],
+    [13, 13, 13, 13, 1, 3, 40, 3, 1, 3, 1, 14, 13, 3, 3, 3, 3, 13, 14, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13,
+     13, 13],
+    [13, 13, 13, 13, 1, 4, 3, 4, 5, 3, 1, 13, 42, 3, 3, 3, 3, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 4, 3, 1, 3, 1, 13, 13, 3, 3, 3, 3, 13, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 4, 3, 4, 1, 3, 1, 13, 3, 3, 3, 3, 3, 3, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 13, 3, 22, 22, 22, 22, 3, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 13, 13,
+     13, 13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 22, 8, 8, 22, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 22, 8, 8, 22, 3, 3, 3, 3, 3, 3, 3, 3, 1, 8, 8, 8, 8, 8, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 1, 1, 3, 3, 1, 1, 1, 3, 22, 22, 22, 22, 3, 1, 1, 3, 3, 3, 3, 3, 1, 8, 8, 8, 8, 8, 1, 13, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 1, 39, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 22, 13, 13,
+     13],
+    [13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+     13, 13],
     [13, 13, 13, 13, 1, 3, 22, 22, 3, 3, 1, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
      13, 13],
-    [13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+    [13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22,
+     13,
      13, 13],
-    [13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 2, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+    [13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 2, 3, 1, 22, 22, 22, 22, 22, 22, 22,
+     13,
      13, 13],
-    [13, 13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22,
+    [13, 13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22,
+     22,
      13, 13, 13],
-    [13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13, 13],
-    [13, 13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22, 22,
+    [13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
+     13, 13],
+    [13, 13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22,
+     22,
      22, 22, 22,
      6, 13, 13],
     grass_line,
@@ -171,33 +200,25 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
 class DragonWarriorMap:
     def __init__(self, map_tiles, hero_images):
 
+        # Character variables
+
         self.player = None
         self.player_sprites = None
         self.characters = []
-        self.tiles_in_current_loaded_map = None
-        self.layout = [[]]
-        self.map_tiles = map_tiles
         self.roaming_characters = []
-
         self.hero_images = hero_images
-
-        self.down_face_guard = None
-        self.down_face_guard_sprites = RenderUpdates()
-
-        self.up_face_guard = None
-        self.up_face_guard_sprites = RenderUpdates()
-        self.right_face_guard = None
-        self.right_face_guard_sprites = RenderUpdates()
-
-        self.man = None
-        self.man_sprites = RenderUpdates()
         self.character_sprites = []
 
-        self.impassable_tiles = all_impassable_tiles
+        # Map variables
 
+        self.tiles_in_current_loaded_map = None
+        self.layout = [[]]
+        self.center_pt = None
+        self.map_tiles = map_tiles
+        self.impassable_tiles = all_impassable_tiles
         self.tile_group_dict = {}
 
-        self.roof_group = Group()  # 0/
+        self.roof_group = Group()  # 0
         self.wall_group = Group()  # 1
         self.wood_group = Group()  # 2
         self.brick_group = Group()  # 3
@@ -270,20 +291,20 @@ class DragonWarriorMap:
         ])
 
         self.character_key = OrderedDict([
-            ('HERO', {'val': 34}),
-            ('KING_LORIK', {'val': 35}),
-            ('DOWN_FACE_GUARD', {'val': 36}),
-            ('LEFT_FACE_GUARD', {'val': 37}),
-            ('UP_FACE_GUARD', {'val': 38}),
-            ('RIGHT_FACE_GUARD', {'val': 39}),
-            ('ROAMING_GUARD', {'val': 40}),
-            ('MAN', {'val': 41}),
-            ('WOMAN', {'val': 42}),
-            ('WISE_MAN', {'val': 43}),
-            ('SOLDIER', {'val': 44}),
-            ('MERCHANT', {'val': 45}),
-            ('PRINCESS_GWAELIN', {'val': 46}),
-            ('DRAGONLORD', {'val': 47}),
+            ('HERO', {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False}),
+            ('KING_LORIK', {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False}),
+            ('DOWN_FACE_GUARD', {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
+            ('LEFT_FACE_GUARD', {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
+            ('UP_FACE_GUARD', {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
+            ('RIGHT_FACE_GUARD', {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
+            ('ROAMING_GUARD', {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True}),
+            ('MAN', {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False}),
+            ('WOMAN', {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False}),
+            ('WISE_MAN', {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False}),
+            ('SOLDIER', {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False}),
+            ('MERCHANT', {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False}),
+            ('PRINCESS_GWAELIN', {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False}),
+            ('DRAGONLORD', {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False}),
         ])
         self.tile_character_key = self.tile_key.update(self.character_key)
 
@@ -320,59 +341,19 @@ class DragonWarriorMap:
                 self.map_floor_tiles(x, y)
                 self.map_character_tiles(current_loaded_map, x, y)
 
-        self.add_tile(tile_value=self.tile_key['BRICK']['val'], tile_group=self.brick_group)
-
     def map_character_tiles(self, current_loaded_map, x, y):
-        if self.layout[y][x] == self.character_key['HERO']['val']:
-            self.map_player(current_loaded_map)
-        elif self.layout[y][x] == self.character_key['KING_LORIK']['val']:
-            self.map_two_sided_npc(path=KING_LORIK_PATH, name='KING_LORIK', underlying_tile='BRICK')
-        elif self.layout[y][x] == self.character_key['DOWN_FACE_GUARD']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='DOWN_FACE_GUARD',
-                                    underlying_tile='BRICK',
-                                    image_path=ROAMING_GUARD_PATH)
-        elif self.layout[y][x] == self.character_key['LEFT_FACE_GUARD']['val']:
-            self.map_four_sided_npc(direction=Direction.LEFT.value, name='LEFT_FACE_GUARD',
-                                    underlying_tile='BRICK',
-                                    image_path=ROAMING_GUARD_PATH)
-        elif self.layout[y][x] == self.character_key['UP_FACE_GUARD']['val']:
-            self.map_four_sided_npc(direction=Direction.UP.value, name='UP_FACE_GUARD',
-                                    underlying_tile='BRICK',
-                                    image_path=ROAMING_GUARD_PATH)
-        elif self.layout[y][x] == self.character_key['RIGHT_FACE_GUARD']['val']:
-            self.map_four_sided_npc(direction=Direction.RIGHT.value, name='RIGHT_FACE_GUARD',
-                                    underlying_tile='BRICK',
-                                    image_path=ROAMING_GUARD_PATH)
-        elif self.layout[y][x] == self.character_key['ROAMING_GUARD']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='ROAMING_GUARD',
-                                    underlying_tile='BRICK',
-                                    image_path=ROAMING_GUARD_PATH, is_roaming=True)
-        elif self.layout[y][x] == self.character_key['MAN']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='MAN',
-                                    underlying_tile='BRICK',
-                                    image_path=MAN_PATH)
-        elif self.layout[y][x] == self.character_key['WOMAN']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='WOMAN',
-                                    underlying_tile='GRASS',
-                                    image_path=WOMAN_PATH)
-        elif self.layout[y][x] == self.character_key['WISE_MAN']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='WISE_MAN',
-                                    underlying_tile='BRICK',
-                                    image_path=WISE_MAN_PATH, is_roaming=True)
-        elif self.layout[y][x] == self.character_key['SOLDIER']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='SOLDIER',
-                                    underlying_tile='BRICK',
-                                    image_path=SOLDIER_PATH, is_roaming=True)
-        elif self.layout[y][x] == self.character_key['MERCHANT']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='MERCHANT',
-                                    underlying_tile='BRICK',
-                                    image_path=MERCHANT_PATH, is_roaming=True)
-        elif self.layout[y][x] == self.character_key['PRINCESS_GWAELIN']['val']:
-            self.map_two_sided_npc(path=PRINCESS_GWAELIN_PATH, name='PRINCESS_GWAELIN', underlying_tile='BRICK')
-        elif self.layout[y][x] == self.character_key['DRAGONLORD']['val']:
-            self.map_four_sided_npc(direction=Direction.DOWN.value, name='DRAGONLORD',
-                                    underlying_tile='BRICK',
-                                    image_path=DRAGONLORD_PATH, is_roaming=True)
+        for character, character_dict in self.character_key.items():
+            if self.layout[y][x] >= 34:
+                if self.layout[y][x] == character_dict['val']:
+                    if self.layout[y][x] == self.character_key['HERO']['val']:
+                        self.map_player(current_loaded_map)
+                    elif character_dict['four_sided']:
+                        self.map_four_sided_npc(direction=Direction.DOWN.value, name=character,
+                                                underlying_tile='BRICK',
+                                                image_path=character_dict['path'], is_roaming=character_dict['roaming'])
+                    else:
+                        self.map_two_sided_npc(image_path=character_dict['path'], name=character,
+                                               underlying_tile='BRICK')
 
     def map_four_sided_npc(self, direction, name, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
@@ -394,9 +375,9 @@ class DragonWarriorMap:
         self.characters.append(character)
         self.character_sprites.append(character_sprites)
 
-    def map_two_sided_npc(self, path, name, underlying_tile):
+    def map_two_sided_npc(self, image_path, name, underlying_tile):
         sprites = RenderUpdates()
-        sheet = get_image(path)
+        sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet)
         character = AnimatedSprite(self.center_pt, Direction.DOWN.value,
@@ -404,9 +385,11 @@ class DragonWarriorMap:
         sprites.add(character)
         self.characters.append(character)
         self.character_sprites.append(sprites)
-        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'], tile_group=self.tile_key[underlying_tile]['group'])
+        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
+                      tile_group=self.tile_key[underlying_tile]['group'])
 
     def map_player(self, current_loaded_map, underlying_tile='BRICK'):
+        # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
         self.player = Player(center_point=self.center_pt,
                              down_images=self.hero_images[Direction.DOWN.value],
                              left_images=self.hero_images[Direction.LEFT.value],
@@ -416,14 +399,16 @@ class DragonWarriorMap:
         self.player_sprites = RenderUpdates(self.player)
         if isinstance(current_loaded_map, TantegelThroneRoom):
             self.player.direction = Direction.UP.value
-        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'], tile_group=self.tile_key[underlying_tile]['group'])
+        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
+                      tile_group=self.tile_key[underlying_tile]['group'])
         self.characters.append(self.player)
         self.character_sprites.append(self.player_sprites)
 
     def map_floor_tiles(self, x, y):
         for tile, tile_dict in self.tile_key.items():
-            if self.layout[y][x] == tile_dict['val'] and 'group' in tile_dict.keys():
-                self.add_tile(tile_value=tile_dict['val'], tile_group=tile_dict['group'])
+            if self.layout[y][x] <= 33:
+                if self.layout[y][x] == tile_dict['val']:
+                    self.add_tile(tile_value=tile_dict['val'], tile_group=tile_dict['group'])
 
     def add_tile(self, tile_value, tile_group):
         if tile_value < 10:

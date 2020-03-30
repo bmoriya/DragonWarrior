@@ -204,7 +204,7 @@ class Game:
         if not self.next_tile_checked:
             self.next_tile = self.get_next_tile()
             self.next_tile_checked = True
-        print(self.next_tile)
+        # print(self.next_tile)
         if not self.did_collide(self.next_tile):
             self.current_map.player.rect.x += delta_x
             next_cam_pos_x = curr_cam_pos_x + -delta_x
