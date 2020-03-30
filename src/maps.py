@@ -7,7 +7,7 @@ from pygame.transform import scale
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
-    ROAMING_GUARD_PATH, MAN_PATH, village_music
+    ROAMING_GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music
 from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
@@ -20,22 +20,23 @@ all_impassable_tiles = (
     'DOWN_FACE_GUARD', 'LEFT_FACE_GUARD', 'UP_FACE_GUARD', 'RIGHT_FACE_GUARD', 'MAN', 'WOMAN', 'WISE_MAN', 'SOLDIER',
     'MERCHANT')
 
+brick_line = [3] * 16
 test_map = [
-    [3, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    [3, 3, 3, 1, 6, 34, 6, 6, 6, 6, 6, 6, 6, 6, 6, 3],
-    [3, 1, 6, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 3],
-    [3, 6, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 4, 4, 4, 4, 4, 4, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 4, 3, 3, 3, 3, 4, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 4, 3, 4, 4, 3, 4, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 4, 3, 3, 3, 3, 4, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 4, 4, 4, 4, 4, 4, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 6, 3],
-    [3, 6, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 6, 3],
-    [3, 6, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 3],
-    [3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 3],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+    brick_line,
+    [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3],
+    [3, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 3],
+    [3, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 4, 4, 4, 4, 4, 4, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 3, 3, 3, 3, 3, 3, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 3, 4, 3, 34, 4, 3, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 3, 3, 3, 3, 3, 3, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 4, 4, 4, 4, 4, 4, 4, 4, 7, 6, 4, 3],
+    [3, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 4, 3],
+    [3, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 3],
+    [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3],
+    brick_line
 ]
 
 roof_line = [0] * 27
@@ -73,6 +74,14 @@ tantegel_throne_room = [
 grass_line = [13] * 34
 
 tantegel_courtyard = [
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
+    grass_line,
     [13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13, 13,
      13],
     [13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 3, 1, 13, 13, 13, 13,
@@ -182,6 +191,9 @@ class DragonWarriorMap:
         self.man = None
         self.man_sprites = RenderUpdates()
         self.character_sprites = []
+
+        self.impassable_tiles = all_impassable_tiles
+
         self.tile_group_dict = {}
 
         self.roof_group = Group()  # 0/
@@ -413,6 +425,8 @@ class TestMap(DragonWarriorMap):
     def __init__(self, map_tiles, hero_images):
         super().__init__(map_tiles, hero_images)
         self.layout = test_map
+        self.height = len(self.layout * TILE_SIZE)
+        self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = village_music
         play_music(self.music_file_path)
 
@@ -437,3 +451,5 @@ class TantegelCourtyard(DragonWarriorMap):
         self.layout = tantegel_courtyard
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
+        self.music_file_path = tantegel_castle_courtyard_music
+        play_music(self.music_file_path)

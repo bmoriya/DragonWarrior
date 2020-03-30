@@ -13,7 +13,7 @@ from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import parse_animated_spritesheet, TantegelCourtyard, TantegelThroneRoom
+from src.maps import parse_animated_spritesheet, TantegelCourtyard, TestMap
 
 
 class Game:
@@ -43,6 +43,7 @@ class Game:
         self.last_roaming_character_clock_check = get_ticks()
         self.roaming_character_go_cooldown = 3000
         self.sprite_movement_wait_period = 10
+        self.current_map = None
         if maps.current_map is None:
             maps.current_map = maps.TantegelThroneRoom
         self.map_tiles = []
@@ -76,8 +77,6 @@ class Game:
         self.hero_layout_column = initial_hero_location.take(1)
         hero_row = int(self.hero_layout_row)
         hero_col = int(self.hero_layout_column)
-        map_width = len(self.current_map.layout[0])
-        map_height = len(self.current_map.layout)
         self.camera = Camera(hero_position=(hero_row, hero_col), current_map=self.current_map, speed=None)
 
     def main(self):
@@ -123,7 +122,7 @@ class Game:
 
     def events(self):
         for event in get():
-            if event.type == pygame.QUIT or (event.type == pygame.K_LCTRL and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT or (event.type == pygame.K_LCTRL and event.key == pygame.K_q):
                 quit()
                 sys.exit()
         # TODO: Smooth out movement even more.
@@ -301,8 +300,9 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
         # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
+        self.current_map = TestMap(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
 
     def load_images(self):

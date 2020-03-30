@@ -30,6 +30,9 @@ class Camera:
             self.y = -3 * TILE_SIZE
         elif isinstance(self.current_map, TantegelCourtyard):
             self.x = -3 * TILE_SIZE
+            self.y = -8 * TILE_SIZE
+        else:
+            self.x = 0 * TILE_SIZE
             self.y = 0 * TILE_SIZE
 
     def get_pos(self):

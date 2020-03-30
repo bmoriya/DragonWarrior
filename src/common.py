@@ -43,7 +43,7 @@ def play_music(path='data/sound/music'):
             canonicalized_path = path.replace('/', sep).replace('\\', sep)
             music = pygame.mixer.Sound(canonicalized_path)
             _music_library[path] = music
-        music.play()
+        music.play(-1)
 
 
 _image_library = {}
