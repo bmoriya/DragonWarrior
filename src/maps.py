@@ -293,18 +293,18 @@ class DragonWarriorMap:
         self.character_key = OrderedDict([
             ('HERO', {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False}),
             ('KING_LORIK', {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False}),
-            ('DOWN_FACE_GUARD', {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
-            ('LEFT_FACE_GUARD', {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
-            ('UP_FACE_GUARD', {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
-            ('RIGHT_FACE_GUARD', {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False}),
-            ('ROAMING_GUARD', {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True}),
-            ('MAN', {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False}),
-            ('WOMAN', {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False}),
-            ('WISE_MAN', {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False}),
-            ('SOLDIER', {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False}),
-            ('MERCHANT', {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False}),
-            ('PRINCESS_GWAELIN', {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False}),
-            ('DRAGONLORD', {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False}),
+            ('DOWN_FACE_GUARD', {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('LEFT_FACE_GUARD', {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value}),
+            ('UP_FACE_GUARD', {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value}),
+            ('RIGHT_FACE_GUARD', {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value}),
+            ('ROAMING_GUARD', {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value}),
+            ('MAN', {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('WOMAN', {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('WISE_MAN', {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('SOLDIER', {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('MERCHANT', {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('PRINCESS_GWAELIN', {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+            ('DRAGONLORD', {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
         ])
         self.tile_character_key = self.tile_key.update(self.character_key)
 
@@ -348,7 +348,7 @@ class DragonWarriorMap:
                     if self.layout[y][x] == self.character_key['HERO']['val']:
                         self.map_player(current_loaded_map)
                     elif character_dict['four_sided']:
-                        self.map_four_sided_npc(direction=Direction.DOWN.value, name=character,
+                        self.map_four_sided_npc(direction=character_dict['direction'], name=character,
                                                 underlying_tile='BRICK',
                                                 image_path=character_dict['path'], is_roaming=character_dict['roaming'])
                     else:
