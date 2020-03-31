@@ -12,7 +12,7 @@ from pygame.transform import scale
 
 from src import maps
 from src.camera import Camera
-from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, DRAGON_QUEST_FONT, \
+from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, \
     DRAGON_QUEST_FONT_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from src.maps import parse_animated_spritesheet, TantegelThroneRoom
@@ -27,6 +27,7 @@ class Game:
     ORIGIN = (0, 0)
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
+    RED = (255, 0, 0)
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = USEREVENT + 1
     time.set_timer(MOVE_EVENT, 100)
@@ -182,19 +183,39 @@ class Game:
         menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
                                                      (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
                                                      TILE_SIZE * 8, TILE_SIZE * 5)
-        menu = pygameMenu.Menu(menu_subsurface, TILE_SIZE * 5, TILE_SIZE * 8,
+        menu = pygameMenu.Menu(surface=menu_subsurface,
+                               window_width=TILE_SIZE * 5,
+                               window_height=TILE_SIZE * 8,
                                font=DRAGON_QUEST_FONT_PATH,
+                               title='COMMAND',
+                               back_box=False,
+                               bgfun=self.update,
+                               color_selected=Game.RED,
+                               dopause=True,
+                               draw_region_x=89,
+                               draw_region_y=56,
+                               draw_select=False,
+                               font_color=Game.WHITE,
                                font_size=15,
-                               font_color=Game.WHITE, title='COMMAND',
-                               dopause=True, bgfun=self.update, menu_alpha=100)
-        menu.add_option('TALK', self.talk)
-        menu.add_option('STATUS', self.status)
-        menu.add_option('STAIRS', self.stairs)
-        menu.add_option('SEARCH', self.search)
+                               font_title=DRAGON_QUEST_FONT_PATH,
+                               fps=60,
+                               joystick_enabled=True,
+                               menu_alpha=100,
+                               menu_color=Game.BLACK,
+                               menu_color_title=Game.WHITE,
+                               mouse_enabled=True,
+                               option_margin=20,
+
+                               widget_alignment=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_option('TALK', self.talk, align=pygameMenu.locals.ALIGN_LEFT, font_color=Game.WHITE)
+        menu.add_option('STATUS', self.status, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_option('STAIRS', self.stairs, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_option('SEARCH', self.search, align=pygameMenu.locals.ALIGN_LEFT)
         menu.add_option('SPELL', self.spell)
         menu.add_option('ITEM', self.item)
         menu.add_option('DOOR', self.door)
         menu.add_option('TAKE', self.take)
+
         menu.draw()
 
     def talk(self):
