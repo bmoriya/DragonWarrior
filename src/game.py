@@ -34,6 +34,7 @@ class Game:
     def __init__(self):
 
         # Initialize pygame
+        self.paused = False
         init()
 
         # Create the game window.
@@ -124,15 +125,21 @@ class Game:
         # # TODO: implement actual function of B, A, Start, Select buttons.
         if key[pygame.K_j]:
             # B button
-            self.unfreeze()
+            self.enable_menu = False
+            self.unpause_all_movement()
             print("You pressed the J key (B button).")
         if key[pygame.K_k]:
             # A button
-            self.freeze()
+            self.enable_menu = True
+            self.pause_all_movement()
             print("You pressed the K key (A button).")
 
         if key[pygame.K_i]:
             # Start button
+            if self.paused:
+                self.unpause_all_movement()
+            else:
+                self.pause_all_movement()
             print("You pressed the I key (Start button).")
         if key[pygame.K_u]:
             # Select button
@@ -144,17 +151,17 @@ class Game:
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
 
-    def unfreeze(self):
-        self.enable_menu = False
+    def unpause_all_movement(self):
         self.enable_animate = True
         self.enable_roaming = True
         self.enable_movement = True
+        self.paused = False
 
-    def freeze(self):
-        self.enable_menu = True
+    def pause_all_movement(self):
         self.enable_animate = False
         self.enable_roaming = False
         self.enable_movement = False
+        self.paused = True
 
     def draw(self):
         self.current_map.draw_map(self.bigmap)
