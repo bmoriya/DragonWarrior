@@ -2,6 +2,7 @@ import random
 import sys
 
 import pygame
+import pygameMenu
 from pygame import init, Surface, USEREVENT, time, quit, FULLSCREEN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
@@ -11,9 +12,10 @@ from pygame.transform import scale
 
 from src import maps
 from src.camera import Camera
-from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image
+from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, DRAGON_QUEST_FONT, \
+    DRAGON_QUEST_FONT_PATH
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import parse_animated_spritesheet, TestMap, TantegelCourtyard, TantegelThroneRoom
+from src.maps import parse_animated_spritesheet, TantegelThroneRoom
 
 
 class Game:
@@ -24,6 +26,7 @@ class Game:
 
     ORIGIN = (0, 0)
     BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = USEREVENT + 1
     time.set_timer(MOVE_EVENT, 100)
@@ -78,6 +81,10 @@ class Game:
         hero_row = int(self.hero_layout_row)
         hero_col = int(self.hero_layout_column)
         self.camera = Camera(hero_position=(hero_row, hero_col), current_map=self.current_map, speed=None)
+        self.enable_menu = False
+        self.enable_animate = True
+        self.enable_roaming = True
+        self.enable_movement = True
 
     def main(self):
         while True:
@@ -85,25 +92,6 @@ class Game:
             self.events()
             self.draw()
             self.update()
-
-    def draw(self):
-        self.current_map.draw_map(self.bigmap)
-        for sprites in self.current_map.character_sprites:
-            sprites.clear(self.screen, self.background)
-        self.screen.fill(self.BACK_FILL_COLOR)
-        self.background = self.get_background()
-        for character in self.current_map.characters:
-            character.animate()
-        for sprites in self.current_map.character_sprites:
-            sprites.draw(self.background)
-
-    def update(self):
-        self.screen.blit(self.background, self.camera.get_pos())
-        flip()
-
-    def get_background(self):
-        return self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
-                                      self.current_map.height).convert()
 
     def move_roaming_characters(self):
         # TODO: Disable moving of roaming characters if a dialog box is open.
@@ -121,35 +109,114 @@ class Game:
             self.handle_roaming_character_map_edge_side_collision(roaming_character)
 
     def events(self):
+
         for event in get():
             if event.type == pygame.QUIT or (event.type == pygame.K_LCTRL and event.key == pygame.K_q):
                 quit()
                 sys.exit()
-        # TODO: Smooth out movement even more.
         key = pygame.key.get_pressed()
         self.hero_layout_row = self.current_map.player.rect.y // TILE_SIZE
         self.hero_layout_column = self.current_map.player.rect.x // TILE_SIZE
-        self.move_roaming_characters()
-        self.move_player(key)
+        if self.enable_roaming:
+            self.move_roaming_characters()
+        if self.enable_movement:
+            self.move_player(key)
         # # TODO: implement actual function of B, A, Start, Select buttons.
-        if key[pygame.K_z]:
+        if key[pygame.K_j]:
             # B button
-            print("You pressed the z key.")
-        if key[pygame.K_y]:
+            self.unfreeze()
+            print("You pressed the J key (B button).")
+        if key[pygame.K_k]:
             # A button
-            print("You pressed the y key.")
-        if key[pygame.K_SPACE]:
+            self.freeze()
+            print("You pressed the K key (A button).")
+
+        if key[pygame.K_i]:
             # Start button
-            print("You pressed the space bar.")
-        if key[pygame.K_ESCAPE]:
+            print("You pressed the I key (Start button).")
+        if key[pygame.K_u]:
             # Select button
-            print("You pressed the escape key.")
+            print("You pressed the U key (Select button).")
 
         # For debugging purposes, this prints out the current tile that the hero is standing on.
         # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
         #                                    self.current_map.player.rect.x // TILE_SIZE))
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
+
+    def unfreeze(self):
+        self.enable_menu = False
+        self.enable_animate = True
+        self.enable_roaming = True
+        self.enable_movement = True
+
+    def freeze(self):
+        self.enable_menu = True
+        self.enable_animate = False
+        self.enable_roaming = False
+        self.enable_movement = False
+
+    def draw(self):
+        self.current_map.draw_map(self.bigmap)
+        for sprites in self.current_map.character_sprites:
+            sprites.clear(self.screen, self.background)
+        self.screen.fill(self.BACK_FILL_COLOR)
+        self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
+                                                 self.current_map.height).convert()
+        for character in self.current_map.characters:
+            if self.enable_animate:
+                character.animate()
+        for sprites in self.current_map.character_sprites:
+            sprites.draw(self.background)
+        if self.enable_menu:
+            self.draw_menu()
+
+    def draw_menu(self):
+        menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
+                                                     (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
+                                                     TILE_SIZE * 8, TILE_SIZE * 5)
+        menu = pygameMenu.Menu(menu_subsurface, TILE_SIZE * 5, TILE_SIZE * 8,
+                               font=DRAGON_QUEST_FONT_PATH,
+                               font_size=15,
+                               font_color=Game.WHITE, title='COMMAND',
+                               dopause=True, bgfun=self.update, menu_alpha=100)
+        menu.add_option('TALK', self.talk)
+        menu.add_option('STATUS', self.status)
+        menu.add_option('STAIRS', self.stairs)
+        menu.add_option('SEARCH', self.search)
+        menu.add_option('SPELL', self.spell)
+        menu.add_option('ITEM', self.item)
+        menu.add_option('DOOR', self.door)
+        menu.add_option('TAKE', self.take)
+        menu.draw()
+
+    def talk(self):
+        print("TALK")
+
+    def status(self):
+        print("STATUS")
+
+    def stairs(self):
+        print("STAIRS")
+
+    def search(self):
+        print("SEARCH")
+
+    def spell(self):
+        print("SPELL")
+
+    def item(self):
+        print("ITEM")
+
+    def door(self):
+        print("DOOR")
+
+    def take(self):
+        print("TAKE")
+
+    def update(self):
+        self.screen.blit(self.background, self.camera.get_pos())
+        flip()
 
     def get_tile_by_coordinates(self, row, column):
         if row < len(self.current_map.layout) and column < len(self.current_map.layout[0]):

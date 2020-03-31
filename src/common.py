@@ -4,7 +4,7 @@ from os.path import join, sep
 
 import pygame
 
-from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR
+from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR, FONTS_DIR
 
 
 class Direction(Enum):
@@ -59,6 +59,7 @@ MERCHANT_PATH = join(IMAGES_DIR, 'merchant.png')
 PRINCESS_GWAELIN_PATH = join(IMAGES_DIR, 'princess_gwaelin.png')
 DRAGONLORD_PATH = join(IMAGES_DIR, 'dragonlord.png')
 
+
 def get_image(path):
     global _image_library
     image = _image_library.get(path)
@@ -67,3 +68,8 @@ def get_image(path):
         image = pygame.image.load(canonicalized_path)
         _image_library[path] = image
     return image
+
+
+pygame.font.init()
+DRAGON_QUEST_FONT_PATH = join(FONTS_DIR, 'dragon-quest.ttf')
+DRAGON_QUEST_FONT = pygame.font.Font(DRAGON_QUEST_FONT_PATH, 15)

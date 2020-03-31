@@ -22,8 +22,10 @@ all_impassable_tiles = (
     'MERCHANT')
 
 character_key = OrderedDict([
-    ('HERO', {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False}),
-    ('KING_LORIK', {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False}),
+    ('HERO',
+     {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False}),
+    ('KING_LORIK',
+     {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False}),
     ('DOWN_FACE_GUARD',
      {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
     ('LEFT_FACE_GUARD',
@@ -34,7 +36,8 @@ character_key = OrderedDict([
      {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value}),
     ('ROAMING_GUARD',
      {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value}),
-    ('MAN', {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+    ('MAN',
+     {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
     ('WOMAN',
      {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
     ('WISE_MAN',
@@ -43,8 +46,8 @@ character_key = OrderedDict([
      {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
     ('MERCHANT',
      {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
-    ('PRINCESS_GWAELIN', {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False,
-                          'direction': Direction.DOWN.value}),
+    ('PRINCESS_GWAELIN',
+     {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
     ('DRAGONLORD',
      {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
 ])
