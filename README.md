@@ -7,7 +7,7 @@ This is a clone of Dragon Warrior for the NES, done in Python.
 REQUIREMENTS
 ============
 
-Python 3.x, Pygame 1.9.
+Python 3.x, PyGame, Pygame Menu, NumPy
 
 INSTRUCTIONS
 ============
