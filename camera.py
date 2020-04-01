@@ -1,5 +1,5 @@
-from src.config import TILE_SIZE
-from src.maps import TantegelThroneRoom, TantegelCourtyard
+from config import TILE_SIZE
+from maps import TantegelThroneRoom, TantegelCourtyard
 
 
 class Camera:

@@ -4,12 +4,12 @@ import pygame
 from pygame.imageext import load_extended
 from pygame.transform import scale
 
-from src.camera import Camera
-from src.common import UNARMED_HERO_PATH, Direction
-from src.config import SCALE
-from src.game import Game
-from src.maps import DragonWarriorMap, parse_animated_spritesheet
-from src.player import Player
+from camera import Camera
+from common import UNARMED_HERO_PATH, Direction
+from config import SCALE
+from game import Game
+from maps import DragonWarriorMap, parse_animated_spritesheet
+from player import Player
 
 
 def create_key_mock(pressed_key):

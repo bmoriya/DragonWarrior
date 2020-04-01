@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # This file is mainly here for the repl.it
-from src.game import Game
+from game import Game
 
 
 def run():

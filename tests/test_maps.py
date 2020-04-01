@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.test_game import TestMap
+from tests.test_game import TestMap
 
 
 class TestDragonWarriorMap(TestCase):

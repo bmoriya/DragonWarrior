@@ -1,9 +1,9 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from src.animated_sprite import AnimatedSprite
-from src.common import Direction
-from src.maps import parse_animated_spritesheet
+from animated_sprite import AnimatedSprite
+from common import Direction
+from maps import parse_animated_spritesheet
 
 
 class TestAnimatedSprite(TestCase):

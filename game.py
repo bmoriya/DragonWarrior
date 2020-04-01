@@ -10,12 +10,12 @@ from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
 
-from src import maps
-from src.camera import Camera
-from src.common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, \
+import maps
+from camera import Camera
+from common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, \
     DRAGON_QUEST_FONT_PATH
-from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from src.maps import parse_animated_spritesheet, TantegelThroneRoom
+from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
+from maps import parse_animated_spritesheet, TantegelThroneRoom
 
 
 class Game:
