@@ -13,7 +13,7 @@ from pygame.transform import scale
 import maps
 from camera import Camera
 from common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, \
-    DRAGON_QUEST_FONT_PATH
+    DRAGON_QUEST_FONT_PATH, menu_button_sfx
 from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from maps import parse_animated_spritesheet, TantegelThroneRoom
 
@@ -35,6 +35,7 @@ class Game:
     def __init__(self):
 
         # Initialize pygame
+        self.command_menu_launched = False
         self.paused = False
         init()
 
@@ -83,7 +84,7 @@ class Game:
         hero_row = int(self.hero_layout_row)
         hero_col = int(self.hero_layout_column)
         self.camera = Camera(hero_position=(hero_row, hero_col), current_map=self.current_map, speed=None)
-        self.enable_menu = False
+        self.enable_command_menu = False
         self.enable_animate = True
         self.enable_roaming = True
         self.enable_movement = True
@@ -126,12 +127,11 @@ class Game:
         # # TODO: implement actual function of B, A, Start, Select buttons.
         if key[pygame.K_j]:
             # B button
-            self.enable_menu = False
-            self.unpause_all_movement()
+            self.unlaunch_command_menu()
             print("You pressed the J key (B button).")
         if key[pygame.K_k]:
             # A button
-            self.enable_menu = True
+            self.enable_command_menu = True
             self.pause_all_movement()
             print("You pressed the K key (A button).")
 
@@ -151,6 +151,11 @@ class Game:
         #                                    self.current_map.player.rect.x // TILE_SIZE))
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
+
+    def unlaunch_command_menu(self):
+        self.enable_command_menu = False
+        self.unpause_all_movement()
+        self.command_menu_launched = False
 
     def unpause_all_movement(self):
         self.enable_animate = True
@@ -176,10 +181,13 @@ class Game:
                 character.animate()
         for sprites in self.current_map.character_sprites:
             sprites.draw(self.background)
-        if self.enable_menu:
-            self.draw_menu()
+        if self.enable_command_menu:
+            self.launch_command_menu()
 
-    def draw_menu(self):
+    def launch_command_menu(self):
+        if not self.command_menu_launched:
+            play_sound(menu_button_sfx)
+
         menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
                                                      (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
                                                      TILE_SIZE * 8, TILE_SIZE * 5)
@@ -217,6 +225,7 @@ class Game:
         menu.add_option('TAKE', self.take)
 
         menu.draw()
+        self.command_menu_launched = True
 
     def talk(self):
         print("TALK")
