@@ -13,7 +13,7 @@ from pygame.transform import scale
 import maps
 from camera import Camera
 from common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, \
-    DRAGON_QUEST_FONT_PATH, menu_button_sfx
+    menu_button_sfx, DRAGON_QUEST_FONT_PATH
 from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from maps import parse_animated_spritesheet, TantegelThroneRoom
 
@@ -90,7 +90,7 @@ class Game:
         self.enable_movement = True
 
     def main(self):
-        while True:
+        while 1:
             self.clock.tick(self.FPS)
             self.events()
             self.draw()
@@ -201,28 +201,44 @@ class Game:
                                color_selected=Game.RED,
                                dopause=True,
                                draw_region_x=89,
-                               draw_region_y=56,
+                               draw_region_y=41,
                                draw_select=False,
+                               enabled=False,
                                font_color=Game.WHITE,
-                               font_size=15,
+                               font_size=16,
+                               font_size_title=16,
                                font_title=DRAGON_QUEST_FONT_PATH,
                                fps=60,
                                joystick_enabled=True,
                                menu_alpha=100,
                                menu_color=Game.BLACK,
-                               menu_color_title=Game.WHITE,
-                               mouse_enabled=True,
-                               option_margin=20,
-
-                               widget_alignment=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_option('TALK', self.talk, align=pygameMenu.locals.ALIGN_LEFT, font_color=Game.WHITE)
-        menu.add_option('STATUS', self.status, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_option('STAIRS', self.stairs, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_option('SEARCH', self.search, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_option('SPELL', self.spell)
-        menu.add_option('ITEM', self.item)
-        menu.add_option('DOOR', self.door)
-        menu.add_option('TAKE', self.take)
+                               # menu_color_title=Game.WHITE,
+                               # menu_height=_cfg.MENU_HEIGHT,
+                               # menu_width=_cfg.MENU_WIDTH,
+                               mouse_enabled=False,
+                               mouse_visible=False,
+                               # onclose=None,
+                               option_margin=15,
+                               option_shadow=False,
+                               # option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
+                               # option_shadow_position=_cfg.MENU_SHADOW_POSITION,
+                               # rect_width=_cfg.MENU_SELECTED_WIDTH,
+                               title_offsetx=280,
+                               title_offsety=71,
+                               widget_alignment=pygameMenu.locals.ALIGN_LEFT,
+                               columns=2,
+                               rows=4,
+                               column_weights=None,
+                               # force_fit_text=False
+                               )
+        menu.add_button('TALK', self.talk, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('STATUS', self.status, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('STAIRS', self.stairs, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('SEARCH', self.search, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('SPELL', self.spell, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('ITEM', self.item, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('DOOR', self.door, align=pygameMenu.locals.ALIGN_LEFT)
+        menu.add_button('TAKE', self.take, align=pygameMenu.locals.ALIGN_LEFT)
 
         menu.draw()
         self.command_menu_launched = True

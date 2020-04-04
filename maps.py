@@ -1,3 +1,4 @@
+import time
 from collections import OrderedDict
 
 import numpy as np
@@ -104,7 +105,6 @@ tantegel_throne_room = [
     roof_line,  # 19
     roof_line,  # 20
     roof_line,  # 21
-    roof_line,  # 22
 ]
 
 grass_line = tuple([13] * 36)
@@ -171,10 +171,7 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
     sheet.convert_alpha()
     # width, height = sheet.get_size()
 
-    facing_down = []
-    facing_left = []
-    facing_up = []
-    facing_right = []
+    facing_down, facing_left, facing_up, facing_right = [], [], [], []
 
     for i in range(0, 2):
 
@@ -306,20 +303,20 @@ class DragonWarriorMap:
                 group.draw(surface)
 
     def load_map(self):
+        # start_time = time.time()
         current_loaded_map = self
 
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
 
-        layout_values = [self.get_tile_by_value(tile) for row in self.layout for tile in row]
-        tiles_in_current_loaded_map = list(filter(lambda n: n in layout_values, list(self.tile_key.keys())))
-        self.impassable_tiles = tuple(set(tiles_in_current_loaded_map) & set(all_impassable_tiles))
+        tiles_in_current_loaded_map = set([self.get_tile_by_value(tile) for row in set(self.layout) for tile in row])
+        self.impassable_tiles = tuple(tiles_in_current_loaded_map & set(all_impassable_tiles))
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
-                self.center_pt = [(x * TILE_SIZE) + x_offset,
-                                  (y * TILE_SIZE) + y_offset]
+                self.center_pt = [(x * TILE_SIZE) + x_offset, (y * TILE_SIZE) + y_offset]
                 self.map_floor_tiles(x, y)
                 self.map_character_tiles(current_loaded_map, x, y)
+        # print("--- %s seconds ---" % (time.time() - start_time))
 
     def map_character_tiles(self, current_loaded_map, x, y):
         for character, character_dict in character_key.items():
