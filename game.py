@@ -32,12 +32,10 @@ def get_next_coordinates(character_column, character_row, direction):
 class Game:
     FPS = 60
     GAME_TITLE = "Dragon Warrior"
-    WIN_WIDTH = NES_RES[0] * SCALE
-    WIN_HEIGHT = NES_RES[1] * SCALE
+    WIN_WIDTH, WIN_HEIGHT = NES_RES[0] * SCALE, NES_RES[1] * SCALE
 
     ORIGIN = (0, 0)
-    BLACK = (0, 0, 0)
-    WHITE = (255, 255, 255)
+    BLACK, WHITE = (0, 0, 0), (255, 255, 255)
     RED = (255, 0, 0)
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = USEREVENT + 1
@@ -63,45 +61,32 @@ class Game:
             maps.current_map = maps.TantegelThroneRoom
 
         self.map_tiles = []
-        self.bigmap_width = None
-        self.bigmap_height = None
-        self.bigmap = None
-        self.current_map_height = None
+        self.bigmap_width, self.bigmap_height, self.bigmap = None, None, None
         self.background = None
         self.next_tile = None
         self.next_tile_checked = False
 
-        self.left_face_guard_images = None
-        self.right_face_guard_images = None
-        self.roaming_guard_images = None
         self.unarmed_hero_images = None
         self.load_images()
         self.map_tilesheet = None
-
-        self.hero_layout_row = None
-        self.hero_layout_column = None
+        self.hero_layout_row, self.hero_layout_column = None, None
         self.player_moving = False
         self.speed = 2
 
         self.load_current_map()
         for roaming_character in self.current_map.roaming_characters:
             roaming_character.last_roaming_clock_check = get_ticks()
-            roaming_character.column = roaming_character.rect.x // TILE_SIZE
-            roaming_character.row = roaming_character.rect.y // TILE_SIZE
+            roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
         # Make the big scrollable map
         # TODO(ELF): Refactor these into the actual values and remove the None assignments that they replace.
         self.make_bigmap()
         self.background = Surface(self.screen.get_size()).convert()
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
-        self.hero_layout_row = initial_hero_location.take(0)
-        self.hero_layout_column = initial_hero_location.take(1)
-        hero_row = int(self.hero_layout_row)
-        hero_col = int(self.hero_layout_column)
-        self.camera = Camera(hero_position=(hero_row, hero_col), current_map=self.current_map, speed=None)
+        self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
+        self.camera = Camera(hero_position=(int(self.hero_layout_row), int(self.hero_layout_column)),
+                             current_map=self.current_map, speed=None)
         self.enable_command_menu = False
-        self.enable_animate = True
-        self.enable_roaming = True
-        self.enable_movement = True
+        self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
 
     def main(self):
         while 1:
@@ -117,22 +102,26 @@ class Game:
                 quit()
                 sys.exit()
         key = pygame.key.get_pressed()
-        self.hero_layout_row = self.current_map.player.rect.y // TILE_SIZE
-        self.hero_layout_column = self.current_map.player.rect.x // TILE_SIZE
+        self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
         if self.enable_roaming:
             self.move_roaming_characters()
         if self.enable_movement:
             self.move_player(key)
-        # # TODO: implement actual function of B, A, Start, Select buttons.
         if key[pygame.K_j]:
             # B button
             self.unlaunch_command_menu()
             print("You pressed the J key (B button).")
         if key[pygame.K_k]:
             # A button
-            self.enable_command_menu = True
-            self.pause_all_movement()
             print("You pressed the K key (A button).")
+            if not self.player_moving:
+                self.enable_command_menu = True
+                self.pause_all_movement()
+            else:
+                # TODO(ELF): Make the menu wait until the player arrives at the next tile, and then launch.
+                # wait until arriving at the next square, and then
+                self.enable_command_menu = True
+                self.pause_all_movement()
 
         if key[pygame.K_i]:
             # Start button
@@ -381,8 +370,7 @@ class Game:
         # TODO: Disable moving of roaming characters if a dialog box is open.
         # TODO: Extend roaming characters beyond just the roaming guard.
         for roaming_character in self.current_map.roaming_characters:
-            roaming_character.column = roaming_character.rect.x // TILE_SIZE
-            roaming_character.row = roaming_character.rect.y // TILE_SIZE
+            roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
             now = get_ticks()
             if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
                 roaming_character.last_roaming_clock_check = now
@@ -392,25 +380,13 @@ class Game:
                     return
                 roaming_character.moving = True
             else:  # determine if character has reached new tile
-                if roaming_character.direction == Direction.UP.value:
+                if roaming_character.direction == Direction.UP.value or roaming_character.direction == Direction.DOWN.value:
                     if roaming_character.rect.y % TILE_SIZE == 0:
-                        roaming_character.moving = False
-                        roaming_character.next_tile_checked = False
+                        roaming_character.moving, roaming_character.next_tile_checked = False, False
                         return
-                elif roaming_character.direction == Direction.DOWN.value:
-                    if roaming_character.rect.y % TILE_SIZE == 0:
-                        roaming_character.moving = False
-                        roaming_character.next_tile_checked = False
-                        return
-                elif roaming_character.direction == Direction.LEFT.value:
+                elif roaming_character.direction == Direction.LEFT.value or roaming_character.direction == Direction.RIGHT.value:
                     if roaming_character.rect.x % TILE_SIZE == 0:
-                        roaming_character.moving = False
-                        roaming_character.next_tile_checked = False
-                        return
-                elif roaming_character.direction == Direction.RIGHT.value:
-                    if roaming_character.rect.x % TILE_SIZE == 0:
-                        roaming_character.moving = False
-                        roaming_character.next_tile_checked = False
+                        roaming_character.moving, roaming_character.next_tile_checked = False, False
                         return
             if roaming_character.direction == Direction.UP.value:
                 self.move_roaming_character(delta_x=0, delta_y=self.speed, roaming_character=roaming_character)
@@ -430,7 +406,7 @@ class Game:
                                                              character_column=roaming_character.column,
                                                              direction=roaming_character.direction)
             roaming_character.next_tile_checked = True
-        if not self.is_impassable(roaming_character.next_tile):
+        if not self.is_impassable(roaming_character.next_tile) and (roaming_character.column, roaming_character.row) != (self.hero_layout_column, self.hero_layout_row):
             if delta_x:
                 roaming_character.rect.x += delta_x
             if delta_y:
@@ -471,20 +447,15 @@ class Game:
         """Load all the images for the game graphics.
         """
         # Load the map tile spritesheet
-        self.map_tilesheet = get_image(MAP_TILES_PATH).convert()
+        map_sheet = get_image(MAP_TILES_PATH).convert()
+        self.map_tilesheet = scale(map_sheet, (map_sheet.get_width() * SCALE, map_sheet.get_height() * SCALE))
+        self.parse_map_tiles()
         # Load unarmed hero images
         unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
-
-        self.map_tilesheet = scale(self.map_tilesheet,
-                                   (self.map_tilesheet.get_width() * SCALE,
-                                    self.map_tilesheet.get_height() * SCALE))
-        unarmed_hero_sheet = scale(unarmed_hero_sheet,
-                                   (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
-
-        self.parse_map_tiles()
-
+        unarmed_hero_tilesheet = scale(unarmed_hero_sheet, (
+            unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
         # Get the images for the initial hero sprites
-        self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
+        self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
     def parse_map_tiles(self):
 
