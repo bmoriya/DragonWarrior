@@ -18,7 +18,7 @@ from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_
 from maps import parse_animated_spritesheet
 
 
-def move_rect(delta_x, delta_y, sprite):
+def move_roaming_character(delta_x, delta_y, sprite):
     sprite.rect.x += delta_x
     sprite.rect.y += -delta_y
 
@@ -62,7 +62,6 @@ class Game:
             self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
         set_caption(self.GAME_TITLE)
         self.clock = Clock()
-        # self.last_roaming_character_clock_check = get_ticks()
         self.roaming_character_go_cooldown = 3000
         self.current_map = None
         if maps.current_map is None:
@@ -115,17 +114,6 @@ class Game:
             self.events()
             self.draw()
             self.update()
-
-    def move_roaming_characters(self):
-        # TODO: Disable moving of roaming characters if a dialog box is open.
-        # TODO: Extend roaming characters beyond just the roaming guard.
-        for roaming_character in self.current_map.roaming_characters:
-            now = get_ticks()
-            if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
-                roaming_character.last_roaming_clock_check = now
-                roaming_character.direction = random.randrange(4)
-                self.move_roaming_character(roaming_character, roaming_character.column, roaming_character.row)
-            self.handle_roaming_character_map_edge_side_collision(roaming_character)
 
     def events(self):
 
@@ -343,7 +331,7 @@ class Game:
                                                 direction=self.current_map.player.direction)
             self.next_tile_checked = True
         # print(self.next_tile)
-        if not self.did_collide_with_tile(self.next_tile):
+        if not self.is_impassable(self.next_tile):
             self.current_map.player.rect.x += delta_x
             next_cam_pos_x = curr_cam_pos_x + -delta_x
             self.current_map.player.rect.y += -delta_y
@@ -366,7 +354,7 @@ class Game:
         elif direction == Direction.RIGHT.value:
             return self.get_tile_by_coordinates(character_row, character_column + 1)
 
-    def did_collide_with_tile(self, next_tile):
+    def is_impassable(self, next_tile):
         return next_tile in self.current_map.impassable_tiles
 
     def handle_sides_collision(self, next_pos_x, next_pos_y):
@@ -393,30 +381,53 @@ class Game:
             next_pos_y += self.speed
         return next_pos_x, next_pos_y
 
-    def move_roaming_character(self, roaming_character, roaming_character_column, roaming_character_row):
-        if roaming_character.direction == Direction.UP.value:
-            if self.did_collide_roaming(roaming_character, roaming_character_row, roaming_character_column):
-                move_rect(delta_x=0, delta_y=TILE_SIZE, sprite=roaming_character)
-        elif roaming_character.direction == Direction.DOWN.value:
-            if self.did_collide_roaming(roaming_character, roaming_character_row, roaming_character_column):
-                move_rect(delta_x=0, delta_y=-TILE_SIZE, sprite=roaming_character)
-        elif roaming_character.direction == Direction.LEFT.value:
-            if self.did_collide_roaming(roaming_character, roaming_character_row, roaming_character_column):
-                move_rect(delta_x=-TILE_SIZE, delta_y=0, sprite=roaming_character)
-        elif roaming_character.direction == Direction.RIGHT.value:
-            if self.did_collide_roaming(roaming_character, roaming_character_row, roaming_character_column):
-                move_rect(delta_x=TILE_SIZE, delta_y=0, sprite=roaming_character)
-        else:
-            print("Invalid direction.")
+    def move_roaming_characters(self):
+        # TODO: Disable moving of roaming characters if a dialog box is open.
+        # TODO: Extend roaming characters beyond just the roaming guard.
+        for roaming_character in self.current_map.roaming_characters:
+            now = get_ticks()
+            if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
+                roaming_character.last_roaming_clock_check = now
+                if not roaming_character.moving:
+                    roaming_character.direction = random.randrange(4)
+                else:  # character not moving and no input
+                    return
+                roaming_character.moving = True
+            else: # determine if character has reached new tile
+                if (roaming_character.direction == Direction.UP.value or
+                        roaming_character.direction == Direction.DOWN.value):
+                    if roaming_character.rect.y % TILE_SIZE == 0:
+                        roaming_character.moving = False
+                        roaming_character.next_tile_checked = False
+                        return
+                elif (roaming_character.direction == Direction.LEFT.value or
+                      roaming_character.direction == Direction.RIGHT.value):
+                    if roaming_character.rect.x % TILE_SIZE == 0:
+                        roaming_character.moving = False
+                        roaming_character.next_tile_checked = False
+                        return
+            if roaming_character.direction == Direction.UP.value:
+                move_roaming_character(delta_x=0, delta_y=self.speed, sprite=roaming_character)
+            elif roaming_character.direction == Direction.DOWN.value:
+                # if self.did_collide_roaming(roaming_character, roaming_character.row, roaming_character.column):
+                move_roaming_character(delta_x=0, delta_y=-self.speed, sprite=roaming_character)
+            elif roaming_character.direction == Direction.LEFT.value:
+                # if self.did_collide_roaming(roaming_character, roaming_character.row, roaming_character.column):
+                move_roaming_character(delta_x=-self.speed, delta_y=0, sprite=roaming_character)
+            elif roaming_character.direction == Direction.RIGHT.value:
+                # if self.did_collide_roaming(roaming_character, roaming_character.row, roaming_character.column):
+                move_roaming_character(delta_x=self.speed, delta_y=0, sprite=roaming_character)
+            else:
+                print("Invalid direction.")
 
     def did_collide_roaming(self, roaming_character, roaming_character_row, roaming_character_column):
-        return self.did_collide_with_tile(self.get_next_tile(roaming_character_column, roaming_character_row,
-                                                             roaming_character.direction)) or self.did_collide_with_hero(
+        return self.is_impassable(self.get_next_tile(roaming_character_column, roaming_character_row,
+                                                     roaming_character.direction)) or self.did_collide_with_hero(
             roaming_character, roaming_character_column, roaming_character_row)
 
     def did_collide_with_hero(self, roaming_character, roaming_character_column, roaming_character_row):
         return get_next_coordinates(roaming_character_column, roaming_character_row, roaming_character.direction) != (
-        self.hero_layout_row, self.hero_layout_column)
+            self.hero_layout_row, self.hero_layout_column)
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
@@ -435,9 +446,9 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        self.current_map = maps.TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
         # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
-        self.current_map = maps.TestMap(self.map_tiles, self.unarmed_hero_images)
+        # self.current_map = maps.TestMap(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
 
     def load_images(self):

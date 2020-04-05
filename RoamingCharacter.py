@@ -10,6 +10,8 @@ class RoamingCharacter(AnimatedSprite):
         self.name = name
         self.row = None
         self.column = None
+        self.moving = False
+        self.next_tile_checked = None
         if down_images is None:
             down_images = []
         if left_images is None:
