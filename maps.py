@@ -309,7 +309,7 @@ class DragonWarriorMap:
         x_offset = TILE_SIZE / 2
         y_offset = TILE_SIZE / 2
 
-        tiles_in_current_loaded_map = set([self.get_tile_by_value(tile) for row in set(self.layout) for tile in row])
+        tiles_in_current_loaded_map = set([self.get_tile_by_value(tile) for row in self.layout for tile in row])
         self.impassable_tiles = tuple(tiles_in_current_loaded_map & set(all_impassable_tiles))
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):

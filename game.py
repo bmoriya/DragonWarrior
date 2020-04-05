@@ -106,9 +106,7 @@ class Game:
             if now - self.last_roaming_character_clock_check >= self.roaming_character_go_cooldown:
                 self.last_roaming_character_clock_check = now
                 roaming_character.direction = random.randrange(4)
-                self.move_roaming_character(roaming_character.position.take(0), roaming_character.position.take(1),
-                                            roaming_character, roaming_character_x_pos,
-                                            roaming_character_y_pos)
+                self.move_roaming_character(roaming_character, roaming_character_x_pos, roaming_character_y_pos)
             self.handle_roaming_character_map_edge_side_collision(roaming_character)
 
     def events(self):
@@ -336,8 +334,8 @@ class Game:
             # TODO: Slow down the bump sound effect.
             play_sound(bump_sfx)
 
-        next_cam_pos_x = self.handle_lr_sides_collision(next_cam_pos_x, delta_x)
-        next_cam_pos_y = self.handle_tb_sides_collision(next_cam_pos_y)
+        next_cam_pos_x, next_cam_pos_y = self.handle_sides_collision(next_cam_pos_x, next_cam_pos_y)
+         # = self.handle_tb_sides_collision(next_cam_pos_y)
         self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
 
     def get_next_tile(self, character_row, character_column, direction):
@@ -353,35 +351,31 @@ class Game:
     def did_collide(self, next_tile):
         return next_tile in self.current_map.impassable_tiles
 
-    def handle_tb_sides_collision(self, next_pos_y):
-        max_bound = self.current_map.height
+    def handle_sides_collision(self, next_pos_x, next_pos_y):
+        max_x_bound = self.current_map.width
+        max_y_bound = self.current_map.height
         min_bound = 0
-        player_pos = self.current_map.player.rect.y
-        if player_pos < min_bound:
+        player_pos_x = self.current_map.player.rect.x
+        player_pos_y = self.current_map.player.rect.y
+        if player_pos_x < min_bound:  # Simple Sides Collision
+            self.current_map.player.rect.x = min_bound  # Reset Player Rect Coord
+            play_sound(bump_sfx)
+            next_pos_x += -self.speed
+        elif player_pos_x > max_x_bound - TILE_SIZE:
+            self.current_map.player.rect.x = max_x_bound - TILE_SIZE
+            play_sound(bump_sfx)
+            next_pos_x += self.speed
+        elif player_pos_y < min_bound:
             self.current_map.player.rect.y = min_bound
             play_sound(bump_sfx)
             next_pos_y -= self.speed
-        elif player_pos > max_bound - TILE_SIZE:
-            self.current_map.player.rect.y = max_bound - TILE_SIZE
+        elif player_pos_y > max_y_bound - TILE_SIZE:
+            self.current_map.player.rect.y = max_y_bound - TILE_SIZE
             play_sound(bump_sfx)
             next_pos_y += self.speed
-        return next_pos_y
+        return next_pos_x, next_pos_y
 
-    def handle_lr_sides_collision(self, next_pos_x, delta_x):
-        max_bound = self.current_map.width
-        min_bound = 0
-        player_pos = self.current_map.player.rect.x
-        if player_pos < min_bound:  # Simple Sides Collision
-            self.current_map.player.rect.x = min_bound  # Reset Player Rect Coord
-            play_sound(bump_sfx)
-            next_pos_x += delta_x
-        elif player_pos > max_bound - TILE_SIZE:
-            self.current_map.player.rect.x = max_bound - TILE_SIZE
-            play_sound(bump_sfx)
-            next_pos_x += delta_x
-        return next_pos_x
-
-    def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
+    def move_roaming_character(self, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
         if roaming_character.direction == Direction.UP.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
                                                       roaming_character_y_pos]) not in self.current_map.impassable_tiles:
@@ -422,9 +416,9 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        # self.current_map = TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
         # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
-        # self.current_map = TestMap(self.map_tiles, self.unarmed_hero_images)
+        self.current_map = maps.TestMap(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
 
     def load_images(self):
