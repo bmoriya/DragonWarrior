@@ -1,5 +1,5 @@
 # Constants
-from enum import Enum
+from enum import IntEnum
 from os.path import join, sep
 
 import pygame
@@ -7,7 +7,7 @@ import pygame
 from config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR, FONTS_DIR
 
 
-class Direction(Enum):
+class Direction(IntEnum):
     DOWN = 0
     LEFT = 1
     UP = 2

@@ -18,11 +18,6 @@ from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_
 from maps import parse_animated_spritesheet
 
 
-def move_roaming_character(delta_x, delta_y, sprite):
-    sprite.rect.x += delta_x
-    sprite.rect.y += -delta_y
-
-
 def get_next_coordinates(character_column, character_row, direction):
     if direction == Direction.UP.value:
         return character_row - 1, character_column
@@ -330,12 +325,13 @@ class Game:
                                                 character_column=self.hero_layout_column,
                                                 direction=self.current_map.player.direction)
             self.next_tile_checked = True
-        # print(self.next_tile)
         if not self.is_impassable(self.next_tile):
-            self.current_map.player.rect.x += delta_x
-            next_cam_pos_x = curr_cam_pos_x + -delta_x
-            self.current_map.player.rect.y += -delta_y
-            next_cam_pos_y = curr_cam_pos_y + delta_y
+            if delta_x:
+                self.current_map.player.rect.x += delta_x
+                next_cam_pos_x = curr_cam_pos_x + -delta_x
+            if delta_y:
+                self.current_map.player.rect.y += -delta_y
+                next_cam_pos_y = curr_cam_pos_y + delta_y
         else:
             # TODO: Slow down the bump sound effect.
             play_sound(bump_sfx)
@@ -385,49 +381,69 @@ class Game:
         # TODO: Disable moving of roaming characters if a dialog box is open.
         # TODO: Extend roaming characters beyond just the roaming guard.
         for roaming_character in self.current_map.roaming_characters:
+            roaming_character.column = roaming_character.rect.x // TILE_SIZE
+            roaming_character.row = roaming_character.rect.y // TILE_SIZE
             now = get_ticks()
             if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
                 roaming_character.last_roaming_clock_check = now
                 if not roaming_character.moving:
-                    roaming_character.direction = random.randrange(4)
+                    roaming_character.direction = random.choice(list(map(int, Direction)))
                 else:  # character not moving and no input
                     return
                 roaming_character.moving = True
-            else: # determine if character has reached new tile
-                if (roaming_character.direction == Direction.UP.value or
-                        roaming_character.direction == Direction.DOWN.value):
+            else:  # determine if character has reached new tile
+                if roaming_character.direction == Direction.UP.value:
                     if roaming_character.rect.y % TILE_SIZE == 0:
                         roaming_character.moving = False
                         roaming_character.next_tile_checked = False
                         return
-                elif (roaming_character.direction == Direction.LEFT.value or
-                      roaming_character.direction == Direction.RIGHT.value):
+                elif roaming_character.direction == Direction.DOWN.value:
+                    if roaming_character.rect.y % TILE_SIZE == 0:
+                        roaming_character.moving = False
+                        roaming_character.next_tile_checked = False
+                        return
+                elif roaming_character.direction == Direction.LEFT.value:
+                    if roaming_character.rect.x % TILE_SIZE == 0:
+                        roaming_character.moving = False
+                        roaming_character.next_tile_checked = False
+                        return
+                elif roaming_character.direction == Direction.RIGHT.value:
                     if roaming_character.rect.x % TILE_SIZE == 0:
                         roaming_character.moving = False
                         roaming_character.next_tile_checked = False
                         return
             if roaming_character.direction == Direction.UP.value:
-                move_roaming_character(delta_x=0, delta_y=self.speed, sprite=roaming_character)
+                self.move_roaming_character(delta_x=0, delta_y=self.speed, roaming_character=roaming_character)
             elif roaming_character.direction == Direction.DOWN.value:
-                # if self.did_collide_roaming(roaming_character, roaming_character.row, roaming_character.column):
-                move_roaming_character(delta_x=0, delta_y=-self.speed, sprite=roaming_character)
+                self.move_roaming_character(delta_x=0, delta_y=-self.speed, roaming_character=roaming_character)
             elif roaming_character.direction == Direction.LEFT.value:
-                # if self.did_collide_roaming(roaming_character, roaming_character.row, roaming_character.column):
-                move_roaming_character(delta_x=-self.speed, delta_y=0, sprite=roaming_character)
+                self.move_roaming_character(delta_x=-self.speed, delta_y=0, roaming_character=roaming_character)
             elif roaming_character.direction == Direction.RIGHT.value:
-                # if self.did_collide_roaming(roaming_character, roaming_character.row, roaming_character.column):
-                move_roaming_character(delta_x=self.speed, delta_y=0, sprite=roaming_character)
+                self.move_roaming_character(delta_x=self.speed, delta_y=0, roaming_character=roaming_character)
             else:
                 print("Invalid direction.")
 
-    def did_collide_roaming(self, roaming_character, roaming_character_row, roaming_character_column):
-        return self.is_impassable(self.get_next_tile(roaming_character_column, roaming_character_row,
-                                                     roaming_character.direction)) or self.did_collide_with_hero(
-            roaming_character, roaming_character_column, roaming_character_row)
+    # Roaming guard starts at 16th column (index), 11th row (index) in Tantegel Throne Room
+    def move_roaming_character(self, delta_x, delta_y, roaming_character):
+        if not roaming_character.next_tile_checked:
+            roaming_character.next_tile = self.get_next_tile(character_row=roaming_character.row,
+                                                             character_column=roaming_character.column,
+                                                             direction=roaming_character.direction)
+            roaming_character.next_tile_checked = True
+        if not self.is_impassable(roaming_character.next_tile):
+            if delta_x:
+                roaming_character.rect.x += delta_x
+            if delta_y:
+                roaming_character.rect.y += -delta_y
 
-    def did_collide_with_hero(self, roaming_character, roaming_character_column, roaming_character_row):
-        return get_next_coordinates(roaming_character_column, roaming_character_row, roaming_character.direction) != (
-            self.hero_layout_row, self.hero_layout_column)
+    # def did_collide_roaming(self, roaming_character, roaming_character_row, roaming_character_column):
+    #     return self.is_impassable(self.get_next_tile(roaming_character_column, roaming_character_row,
+    #                                                  roaming_character.direction)) or self.did_collide_with_hero(
+    #         roaming_character, roaming_character_column, roaming_character_row)
+    #
+    # def did_collide_with_hero(self, roaming_character, roaming_character_column, roaming_character_row):
+    #     return get_next_coordinates(roaming_character_column, roaming_character_row, roaming_character.direction) != (
+    #         self.hero_layout_row, self.hero_layout_column)
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
