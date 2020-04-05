@@ -5,6 +5,7 @@ import numpy as np
 from pygame.sprite import Group, RenderUpdates
 from pygame.transform import scale
 
+from RoamingCharacter import RoamingCharacter
 from animated_sprite import AnimatedSprite
 from base_sprite import BaseSprite
 from common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
@@ -65,7 +66,7 @@ test_map = [
     [3, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 4, 3],
     [3, 4, 6, 7, 4, 4, 4, 4, 4, 4, 4, 4, 7, 6, 4, 3],
     [3, 4, 6, 7, 4, 3, 3, 3, 3, 3, 3, 4, 7, 6, 4, 3],
-    [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
+    [3, 40, 40, 40, 40, 40, 40, 40, 40, 4, 3, 4, 7, 6, 4, 3],
     all_characters_values,
     [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
     [3, 4, 6, 7, 4, 3, 3, 3, 3, 3, 3, 4, 7, 6, 4, 3],
@@ -337,15 +338,20 @@ class DragonWarriorMap:
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet, is_roaming=True)
         character_sprites = RenderUpdates()
-        character = AnimatedSprite(self.center_pt, direction,
-                                   images[Direction.DOWN.value],
-                                   images[Direction.LEFT.value],
-                                   images[Direction.UP.value],
-                                   images[Direction.RIGHT.value], name=name)
         if is_roaming:
-            character.position = self.get_initial_character_location(
-                character_name=character.name)
+            character = RoamingCharacter(self.center_pt, direction,
+                                       images[Direction.DOWN.value],
+                                       images[Direction.LEFT.value],
+                                       images[Direction.UP.value],
+                                       images[Direction.RIGHT.value], name=name)
+            character.position = self.get_initial_character_location(character_name=character.name)
             self.roaming_characters.append(character)
+        else:
+            character = AnimatedSprite(self.center_pt, direction,
+                                       images[Direction.DOWN.value],
+                                       images[Direction.LEFT.value],
+                                       images[Direction.UP.value],
+                                       images[Direction.RIGHT.value], name=name)
         character_sprites.add(character)
         self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
                       tile_group=self.tile_key[underlying_tile]['group'])
