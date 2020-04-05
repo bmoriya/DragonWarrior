@@ -322,7 +322,9 @@ class Game:
         next_cam_pos_x = curr_cam_pos_x
         next_cam_pos_y = curr_cam_pos_y
         if not self.next_tile_checked:
-            self.next_tile = self.get_next_tile()
+            self.next_tile = self.get_next_tile(character_row=self.hero_layout_row,
+                                                character_column=self.hero_layout_column,
+                                                direction=self.current_map.player.direction)
             self.next_tile_checked = True
         # print(self.next_tile)
         if not self.did_collide(self.next_tile):
@@ -338,15 +340,15 @@ class Game:
         next_cam_pos_y = self.handle_tb_sides_collision(next_cam_pos_y)
         self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
 
-    def get_next_tile(self):
-        if self.current_map.player.direction == Direction.UP.value:
-            return self.get_tile_by_coordinates(self.hero_layout_row - 1, self.hero_layout_column)
-        elif self.current_map.player.direction == Direction.DOWN.value:
-            return self.get_tile_by_coordinates(self.hero_layout_row + 1, self.hero_layout_column)
-        elif self.current_map.player.direction == Direction.LEFT.value:
-            return self.get_tile_by_coordinates(self.hero_layout_row, self.hero_layout_column - 1)
-        elif self.current_map.player.direction == Direction.RIGHT.value:
-            return self.get_tile_by_coordinates(self.hero_layout_row, self.hero_layout_column + 1)
+    def get_next_tile(self, character_row, character_column, direction):
+        if direction == Direction.UP.value:
+            return self.get_tile_by_coordinates(character_row - 1, character_column)
+        elif direction == Direction.DOWN.value:
+            return self.get_tile_by_coordinates(character_row + 1, character_column)
+        elif direction == Direction.LEFT.value:
+            return self.get_tile_by_coordinates(character_row, character_column - 1)
+        elif direction == Direction.RIGHT.value:
+            return self.get_tile_by_coordinates(character_row, character_column + 1)
 
     def did_collide(self, next_tile):
         return next_tile in self.current_map.impassable_tiles
@@ -380,28 +382,42 @@ class Game:
         return next_pos_x
 
     def move_roaming_character(self, pos_x, pos_y, roaming_character, roaming_character_x_pos, roaming_character_y_pos):
-        if roaming_character.direction == Direction.DOWN.value:
+        if roaming_character.direction == Direction.UP.value:
+            if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
+                                                      roaming_character_y_pos]) not in self.current_map.impassable_tiles:
+                self.move_roaming_up(pos_y, roaming_character)
+        elif roaming_character.direction == Direction.DOWN.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
                                                       roaming_character_y_pos]) not in self.current_map.impassable_tiles:
-                roaming_character.rect.y += TILE_SIZE
-                pos_y -= 1
+                self.move_roaming_down(pos_y, roaming_character)
         elif roaming_character.direction == Direction.LEFT.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
                                                       roaming_character_y_pos - 1]) not in self.current_map.impassable_tiles:
-                roaming_character.rect.x -= TILE_SIZE
-                pos_x -= 1
-        elif roaming_character.direction == Direction.UP.value:
-            if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
-                                                      roaming_character_y_pos]) not in self.current_map.impassable_tiles:
-                roaming_character.rect.y -= TILE_SIZE
-                pos_y += 1
+                self.move_roaming_left(pos_x, roaming_character)
         elif roaming_character.direction == Direction.RIGHT.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
                                                       roaming_character_y_pos + 1]) not in self.current_map.impassable_tiles:
-                roaming_character.rect.x += TILE_SIZE
-                pos_x += 1
+                self.move_roaming_right(pos_x, roaming_character)
         else:
             print("Invalid direction.")
+
+    # def move_roaming(self, delta_x, delta_y):
+
+    def move_roaming_up(self, pos_y, roaming_character):
+        roaming_character.rect.y -= TILE_SIZE
+        pos_y += 1
+
+    def move_roaming_down(self, pos_y, roaming_character):
+        roaming_character.rect.y += TILE_SIZE
+        pos_y -= 1
+
+    def move_roaming_left(self, pos_x, roaming_character):
+        roaming_character.rect.x -= TILE_SIZE
+        pos_x -= 1
+
+    def move_roaming_right(self, pos_x, roaming_character):
+        roaming_character.rect.x += TILE_SIZE
+        pos_x += 1
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
