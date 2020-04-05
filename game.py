@@ -385,39 +385,25 @@ class Game:
         if roaming_character.direction == Direction.UP.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos - 1][
                                                       roaming_character_y_pos]) not in self.current_map.impassable_tiles:
-                self.move_roaming_up(pos_y, roaming_character)
+                self.move_roaming(delta_x=0, delta_y=TILE_SIZE, roaming_character=roaming_character)
         elif roaming_character.direction == Direction.DOWN.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos + 1][
                                                       roaming_character_y_pos]) not in self.current_map.impassable_tiles:
-                self.move_roaming_down(pos_y, roaming_character)
+                self.move_roaming(delta_x=0, delta_y=-TILE_SIZE, roaming_character=roaming_character)
         elif roaming_character.direction == Direction.LEFT.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
                                                       roaming_character_y_pos - 1]) not in self.current_map.impassable_tiles:
-                self.move_roaming_left(pos_x, roaming_character)
+                self.move_roaming(delta_x=-TILE_SIZE, delta_y=0, roaming_character=roaming_character)
         elif roaming_character.direction == Direction.RIGHT.value:
             if self.current_map.get_tile_by_value(self.current_map.layout[roaming_character_x_pos][
                                                       roaming_character_y_pos + 1]) not in self.current_map.impassable_tiles:
-                self.move_roaming_right(pos_x, roaming_character)
+                self.move_roaming(delta_x=TILE_SIZE, delta_y=0, roaming_character=roaming_character)
         else:
             print("Invalid direction.")
 
-    # def move_roaming(self, delta_x, delta_y):
-
-    def move_roaming_up(self, pos_y, roaming_character):
-        roaming_character.rect.y -= TILE_SIZE
-        pos_y += 1
-
-    def move_roaming_down(self, pos_y, roaming_character):
-        roaming_character.rect.y += TILE_SIZE
-        pos_y -= 1
-
-    def move_roaming_left(self, pos_x, roaming_character):
-        roaming_character.rect.x -= TILE_SIZE
-        pos_x -= 1
-
-    def move_roaming_right(self, pos_x, roaming_character):
-        roaming_character.rect.x += TILE_SIZE
-        pos_x += 1
+    def move_roaming(self, delta_x, delta_y, roaming_character):
+        roaming_character.rect.x += delta_x
+        roaming_character.rect.y += -delta_y
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
