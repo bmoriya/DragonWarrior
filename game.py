@@ -30,13 +30,12 @@ def get_next_coordinates(character_column, character_row, direction):
 
 
 class Game:
-    FPS = 60
     GAME_TITLE = "Dragon Warrior"
+    FPS = 60
     WIN_WIDTH, WIN_HEIGHT = NES_RES[0] * SCALE, NES_RES[1] * SCALE
 
     ORIGIN = (0, 0)
-    BLACK, WHITE = (0, 0, 0), (255, 255, 255)
-    RED = (255, 0, 0)
+    BLACK, WHITE, RED = (0, 0, 0), (255, 255, 255), (255, 0, 0)
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = USEREVENT + 1
     time.set_timer(MOVE_EVENT, 100)
@@ -44,10 +43,9 @@ class Game:
     def __init__(self):
 
         # Initialize pygame
-        self.command_menu_launched = False
-        self.paused = False
-        init()
 
+        init()
+        self.command_menu_launched, self.paused = False, False
         # Create the game window.
         if FULLSCREEN_ENABLED:
             self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT), FULLSCREEN)
@@ -61,8 +59,7 @@ class Game:
             maps.current_map = maps.TantegelThroneRoom
 
         self.map_tiles = []
-        self.bigmap_width, self.bigmap_height, self.bigmap = None, None, None
-        self.background = None
+        self.bigmap_width, self.bigmap_height, self.bigmap, self.background = None, None, None, None
         self.next_tile = None
         self.next_tile_checked = False
 
@@ -146,15 +143,11 @@ class Game:
         self.command_menu_launched = False
 
     def unpause_all_movement(self):
-        self.enable_animate = True
-        self.enable_roaming = True
-        self.enable_movement = True
+        self.enable_animate,self.enable_roaming, self.enable_movement = True, True, True
         self.paused = False
 
     def pause_all_movement(self):
-        self.enable_animate = False
-        self.enable_roaming = False
-        self.enable_movement = False
+        self.enable_animate, self.enable_roaming,self.enable_movement = False, False, False
         self.paused = True
 
     def draw(self):
@@ -285,14 +278,12 @@ class Game:
             if (self.current_map.player.direction == Direction.UP.value or
                     self.current_map.player.direction == Direction.DOWN.value):
                 if curr_pos_y % TILE_SIZE == 0:
-                    self.player_moving = False
-                    self.next_tile_checked = False
+                    self.player_moving, self.next_tile_checked = False, False
                     return
             elif (self.current_map.player.direction == Direction.LEFT.value or
                   self.current_map.player.direction == Direction.RIGHT.value):
                 if curr_pos_x % TILE_SIZE == 0:
-                    self.player_moving = False
-                    self.next_tile_checked = False
+                    self.player_moving, self.next_tile_checked = False, False
                     return
 
         self.camera.move(self.current_map.player.direction)
@@ -307,8 +298,7 @@ class Game:
 
     def move(self, delta_x, delta_y):
         curr_cam_pos_x, curr_cam_pos_y = self.camera.get_pos()
-        next_cam_pos_x = curr_cam_pos_x
-        next_cam_pos_y = curr_cam_pos_y
+        next_cam_pos_x, next_cam_pos_y = curr_cam_pos_x, curr_cam_pos_y
         if not self.next_tile_checked:
             self.next_tile = self.get_next_tile(character_row=self.hero_layout_row,
                                                 character_column=self.hero_layout_column,
@@ -326,7 +316,6 @@ class Game:
             play_sound(bump_sfx)
 
         next_cam_pos_x, next_cam_pos_y = self.handle_sides_collision(next_cam_pos_x, next_cam_pos_y)
-        # = self.handle_tb_sides_collision(next_cam_pos_y)
         self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
 
     def get_next_tile(self, character_row, character_column, direction):
@@ -343,11 +332,8 @@ class Game:
         return next_tile in self.current_map.impassable_tiles
 
     def handle_sides_collision(self, next_pos_x, next_pos_y):
-        max_x_bound = self.current_map.width
-        max_y_bound = self.current_map.height
-        min_bound = 0
-        player_pos_x = self.current_map.player.rect.x
-        player_pos_y = self.current_map.player.rect.y
+        max_x_bound, max_y_bound, min_bound = self.current_map.width, self.current_map.height, 0
+        player_pos_x, player_pos_y = self.current_map.player.rect.x, self.current_map.player.rect.y
         if player_pos_x < min_bound:  # Simple Sides Collision
             self.current_map.player.rect.x = min_bound  # Reset Player Rect Coord
             play_sound(bump_sfx)
@@ -432,8 +418,7 @@ class Game:
             roaming_character.rect.y = self.current_map.height - TILE_SIZE
 
     def make_bigmap(self):
-        self.bigmap_width = self.current_map.width
-        self.bigmap_height = self.current_map.height
+        self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
