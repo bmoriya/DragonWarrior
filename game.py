@@ -64,7 +64,6 @@ class Game:
         self.clock = Clock()
         # self.last_roaming_character_clock_check = get_ticks()
         self.roaming_character_go_cooldown = 3000
-        self.sprite_movement_wait_period = 10
         self.current_map = None
         if maps.current_map is None:
             maps.current_map = maps.TantegelThroneRoom
@@ -93,6 +92,8 @@ class Game:
         self.load_current_map()
         for roaming_character in self.current_map.roaming_characters:
             roaming_character.last_roaming_clock_check = get_ticks()
+            roaming_character.column = roaming_character.rect.x // TILE_SIZE
+            roaming_character.row = roaming_character.rect.y // TILE_SIZE
         # Make the big scrollable map
         # TODO(ELF): Refactor these into the actual values and remove the None assignments that they replace.
         self.make_bigmap()
@@ -119,8 +120,6 @@ class Game:
         # TODO: Disable moving of roaming characters if a dialog box is open.
         # TODO: Extend roaming characters beyond just the roaming guard.
         for roaming_character in self.current_map.roaming_characters:
-            roaming_character.column = roaming_character.rect.x // TILE_SIZE
-            roaming_character.row = roaming_character.rect.y // TILE_SIZE
             now = get_ticks()
             if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
                 roaming_character.last_roaming_clock_check = now
@@ -416,7 +415,8 @@ class Game:
             roaming_character, roaming_character_column, roaming_character_row)
 
     def did_collide_with_hero(self, roaming_character, roaming_character_column, roaming_character_row):
-        return get_next_coordinates(roaming_character_column, roaming_character_row, roaming_character.direction) != (self.hero_layout_row, self.hero_layout_column)
+        return get_next_coordinates(roaming_character_column, roaming_character_row, roaming_character.direction) != (
+        self.hero_layout_row, self.hero_layout_column)
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
