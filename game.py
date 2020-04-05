@@ -52,7 +52,6 @@ class Game:
         else:
             self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
         set_caption(self.GAME_TITLE)
-        self.clock = Clock()
         self.roaming_character_go_cooldown = 3000
         self.current_map = None
         if maps.current_map is None:
@@ -84,6 +83,7 @@ class Game:
                              current_map=self.current_map, speed=None)
         self.enable_command_menu = False
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
+        self.clock = Clock()
 
     def main(self):
         while 1:
