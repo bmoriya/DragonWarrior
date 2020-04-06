@@ -12,10 +12,10 @@ from pygame.transform import scale
 
 import maps
 from camera import Camera
-from common import Direction, play_sound, bump_sfx, MAP_TILES_PATH, UNARMED_HERO_PATH, get_image, \
+from common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, DRAGON_QUEST_FONT_PATH
 from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from maps import parse_animated_spritesheet
+from maps import parse_animated_spritesheet, parse_map_tiles
 
 
 def get_next_coordinates(character_column, character_row, direction):
@@ -56,8 +56,6 @@ class Game:
         self.current_map = None
         if maps.current_map is None:
             maps.current_map = maps.TantegelThroneRoom
-
-        self.map_tiles = []
         self.bigmap_width, self.bigmap_height, self.bigmap, self.background = None, None, None, None
         self.next_tile = None
         self.next_tile_checked = False
@@ -104,6 +102,10 @@ class Game:
             self.move_roaming_characters()
         if self.enable_movement:
             self.move_player(key)
+        for k, v in self.current_map.staircases:
+            if (self.hero_layout_row, self.hero_layout_column) == v:
+                self.current_map = k
+                self.load_current_map()
         if key[pygame.K_j]:
             # B button
             self.unlaunch_command_menu()
@@ -432,7 +434,7 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
     def load_current_map(self):
-        self.current_map = maps.TantegelThroneRoom(self.map_tiles, self.unarmed_hero_images)
+        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
         # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
         # self.current_map = maps.TestMap(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
@@ -440,28 +442,13 @@ class Game:
     def load_images(self):
         """Load all the images for the game graphics.
         """
-        # Load the map tile spritesheet
-        map_sheet = get_image(MAP_TILES_PATH).convert()
-        self.map_tilesheet = scale(map_sheet, (map_sheet.get_width() * SCALE, map_sheet.get_height() * SCALE))
-        self.parse_map_tiles()
+        parse_map_tiles()
         # Load unarmed hero images
         unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
         unarmed_hero_tilesheet = scale(unarmed_hero_sheet, (
             unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
         # Get the images for the initial hero sprites
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
-
-    def parse_map_tiles(self):
-
-        width, height = self.map_tilesheet.get_size()
-
-        for x in range(0, width // TILE_SIZE):
-            row = []
-            self.map_tiles.append(row)
-
-            for y in range(0, height // TILE_SIZE):
-                rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                row.append(self.map_tilesheet.subsurface(rect))
 
 
 def run():

@@ -9,7 +9,7 @@ from animated_sprite import AnimatedSprite
 from base_sprite import BaseSprite
 from common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
     GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
-    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH
+    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH
 from config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
@@ -54,7 +54,7 @@ character_key = OrderedDict([
      {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
 ])
 
-all_characters_values = [dict['val'] for dict in character_key.values()]
+all_characters_values = [character_dict['val'] for character_dict in character_key.values()]
 all_characters_values.insert(0, 3)
 all_characters_values.append(3)
 
@@ -97,7 +97,7 @@ tantegel_throne_room = [
     (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 34, 4, 4, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 10
     (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 40, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 11
     (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 39, 3, 37, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 12
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0),  # 13
+    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0),  # 13
     (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 3, 6, 1, 0, 0, 0, 0, 0, 0, 0),  # 14
     (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0),  # 15
     roof_line,  # 16
@@ -138,15 +138,18 @@ tantegel_courtyard = [
     (13, 13, 13, 13, 1, 3, 41, 3, 3, 3, 1, 3, 38, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
      13),
     (
-    13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 13, 13, 13, 13),
+        13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 13, 13, 13,
+        13),
     (13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 14, 14, 3, 3, 3, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
      13),
     (
-    13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
-    13),
+        13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13,
+        13,
+        13),
     (
-    13, 13, 13, 13, 1, 3, 40, 3, 1, 3, 1, 14, 13, 3, 3, 3, 3, 13, 14, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
-    13),
+        13, 13, 13, 13, 1, 3, 40, 3, 1, 3, 1, 14, 13, 3, 3, 3, 3, 13, 14, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13,
+        13,
+        13),
     (13, 13, 13, 13, 1, 4, 3, 4, 5, 3, 1, 13, 42, 3, 3, 3, 3, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
      13),
     (13, 13, 13, 13, 1, 3, 4, 3, 1, 3, 1, 13, 13, 3, 3, 3, 3, 13, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
@@ -164,9 +167,11 @@ tantegel_courtyard = [
     (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 1, 39, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13,
      13),
     (
-    13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13, 13),
+        13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13,
+        13),
     (
-    13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 22, 13, 13, 13),
+        13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 22, 13, 13,
+        13),
     (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
      13, 13),
     (13, 13, 13, 13, 1, 3, 22, 22, 3, 3, 1, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
@@ -176,8 +181,9 @@ tantegel_courtyard = [
     (13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 2, 3, 1, 22, 22, 22, 22, 22, 22, 22,
      13, 13, 13),
     (
-    13, 13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22,
-    13, 13, 13),
+        13, 13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22,
+        22,
+        13, 13, 13),
     (13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
      13, 13),
     (13, 13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22,
@@ -226,7 +232,7 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
 
 
 class DragonWarriorMap:
-    def __init__(self, map_tiles, hero_images):
+    def __init__(self, hero_images):
 
         # Character variables
 
@@ -241,10 +247,12 @@ class DragonWarriorMap:
 
         self.tiles_in_current_loaded_map = None
         self.layout = [[]]
+        self.layout_numpy_array = np.empty(0)
         self.center_pt = None
-        self.map_tiles = map_tiles
+        self.map_tiles = parse_map_tiles()
         self.impassable_tiles = all_impassable_tiles
         self.tile_group_dict = {}
+        self.staircases = {}
 
         self.roof_group = Group()  # 0
         self.wall_group = Group()  # 1
@@ -323,9 +331,12 @@ class DragonWarriorMap:
         return list(self.tile_key.keys())[position]
 
     def get_initial_character_location(self, character_name):
-        layout_numpy_array = np.array(self.layout)
-        hero_layout_position = np.asarray(np.where(layout_numpy_array == self.tile_key[character_name]['val'])).T
+        hero_layout_position = np.asarray(np.where(self.layout_numpy_array == self.tile_key[character_name]['val'])).T
         return hero_layout_position
+
+    # def get_staircase_locations(self):
+    #     staircase_locations = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
+    #     return staircase_locations
 
     def draw_map(self, surface):
         """
@@ -441,8 +452,8 @@ class DragonWarriorMap:
 
 class TestMap(DragonWarriorMap):
 
-    def __init__(self, map_tiles, hero_images):
-        super().__init__(map_tiles, hero_images)
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
         self.layout = test_map
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
@@ -455,20 +466,41 @@ class TantegelThroneRoom(DragonWarriorMap):
     This is the first map in the game.
     """
 
-    def __init__(self, map_tiles, hero_images):
-        super().__init__(map_tiles, hero_images)
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
         self.layout = tantegel_throne_room
+        self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
+        # staircase_list = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
+        self.staircases = {(14, 18): TantegelCourtyard(self.hero_images)}
         self.music_file_path = tantegel_castle_throne_room_music
         play_music(self.music_file_path)
 
 
 class TantegelCourtyard(DragonWarriorMap):
-    def __init__(self, map_tiles, hero_images):
-        super().__init__(map_tiles, hero_images)
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
         self.layout = tantegel_courtyard
+        self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = tantegel_castle_courtyard_music
         play_music(self.music_file_path)
+
+
+def parse_map_tiles():
+    # Load the map tile spritesheet
+    map_sheet = get_image(MAP_TILES_PATH).convert()
+    map_tilesheet = scale(map_sheet, (map_sheet.get_width() * SCALE, map_sheet.get_height() * SCALE))
+    map_tiles = []
+    width, height = map_tilesheet.get_size()
+
+    for x in range(0, width // TILE_SIZE):
+        row = []
+        map_tiles.append(row)
+
+        for y in range(0, height // TILE_SIZE):
+            rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            row.append(map_tilesheet.subsurface(rect))
+    return map_tiles
