@@ -143,11 +143,11 @@ class Game:
         self.command_menu_launched = False
 
     def unpause_all_movement(self):
-        self.enable_animate,self.enable_roaming, self.enable_movement = True, True, True
+        self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
         self.paused = False
 
     def pause_all_movement(self):
-        self.enable_animate, self.enable_roaming,self.enable_movement = False, False, False
+        self.enable_animate, self.enable_roaming, self.enable_movement = False, False, False
         self.paused = True
 
     def draw(self):
@@ -252,7 +252,7 @@ class Game:
         self.screen.blit(self.background, self.camera.get_pos())
         flip()
 
-    def get_tile_by_coordinates(self, row, column):
+    def get_tile_by_coordinates(self, column, row):
         if row < len(self.current_map.layout) and column < len(self.current_map.layout[0]):
             return self.current_map.get_tile_by_value(self.current_map.layout[row][column])
 
@@ -300,17 +300,20 @@ class Game:
         curr_cam_pos_x, curr_cam_pos_y = self.camera.get_pos()
         next_cam_pos_x, next_cam_pos_y = curr_cam_pos_x, curr_cam_pos_y
         if not self.next_tile_checked:
-            self.next_tile = self.get_next_tile(character_row=self.hero_layout_row,
-                                                character_column=self.hero_layout_column,
+            self.next_tile = self.get_next_tile(character_column=self.hero_layout_column,
+                                                character_row=self.hero_layout_row,
                                                 direction=self.current_map.player.direction)
             self.next_tile_checked = True
+        roaming_character_locations = [(roaming_character.column, roaming_character.row) for roaming_character in
+                                       self.current_map.roaming_characters]
         if not self.is_impassable(self.next_tile):
-            if delta_x:
-                self.current_map.player.rect.x += delta_x
-                next_cam_pos_x = curr_cam_pos_x + -delta_x
-            if delta_y:
-                self.current_map.player.rect.y += -delta_y
-                next_cam_pos_y = curr_cam_pos_y + delta_y
+            if self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row, self.current_map.player.direction) not in roaming_character_locations:
+                if delta_x:
+                    self.current_map.player.rect.x += delta_x
+                    next_cam_pos_x = curr_cam_pos_x + -delta_x
+                if delta_y:
+                    self.current_map.player.rect.y += -delta_y
+                    next_cam_pos_y = curr_cam_pos_y + delta_y
         else:
             # TODO: Slow down the bump sound effect.
             play_sound(bump_sfx)
@@ -318,15 +321,26 @@ class Game:
         next_cam_pos_x, next_cam_pos_y = self.handle_sides_collision(next_cam_pos_x, next_cam_pos_y)
         self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
 
-    def get_next_tile(self, character_row, character_column, direction):
+    def get_next_tile(self, character_column, character_row, direction):
         if direction == Direction.UP.value:
-            return self.get_tile_by_coordinates(character_row - 1, character_column)
+            return self.get_tile_by_coordinates(character_column, character_row - 1)
         elif direction == Direction.DOWN.value:
-            return self.get_tile_by_coordinates(character_row + 1, character_column)
+            return self.get_tile_by_coordinates(character_column, character_row + 1)
         elif direction == Direction.LEFT.value:
-            return self.get_tile_by_coordinates(character_row, character_column - 1)
+            return self.get_tile_by_coordinates(character_column - 1, character_row)
         elif direction == Direction.RIGHT.value:
-            return self.get_tile_by_coordinates(character_row, character_column + 1)
+            return self.get_tile_by_coordinates(character_column + 1, character_row)
+
+    def get_next_coordinates(self, character_column, character_row, direction):
+        if character_row < len(self.current_map.layout) and character_column < len(self.current_map.layout[0]):
+            if direction == Direction.UP.value:
+                return character_column, character_row - 1
+            elif direction == Direction.DOWN.value:
+                return character_column, character_row + 1,
+            elif direction == Direction.LEFT.value:
+                return character_column - 1, character_row
+            elif direction == Direction.RIGHT.value:
+                return character_column + 1, character_row
 
     def is_impassable(self, next_tile):
         return next_tile in self.current_map.impassable_tiles
@@ -388,11 +402,12 @@ class Game:
     # Roaming guard starts at 16th column (index), 11th row (index) in Tantegel Throne Room
     def move_roaming_character(self, delta_x, delta_y, roaming_character):
         if not roaming_character.next_tile_checked:
-            roaming_character.next_tile = self.get_next_tile(character_row=roaming_character.row,
-                                                             character_column=roaming_character.column,
+            roaming_character.next_tile = self.get_next_tile(character_column=roaming_character.column,
+                                                             character_row=roaming_character.row,
                                                              direction=roaming_character.direction)
             roaming_character.next_tile_checked = True
-        if not self.is_impassable(roaming_character.next_tile) and (roaming_character.column, roaming_character.row) != (self.hero_layout_column, self.hero_layout_row):
+        if not self.is_impassable(roaming_character.next_tile) and (
+                roaming_character.column, roaming_character.row) != (self.hero_layout_column, self.hero_layout_row):
             if delta_x:
                 roaming_character.rect.x += delta_x
             if delta_y:

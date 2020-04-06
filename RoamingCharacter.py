@@ -8,8 +8,8 @@ class RoamingCharacter(AnimatedSprite):
         BaseSprite.__init__(self, center_point, down_images[0])
         self.last_roaming_clock_check = None
         self.name = name
-        self.row = None
         self.column = None
+        self.row = None
         self.moving = False
         self.next_tile = None
         self.next_tile_checked = None
