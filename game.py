@@ -107,10 +107,10 @@ class Game:
         if key[pygame.K_j]:
             # B button
             self.unlaunch_command_menu()
-            print("You pressed the J key (B button).")
+            print("J key pressed (B button).")
         if key[pygame.K_k]:
             # A button
-            print("You pressed the K key (A button).")
+            print("K key pressed (A button).")
             if not self.player_moving:
                 self.enable_command_menu = True
                 self.pause_all_movement()
@@ -126,10 +126,10 @@ class Game:
                 self.unpause_all_movement()
             else:
                 self.pause_all_movement()
-            print("You pressed the I key (Start button).")
+            print("I key pressed (Start button).")
         if key[pygame.K_u]:
             # Select button
-            print("You pressed the U key (Select button).")
+            print("U key pressed (Select button).")
 
         # For debugging purposes, this prints out the current tile that the hero is standing on.
         # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
@@ -259,7 +259,7 @@ class Game:
     def move_player(self, key):
         # block establishes direction if needed and whether to start
         # or stop moving
-        # TODO ED separate dependency of camera pos and player pos
+        # TODO(ELF): separate dependency of camera pos and player pos
         curr_pos_x, curr_pos_y = self.camera.get_pos()
 
         if not self.player_moving:
@@ -307,6 +307,8 @@ class Game:
         roaming_character_locations = [(roaming_character.column, roaming_character.row) for roaming_character in
                                        self.current_map.roaming_characters]
         if not self.is_impassable(self.next_tile):
+            # for roaming_character in self.current_map.roaming_characters:
+            # if not self.current_map.player.rect.colliderect(roaming_character):
             if self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row, self.current_map.player.direction) not in roaming_character_locations:
                 if delta_x:
                     self.current_map.player.rect.x += delta_x
@@ -314,8 +316,9 @@ class Game:
                 if delta_y:
                     self.current_map.player.rect.y += -delta_y
                     next_cam_pos_y = curr_cam_pos_y + delta_y
+            else:
+                play_sound(bump_sfx)
         else:
-            # TODO: Slow down the bump sound effect.
             play_sound(bump_sfx)
 
         next_cam_pos_x, next_cam_pos_y = self.handle_sides_collision(next_cam_pos_x, next_cam_pos_y)
@@ -348,8 +351,8 @@ class Game:
     def handle_sides_collision(self, next_pos_x, next_pos_y):
         max_x_bound, max_y_bound, min_bound = self.current_map.width, self.current_map.height, 0
         player_pos_x, player_pos_y = self.current_map.player.rect.x, self.current_map.player.rect.y
-        if player_pos_x < min_bound:  # Simple Sides Collision
-            self.current_map.player.rect.x = min_bound  # Reset Player Rect Coord
+        if player_pos_x < min_bound:
+            self.current_map.player.rect.x = min_bound
             play_sound(bump_sfx)
             next_pos_x += -self.speed
         elif player_pos_x > max_x_bound - TILE_SIZE:
@@ -412,15 +415,6 @@ class Game:
                 roaming_character.rect.x += delta_x
             if delta_y:
                 roaming_character.rect.y += -delta_y
-
-    # def did_collide_roaming(self, roaming_character, roaming_character_row, roaming_character_column):
-    #     return self.is_impassable(self.get_next_tile(roaming_character_column, roaming_character_row,
-    #                                                  roaming_character.direction)) or self.did_collide_with_hero(
-    #         roaming_character, roaming_character_column, roaming_character_row)
-    #
-    # def did_collide_with_hero(self, roaming_character, roaming_character_column, roaming_character_row):
-    #     return get_next_coordinates(roaming_character_column, roaming_character_row, roaming_character.direction) != (
-    #         self.hero_layout_row, self.hero_layout_column)
 
     def handle_roaming_character_map_edge_side_collision(self, roaming_character):
         if roaming_character.rect.x < 0:  # Simple Sides Collision
