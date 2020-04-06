@@ -4,16 +4,16 @@ import numpy as np
 from pygame.sprite import Group, RenderUpdates
 from pygame.transform import scale
 
-from RoamingCharacter import RoamingCharacter
-from animated_sprite import AnimatedSprite
-from base_sprite import BaseSprite
-from common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
+from src.RoamingCharacter import RoamingCharacter
+from src.animated_sprite import AnimatedSprite
+from src.base_sprite import BaseSprite
+from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
     GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
     SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH
-from config import TILE_SIZE, SCALE, COLOR_KEY
+from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
-from player import Player
+from src.player import Player
 
 all_impassable_tiles = (
     'ROOF', 'WALL', 'WOOD', 'DOOR', 'BARRIER', 'WEAPON_SIGN', 'INN_SIGN', 'MOUNTAINS', 'WATER', 'BOTTOM_COAST',

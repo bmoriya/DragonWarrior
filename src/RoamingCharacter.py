@@ -1,5 +1,5 @@
-from animated_sprite import AnimatedSprite
-from base_sprite import BaseSprite
+from src.animated_sprite import AnimatedSprite
+from src.base_sprite import BaseSprite
 
 
 class RoamingCharacter(AnimatedSprite):

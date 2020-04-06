@@ -1,4 +1,4 @@
-from config import TILE_SIZE
+from src.config import TILE_SIZE
 
 
 class Camera:

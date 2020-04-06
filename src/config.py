@@ -1,7 +1,7 @@
 from os.path import join
 
-REPLIT_DATA_DIR = './data'
-DATA_DIR = 'data'
+REPLIT_DATA_DIR = '../data'
+DATA_DIR = '../data'
 FONTS_DIR = join(DATA_DIR, 'fonts')
 IMAGES_DIR = join(DATA_DIR, 'images')
 SOUND_DIR = join(DATA_DIR, 'sound')

@@ -10,12 +10,12 @@ from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
 
-import maps
-from camera import Camera
-from common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
+from src import maps
+from src.camera import Camera
+from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, DRAGON_QUEST_FONT_PATH, stairs_down_sfx, stairs_up_sfx
-from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from maps import parse_animated_spritesheet
+from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
+from src.maps import parse_animated_spritesheet
 
 
 def get_next_coordinates(character_column, character_row, direction):

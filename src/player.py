@@ -1,5 +1,5 @@
-from animated_sprite import AnimatedSprite
-from common import Direction
+from src.animated_sprite import AnimatedSprite
+from src.common import Direction
 
 
 class Player(AnimatedSprite):
