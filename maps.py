@@ -24,34 +24,36 @@ all_impassable_tiles = (
 
 character_key = OrderedDict([
     ('HERO',
-     {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False}),
+     {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
     ('KING_LORIK',
-     {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False}),
+     {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
     ('DOWN_FACE_GUARD',
-     {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('LEFT_FACE_GUARD',
-     {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value}),
+     {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value, 'underlying_tile': 'BRICK'}),
     ('UP_FACE_GUARD',
-     {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value}),
+     {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value, 'underlying_tile': 'BRICK'}),
     ('RIGHT_FACE_GUARD',
-     {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value}),
+     {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value, 'underlying_tile': 'BRICK'}),
     ('ROAMING_GUARD',
-     {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value}),
+     {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('MAN',
-     {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('WOMAN',
-     {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'GRASS'}),
     ('WISE_MAN',
-     {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('SOLDIER',
-     {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('MERCHANT',
-     {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('PRINCESS_GWAELIN',
      {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False,
-      'direction': Direction.DOWN.value}),
+      'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('DRAGONLORD',
-     {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
 ])
 
 all_characters_values = [character_dict['val'] for character_dict in character_key.values()]
@@ -199,6 +201,8 @@ tantegel_courtyard = [
 ]
 
 current_map = None
+
+
 # current_map = TantegelCourtyard(self.unarmed_hero_images)
 # current_map = TestMap(self.unarmed_hero_images)
 
@@ -370,14 +374,14 @@ class DragonWarriorMap:
             if self.layout[y][x] >= 34:
                 if self.layout[y][x] == character_dict['val']:
                     if self.layout[y][x] == character_key['HERO']['val']:
-                        self.map_player(current_loaded_map)
+                        self.map_player(current_loaded_map, underlying_tile=character_dict['underlying_tile'])
                     elif character_dict['four_sided']:
                         self.map_four_sided_npc(direction=character_dict['direction'], name=character,
-                                                underlying_tile='BRICK',
+                                                underlying_tile=character_dict['underlying_tile'],
                                                 image_path=character_dict['path'], is_roaming=character_dict['roaming'])
                     else:
                         self.map_two_sided_npc(image_path=character_dict['path'], name=character,
-                                               underlying_tile='BRICK')
+                                               underlying_tile=character_dict['underlying_tile'])
 
     def map_four_sided_npc(self, direction, name, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
@@ -417,7 +421,7 @@ class DragonWarriorMap:
         self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
                       tile_group=self.tile_key[underlying_tile]['group'])
 
-    def map_player(self, current_loaded_map, underlying_tile='BRICK'):
+    def map_player(self, current_loaded_map, underlying_tile):
         # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
         self.player = Player(center_point=self.center_pt,
                              down_images=self.hero_images[Direction.DOWN.value],
