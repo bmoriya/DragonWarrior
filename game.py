@@ -114,6 +114,7 @@ class Game:
             pygame.time.delay(5)
 
     def fade_in(self, width, height):
+        # TODO(ELF): Fix fade_in.
         """
         Fade from black to current screen.
         :return: None
@@ -205,7 +206,7 @@ class Game:
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
-        self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
+        # self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
         self.unpause_all_movement()
 
     def unlaunch_command_menu(self):
