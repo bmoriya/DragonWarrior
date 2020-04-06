@@ -465,6 +465,7 @@ class TestMap(DragonWarriorMap):
     def __init__(self, hero_images):
         super().__init__(hero_images)
         self.layout = test_map
+        self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = village_music
