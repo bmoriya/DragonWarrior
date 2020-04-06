@@ -26,19 +26,20 @@ class Camera:
         # initial hero position: (13, 10)
         # width map center: self.current_map.width // TILE_SIZE // 2 = 13
         # height map center: self.current_map.height // TILE_SIZE // 2 = 11
-
+        self.x = 0
+        self.y = 0
         # self.x = -(hero_position[1] // 2) * TILE_SIZE
         # self.y = -(hero_position[0] - 10) * TILE_SIZE
 
-        if isinstance(self.current_map, TantegelThroneRoom):
-            self.x = -5 * TILE_SIZE
-            self.y = -3 * TILE_SIZE
-        elif isinstance(self.current_map, TantegelCourtyard):
-            self.x = -3 * TILE_SIZE
-            self.y = -8 * TILE_SIZE
-        else:
-            self.x = 0 * TILE_SIZE
-            self.y = 0 * TILE_SIZE
+        # if isinstance(self.current_map, TantegelThroneRoom):
+        #     self.x = -5 * TILE_SIZE
+        #     self.y = -3 * TILE_SIZE
+        # elif isinstance(self.current_map, TantegelCourtyard):
+        #     self.x = -3 * TILE_SIZE
+        #     self.y = -8 * TILE_SIZE
+        # else:
+        #     self.x = 0 * TILE_SIZE
+        #     self.y = 0 * TILE_SIZE
 
     def get_pos(self):
         return self.x, self.y

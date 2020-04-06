@@ -13,7 +13,7 @@ from pygame.transform import scale
 import maps
 from camera import Camera
 from common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
-    menu_button_sfx, DRAGON_QUEST_FONT_PATH
+    menu_button_sfx, DRAGON_QUEST_FONT_PATH, stairs_down_sfx, stairs_up_sfx
 from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
 from maps import parse_animated_spritesheet
 
@@ -44,6 +44,7 @@ class Game:
 
         # Initialize pygame
 
+        self.opacity = 0
         init()
         self.command_menu_launched, self.paused = False, False
         # Create the game window.
@@ -68,7 +69,7 @@ class Game:
         self.player_moving = False
         self.speed = 2
 
-        self.load_current_map()
+        self.current_map.load_map()
         for roaming_character in self.current_map.roaming_characters:
             roaming_character.last_roaming_clock_check = get_ticks()
             roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
@@ -85,6 +86,10 @@ class Game:
         self.clock = Clock()
 
     def main(self):
+        """
+        Main loop.
+        :return: None
+        """
         while 1:
             self.clock.tick(self.FPS)
             self.events()
@@ -92,26 +97,42 @@ class Game:
             self.update()
 
     def fade_out(self, width, height):
+        """
+        Fade from current scene to black.
+        :return: None
+        """
         fade = pygame.Surface((width, height))
         fade.fill(self.BLACK)
-        for alpha in range(300):
-            fade.set_alpha(alpha)
+        self.opacity = 0
+        for r in range(300):
+            self.opacity += 1
+            fade.set_alpha(self.opacity)
             self.background.fill(self.BLACK)
             self.screen.blit(fade, (0, 0))
             pygame.display.update()
             pygame.time.delay(5)
 
-    # def fade_in(self, width, height):
-    #     fade = pygame.Surface((width, height))
-    #     fade.fill(self.BLACK)
-    #     for alpha in range(300):
-    #         fade.set_alpha(300-alpha)
-    #         self.background.fill(self.BLACK)
-    #         self.screen.blit(fade, (0, 0))
-    #         pygame.display.update()
-    #         pygame.time.delay(5)
+    def fade_in(self, width, height):
+        """
+        Fade from black to current screen.
+        :return: None
+        """
+        fade = pygame.Surface((width, height))
+        fade.fill(self.BLACK)
+        self.opacity = 300
+        for alpha in range(300):
+            self.opacity -= 1
+            fade.set_alpha(self.opacity)
+            self.background.fill(self.BLACK)
+            self.screen.blit(fade, (0, 0))
+            pygame.display.update()
+            pygame.time.delay(5)
 
     def events(self):
+        """
+        Handle all events in main loop.
+        :return: None
+        """
 
         for event in get():
             if event.type == pygame.QUIT or (event.type == pygame.K_LCTRL and event.key == pygame.K_q):
@@ -124,9 +145,13 @@ class Game:
         if self.enable_movement:
             self.move_player(key)
 
-        for staircase_location, map_name in self.current_map.staircases.items():
+        for staircase_location, staircase_dict in self.current_map.staircases.items():
             if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
-                self.staircase_map_change(map_name)
+                if staircase_dict['direction'] == 'down':
+                    play_sound(stairs_down_sfx)
+                elif staircase_dict['direction'] == 'up':
+                    play_sound(stairs_up_sfx)
+                self.map_change(staircase_dict['map'])
 
         if key[pygame.K_j]:
             # B button
@@ -161,35 +186,54 @@ class Game:
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
 
-    def staircase_map_change(self, v):
-        self.enable_roaming = False
-        self.enable_movement = False
+    def map_change(self, next_map):
+        """
+        Change to a different map.
+        :param next_map: The next map to be loaded.
+        :return: None
+        """
+        self.pause_all_movement()
         self.background = Surface(self.screen.get_size()).convert()
-        self.current_map = v
+        self.current_map = next_map
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
         self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
-        self.load_current_map()
+        self.current_map.load_map()
         self.camera.set_camera_position(hero_position=(self.hero_layout_column, self.hero_layout_row))
-        # self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
-        self.enable_roaming = True
-        self.enable_movement = True
+        self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
+        self.unpause_all_movement()
 
     def unlaunch_command_menu(self):
+        """
+        Unlaunch the command menu.
+        :return: None
+        """
         self.enable_command_menu = False
         self.unpause_all_movement()
         self.command_menu_launched = False
 
     def unpause_all_movement(self):
+        """
+        Unpause movement of animation, roaming, and character.
+        :return: None
+        """
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
         self.paused = False
 
     def pause_all_movement(self):
+        """
+        Pause movement of animation, roaming, and character.
+        :return: None
+        """
         self.enable_animate, self.enable_roaming, self.enable_movement = False, False, False
         self.paused = True
 
     def draw(self):
+        """
+        Draw map, sprites, background, menu and other surfaces.
+        :return: None
+        """
         self.current_map.draw_map(self.bigmap)
         for sprites in self.current_map.character_sprites:
             sprites.clear(self.screen, self.background)
@@ -205,6 +249,10 @@ class Game:
             self.launch_command_menu()
 
     def launch_command_menu(self):
+        """
+        Launch the command menu, which is used by the player to interact with the world in the game.
+        :return: None
+        """
         if not self.command_menu_launched:
             play_sound(menu_button_sfx)
 
@@ -264,38 +312,80 @@ class Game:
         self.command_menu_launched = True
 
     def talk(self):
+        """
+        Talk to an NPC. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("TALK")
 
     def status(self):
+        """
+        Display the current player's status. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("STATUS")
 
     def stairs(self):
+        """
+        Go up or down a staircase. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("STAIRS")
 
     def search(self):
+        """
+        Search the ground for items. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("SEARCH")
 
     def spell(self):
+        """
+        Cast a magic spell. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("SPELL")
 
     def item(self):
+        """
+        View/use items. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("ITEM")
 
     def door(self):
+        """
+        Open a door. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("DOOR")
 
     def take(self):
+        """
+        Take an item. (Not yet implemented)
+        :return: To be determined upon implementation
+        """
         print("TAKE")
 
     def update(self):
+        """Update the screen's display."""
         self.screen.blit(self.background, self.camera.get_pos())
         flip()
 
     def get_tile_by_coordinates(self, column, row):
+        """
+        Retrieve the tile name from the coordinates of the tile on the map.
+        :param column: The column of the tile.
+        :param row: The row of the tile.
+        """
         if row < len(self.current_map.layout) and column < len(self.current_map.layout[0]):
             return self.current_map.get_tile_by_value(self.current_map.layout[row][column])
 
     def move_player(self, key):
+        """
+        Move the player in a specified direction.
+        :param key: The key currently being pressed by the user.
+        """
         # block establishes direction if needed and whether to start
         # or stop moving
         # TODO(ELF): separate dependency of camera pos and player pos
@@ -336,6 +426,12 @@ class Game:
             self.move(delta_x=self.speed, delta_y=0)
 
     def move(self, delta_x, delta_y):
+        """
+        The method that actuates the movement of the player from within the move_player method.
+        :param delta_x: Change in x position.
+        :param delta_y: Change in y position.
+        :return: None
+        """
         curr_cam_pos_x, curr_cam_pos_y = self.camera.get_pos()
         next_cam_pos_x, next_cam_pos_y = curr_cam_pos_x, curr_cam_pos_y
         if not self.next_tile_checked:
@@ -364,7 +460,16 @@ class Game:
         next_cam_pos_x, next_cam_pos_y = self.handle_sides_collision(next_cam_pos_x, next_cam_pos_y)
         self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
 
-    def get_next_tile(self, character_column, character_row, direction):
+    def get_next_tile(self, character_column: int, character_row: int, direction) -> str:
+        """
+        Retrieve the next tile to be stepped on by the player.
+        :type character_column: int
+        :type character_row: int
+        :param character_column: The current player's column within the map layout.
+        :param character_row: The current player's row within the map layout.
+        :param direction: The direction which the current player is facing.
+        :return: str: The next tile that the player will step on (e.g., 'BRICK').
+        """
         if direction == Direction.UP.value:
             return self.get_tile_by_coordinates(character_column, character_row - 1)
         elif direction == Direction.DOWN.value:
@@ -385,10 +490,23 @@ class Game:
             elif direction == Direction.RIGHT.value:
                 return character_column + 1, character_row
 
-    def is_impassable(self, next_tile):
-        return next_tile in self.current_map.impassable_tiles
+    def is_impassable(self, tile):
+        """
+        Check if a tile is impassable (a tile that blocks the player from moving).
+        :param tile: Tile to be checked for impassibility.
+        :return: bool: A boolean value stating whether or not the tile is impassable.
+        """
+        return tile in self.current_map.impassable_tiles
 
-    def handle_sides_collision(self, next_pos_x, next_pos_y):
+    def handle_sides_collision(self, next_pos_x: int, next_pos_y: int):
+        """
+        Handle collision with the sides of the map (for the player).
+        :type next_pos_x: int
+        :type next_pos_y: int
+        :param next_pos_x: Next x position (in terms of tile size).
+        :param next_pos_y: Next y position (in terms of tile size).
+        :return: tuple: The x, y coordinates (in terms of tile size) of the next position of the player.
+        """
         max_x_bound, max_y_bound, min_bound = self.current_map.width, self.current_map.height, 0
         player_pos_x, player_pos_y = self.current_map.player.rect.x, self.current_map.player.rect.y
         if player_pos_x < min_bound:
@@ -410,7 +528,10 @@ class Game:
         return next_pos_x, next_pos_y
 
     def move_roaming_characters(self):
-        # TODO: Disable moving of roaming characters if a dialog box is open.
+        """
+        Move all roaming characters in the current map.
+        :return: None
+        """
         # TODO: Extend roaming characters beyond just the roaming guard.
         for roaming_character in self.current_map.roaming_characters:
             roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
@@ -443,9 +564,17 @@ class Game:
                 self.move_roaming_character(delta_x=self.speed, delta_y=0, roaming_character=roaming_character)
             else:
                 print("Invalid direction.")
+            self.handle_roaming_character_sides_collision(roaming_character)
 
     # Roaming guard starts at 16th column (index), 11th row (index) in Tantegel Throne Room
     def move_roaming_character(self, delta_x, delta_y, roaming_character):
+        """
+        The method that actuates the movement of the roaming characters from within the move_roaming_characters method.
+        :param delta_x: Change in x position.
+        :param delta_y: Change in y position.
+        :param roaming_character: Roaming character to be moved.
+        :return: None
+        """
         if not roaming_character.next_tile_checked:
             roaming_character.next_tile = self.get_next_tile(character_column=roaming_character.column,
                                                              character_row=roaming_character.row,
@@ -458,7 +587,13 @@ class Game:
             if delta_y:
                 roaming_character.rect.y += -delta_y
 
-    def handle_roaming_character_map_edge_side_collision(self, roaming_character):
+    def handle_roaming_character_sides_collision(self, roaming_character):
+        """
+        Handle collision with the sides of the map (for roaming characters).
+        :type roaming_character:
+        :param roaming_character: Roaming character to check for sides collision.
+        :return: None
+        """
         if roaming_character.rect.x < 0:  # Simple Sides Collision
             roaming_character.rect.x = 0  # Reset Player Rect Coord
         elif roaming_character.rect.x > self.current_map.width - TILE_SIZE:
@@ -467,9 +602,6 @@ class Game:
             roaming_character.rect.y = 0
         elif roaming_character.rect.y > self.current_map.height - TILE_SIZE:
             roaming_character.rect.y = self.current_map.height - TILE_SIZE
-
-    def load_current_map(self):
-        self.current_map.load_map()
 
 
 def run():

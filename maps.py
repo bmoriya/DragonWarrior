@@ -28,15 +28,20 @@ character_key = OrderedDict([
     ('KING_LORIK',
      {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
     ('DOWN_FACE_GUARD',
-     {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
+     {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('LEFT_FACE_GUARD',
-     {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value, 'underlying_tile': 'BRICK'}),
+     {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value,
+      'underlying_tile': 'BRICK'}),
     ('UP_FACE_GUARD',
-     {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value, 'underlying_tile': 'BRICK'}),
+     {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value,
+      'underlying_tile': 'BRICK'}),
     ('RIGHT_FACE_GUARD',
-     {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value, 'underlying_tile': 'BRICK'}),
+     {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value,
+      'underlying_tile': 'BRICK'}),
     ('ROAMING_GUARD',
-     {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
+     {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('MAN',
      {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
       'underlying_tile': 'BRICK'}),
@@ -44,16 +49,20 @@ character_key = OrderedDict([
      {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
       'underlying_tile': 'GRASS'}),
     ('WISE_MAN',
-     {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
+     {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('SOLDIER',
-     {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
+     {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('MERCHANT',
-     {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
+     {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('PRINCESS_GWAELIN',
      {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False,
       'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('DRAGONLORD',
-     {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
+     {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
 ])
 
 all_characters_values = [character_dict['val'] for character_dict in character_key.values()]
@@ -203,10 +212,6 @@ tantegel_courtyard = [
 current_map = None
 
 
-# current_map = TantegelCourtyard(self.unarmed_hero_images)
-# current_map = TestMap(self.unarmed_hero_images)
-
-
 def parse_animated_spritesheet(sheet, is_roaming=False):
     """
     Parses spritesheets and creates image lists. If is_roaming is True
@@ -215,7 +220,6 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
     """
     sheet.set_colorkey(COLOR_KEY)
     sheet.convert_alpha()
-    # width, height = sheet.get_size()
 
     facing_down, facing_left, facing_up, facing_right = [], [], [], []
 
@@ -374,16 +378,16 @@ class DragonWarriorMap:
             if self.layout[y][x] >= 34:
                 if self.layout[y][x] == character_dict['val']:
                     if self.layout[y][x] == character_key['HERO']['val']:
-                        self.map_player(current_loaded_map, underlying_tile=character_dict['underlying_tile'])
+                        self.map_player(current_loaded_map, character_dict['underlying_tile'])
                     elif character_dict['four_sided']:
-                        self.map_four_sided_npc(direction=character_dict['direction'], name=character,
+                        self.map_four_sided_npc(name=character, direction=character_dict['direction'],
                                                 underlying_tile=character_dict['underlying_tile'],
                                                 image_path=character_dict['path'], is_roaming=character_dict['roaming'])
                     else:
                         self.map_two_sided_npc(image_path=character_dict['path'], name=character,
                                                underlying_tile=character_dict['underlying_tile'])
 
-    def map_four_sided_npc(self, direction, name, underlying_tile, image_path, is_roaming=False):
+    def map_four_sided_npc(self, name, direction, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet, is_roaming=True)
@@ -479,7 +483,7 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         # staircase_list = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
-        self.staircases = {(14, 18): TantegelCourtyard(self.hero_images)}
+        self.staircases = {(14, 18): {'map': TantegelCourtyard(self.hero_images), 'direction': 'down'}}
         self.music_file_path = tantegel_castle_throne_room_music
         play_music(self.music_file_path)
 
