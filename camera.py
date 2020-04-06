@@ -10,8 +10,12 @@ class Camera:
         self.set_camera_position(hero_position)
         Camera.speed = speed
 
-    def set_camera_position(self, hero_position):
-        # TODO(ELF): move into Camera class.
+    def set_camera_position(self, hero_position: tuple):
+        """
+        Sets the camera position.
+        :type hero_position: tuple
+        :param hero_position: Position of the hero, in (column, row) format.
+        """
         self.x = (-hero_position[0] + 8) * TILE_SIZE
         self.y = (-hero_position[1] + 7) * TILE_SIZE
 

@@ -62,6 +62,7 @@ class Game:
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
         self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
 
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
@@ -200,7 +201,10 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
         self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
         self.current_map.load_map()
-        self.camera.set_camera_position(hero_position=(self.hero_layout_column, self.hero_layout_row))
+        initial_hero_location = self.current_map.get_initial_character_location('HERO')
+        self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
+        self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
+                             current_map=self.current_map, speed=None)
         self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
         self.unpause_all_movement()
 
@@ -566,7 +570,6 @@ class Game:
                 print("Invalid direction.")
             self.handle_roaming_character_sides_collision(roaming_character)
 
-    # Roaming guard starts at 16th column (index), 11th row (index) in Tantegel Throne Room
     def move_roaming_character(self, delta_x, delta_y, roaming_character):
         """
         The method that actuates the movement of the roaming characters from within the move_roaming_characters method.

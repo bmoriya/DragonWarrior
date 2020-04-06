@@ -335,7 +335,7 @@ class DragonWarriorMap:
             ('BOTTOM_TOP_COAST', {'val': 32, 'group': self.bottom_top_coast_group}),
             ('BOTTOM_TOP_RIGHT_COAST', {'val': 33, 'group': self.bottom_top_right_coast_group}),
         ])
-        self.tile_character_key = self.tile_key.update(character_key)
+        self.tile_key.update(character_key)
 
     def get_tile_by_value(self, position):
         return list(self.tile_key.keys())[position]
