@@ -1,0 +1,85 @@
+Metadata-Version: 2.1
+Name: pygame-menu
+Version: 2.2.0
+Summary: A menu for pygame, simple, lightweight and easy to use
+Home-page: https://ppizarror.com/pygame-menu/
+Author: ppizarror
+Author-email: pablo.pizarro@ing.uchile.cl
+License: MIT
+Project-URL: Bug Tracker, https://github.com/ppizarror/pygame-menu/issues
+Project-URL: Documentation, https://github.com/ppizarror/pygame-menu
+Project-URL: Source Code, https://github.com/ppizarror/pygame-menu
+Keywords: pygame menu menus gui widget input button pygame-menu
+Platform: any
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python
+Classifier: Topic :: Games/Entertainment
+Classifier: Topic :: Multimedia
+Classifier: Topic :: Software Development :: Libraries :: pygame
+Classifier: Topic :: Text Processing
+Requires-Python: >=2.7
+Requires-Dist: pygame (>=1.9.4)
+Requires-Dist: pyperclip
+
+
+pygame-menu
+===========
+
+| Written for both Python 2.7+ and 3.4+
+
+Source repo on `github <https://github.com/ppizarror/pygame-menu>`__
+
+Introduction
+------------
+
+Pygame-menu is a python-pygame library for creating menus, it supports
+selectors, buttons and texts menus with many options to customize.
+
+Install Instructions
+--------------------
+
+Pygame-menu can be downloaded via pip. Simply run pip install pygame-menu.
+
+Dependencies
+~~~~~~~~~~~~
+
+This library is dependant on the following
+
+- `Pygame <http://www.pygame.org/download.shtml>`__
+- `pyperclip <https://pypi.org/project/pyperclip/>`__
+
+Contributors
+------------
+
+Ideas and contributions are always welcome. Any found bugs or
+enhancement suggestions should be posted in the issues tab.
+
+Aditional Information
+---------------------
+
+Licensing
+~~~~~~~~~
+
+| This project is distributed using the MIT license.
+| For more licensing information read LICENSE on github.
+
+Contact Info:
+~~~~~~~~~~~~~
+
+This project does not have a mailing list and so the issues tab should
+be the first point of contact if wishing to discuss the project. If you
+have questions that you do not feel are relavent to the issues tab or
+just want to let me know what you think about the library, feel free to
+email me.
+
+Email: pablo.pizarro@ing.uchile.cl
+
+
