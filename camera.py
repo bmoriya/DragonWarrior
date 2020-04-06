@@ -5,8 +5,6 @@ from maps import TantegelThroneRoom, TantegelCourtyard
 class Camera:
     def __init__(self, hero_position, current_map, speed):
         self.current_map = current_map
-        self.map_width = current_map.width
-        self.map_height = current_map.height
         self.x = None
         self.y = None
         self.set_camera_position(hero_position, None)

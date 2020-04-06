@@ -6,7 +6,7 @@ from pygame.transform import scale
 
 from camera import Camera
 from common import UNARMED_HERO_PATH, Direction
-from config import SCALE
+from config import SCALE, TILE_SIZE
 from game import Game
 from maps import DragonWarriorMap, parse_animated_spritesheet
 from player import Player
@@ -37,7 +37,7 @@ class TestGame(TestCase):
         self.game.current_map = TestMap(map_tiles=None, hero_images=None)
 
         self.initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-        self.camera = Camera(self.game.current_map, self.initial_hero_location, speed=1)
+
         unarmed_hero_sheet = load_extended(UNARMED_HERO_PATH)
         unarmed_hero_sheet = scale(unarmed_hero_sheet,
                                    (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
@@ -49,6 +49,10 @@ class TestGame(TestCase):
                                               right_images=self.hero_images[Direction.RIGHT.value])
         self.game.hero_row = 0
         self.game.hero_column = 0
+        self.hero_layout_column, self.hero_layout_row = self.game.current_map.player.rect.x // TILE_SIZE, self.game.current_map.player.rect.y // TILE_SIZE
+        # self.camera = Camera(self.game.current_map, self.initial_hero_location, speed=2)
+        self.camera = Camera(hero_position=(self.hero_layout_row, self.hero_layout_column),
+                             current_map=self.game.current_map, speed=None)
         pygame.key.get_pressed = create_key_mock(pygame.K_RIGHT)
         pygame.key.get_pressed = create_key_mock(pygame.K_UP)
         pygame.key.get_pressed = create_key_mock(pygame.K_DOWN)
