@@ -15,7 +15,7 @@ from camera import Camera
 from common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, DRAGON_QUEST_FONT_PATH
 from config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
-from maps import parse_animated_spritesheet, parse_map_tiles
+from maps import parse_animated_spritesheet
 
 
 def get_next_coordinates(character_column, character_row, direction):
@@ -53,17 +53,18 @@ class Game:
             self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
         set_caption(self.GAME_TITLE)
         self.roaming_character_go_cooldown = 3000
-        self.current_map = None
-        if maps.current_map is None:
-            maps.current_map = maps.TantegelThroneRoom
-        self.bigmap_width, self.bigmap_height, self.bigmap, self.background = None, None, None, None
-        self.next_tile = None
         self.next_tile_checked = False
 
-        self.unarmed_hero_images = None
-        self.load_images()
-        self.map_tilesheet = None
-        self.hero_layout_row, self.hero_layout_column = None, None
+        unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
+        unarmed_hero_tilesheet = scale(unarmed_hero_sheet, (
+            unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
+        self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
+
+        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+
+        self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
+        self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
+        self.bigmap.fill(self.BACK_FILL_COLOR)
         self.player_moving = False
         self.speed = 2
 
@@ -73,11 +74,11 @@ class Game:
             roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
         # Make the big scrollable map
         # TODO(ELF): Refactor these into the actual values and remove the None assignments that they replace.
-        self.make_bigmap()
+
         self.background = Surface(self.screen.get_size()).convert()
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
-        self.camera = Camera(hero_position=(int(self.hero_layout_row), int(self.hero_layout_column)),
+        self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
         self.enable_command_menu = False
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
@@ -90,6 +91,26 @@ class Game:
             self.draw()
             self.update()
 
+    def fade_out(self, width, height):
+        fade = pygame.Surface((width, height))
+        fade.fill(self.BLACK)
+        for alpha in range(300):
+            fade.set_alpha(alpha)
+            self.background.fill(self.BLACK)
+            self.screen.blit(fade, (0, 0))
+            pygame.display.update()
+            pygame.time.delay(5)
+
+    # def fade_in(self, width, height):
+    #     fade = pygame.Surface((width, height))
+    #     fade.fill(self.BLACK)
+    #     for alpha in range(300):
+    #         fade.set_alpha(300-alpha)
+    #         self.background.fill(self.BLACK)
+    #         self.screen.blit(fade, (0, 0))
+    #         pygame.display.update()
+    #         pygame.time.delay(5)
+
     def events(self):
 
         for event in get():
@@ -98,14 +119,15 @@ class Game:
                 sys.exit()
         key = pygame.key.get_pressed()
         self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
-        if self.enable_roaming:
+        if self.enable_roaming and self.current_map.roaming_characters:
             self.move_roaming_characters()
         if self.enable_movement:
             self.move_player(key)
-        for k, v in self.current_map.staircases:
-            if (self.hero_layout_row, self.hero_layout_column) == v:
-                self.current_map = k
-                self.load_current_map()
+
+        for staircase_location, map_name in self.current_map.staircases.items():
+            if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
+                self.staircase_map_change(map_name)
+
         if key[pygame.K_j]:
             # B button
             self.unlaunch_command_menu()
@@ -138,6 +160,21 @@ class Game:
         #                                    self.current_map.player.rect.x // TILE_SIZE))
         # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
         # camera_pos = -160, -96
+
+    def staircase_map_change(self, v):
+        self.enable_roaming = False
+        self.enable_movement = False
+        self.background = Surface(self.screen.get_size()).convert()
+        self.current_map = v
+        self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
+        self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
+        self.bigmap.fill(self.BACK_FILL_COLOR)
+        self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
+        self.load_current_map()
+        self.camera.set_camera_position(hero_position=(self.hero_layout_column, self.hero_layout_row))
+        # self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
+        self.enable_roaming = True
+        self.enable_movement = True
 
     def unlaunch_command_menu(self):
         self.enable_command_menu = False
@@ -311,7 +348,8 @@ class Game:
         if not self.is_impassable(self.next_tile):
             # for roaming_character in self.current_map.roaming_characters:
             # if not self.current_map.player.rect.colliderect(roaming_character):
-            if self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row, self.current_map.player.direction) not in roaming_character_locations:
+            if self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row,
+                                         self.current_map.player.direction) not in roaming_character_locations:
                 if delta_x:
                     self.current_map.player.rect.x += delta_x
                     next_cam_pos_x = curr_cam_pos_x + -delta_x
@@ -377,6 +415,8 @@ class Game:
         for roaming_character in self.current_map.roaming_characters:
             roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
             now = get_ticks()
+            if roaming_character.last_roaming_clock_check is None:
+                roaming_character.last_roaming_clock_check = now
             if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
                 roaming_character.last_roaming_clock_check = now
                 if not roaming_character.moving:
@@ -428,27 +468,8 @@ class Game:
         elif roaming_character.rect.y > self.current_map.height - TILE_SIZE:
             roaming_character.rect.y = self.current_map.height - TILE_SIZE
 
-    def make_bigmap(self):
-        self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
-        self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
-        self.bigmap.fill(self.BACK_FILL_COLOR)
-
     def load_current_map(self):
-        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
-        # self.current_map = TantegelCourtyard(self.map_tiles, self.unarmed_hero_images)
-        # self.current_map = maps.TestMap(self.map_tiles, self.unarmed_hero_images)
         self.current_map.load_map()
-
-    def load_images(self):
-        """Load all the images for the game graphics.
-        """
-        parse_map_tiles()
-        # Load unarmed hero images
-        unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
-        unarmed_hero_tilesheet = scale(unarmed_hero_sheet, (
-            unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
-        # Get the images for the initial hero sprites
-        self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
 
 def run():

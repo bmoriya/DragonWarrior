@@ -7,10 +7,10 @@ class Camera:
         self.current_map = current_map
         self.x = None
         self.y = None
-        self.set_camera_position(hero_position, None)
+        self.set_camera_position(hero_position)
         Camera.speed = speed
 
-    def set_camera_position(self, hero_location, current_map):
+    def set_camera_position(self, hero_position):
         # TODO(ELF): move into Camera class.
         # top_left_x = hero_location[0] * TILE_SIZE
         # top_left_y = hero_location[1] * TILE_SIZE
@@ -23,6 +23,13 @@ class Camera:
         # self.x = int((hero_location[0] - self.map_width) * TILE_SIZE)
         # self.y = int((hero_location[1] - self.map_height) * TILE_SIZE)
         # TODO: Figure out math and remove these hardcoded values.
+        # initial hero position: (13, 10)
+        # width map center: self.current_map.width // TILE_SIZE // 2 = 13
+        # height map center: self.current_map.height // TILE_SIZE // 2 = 11
+
+        # self.x = -(hero_position[1] // 2) * TILE_SIZE
+        # self.y = -(hero_position[0] - 10) * TILE_SIZE
+
         if isinstance(self.current_map, TantegelThroneRoom):
             self.x = -5 * TILE_SIZE
             self.y = -3 * TILE_SIZE

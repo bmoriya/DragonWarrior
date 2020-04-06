@@ -199,6 +199,8 @@ tantegel_courtyard = [
 ]
 
 current_map = None
+# current_map = TantegelCourtyard(self.unarmed_hero_images)
+# current_map = TestMap(self.unarmed_hero_images)
 
 
 def parse_animated_spritesheet(sheet, is_roaming=False):
