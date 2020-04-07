@@ -85,6 +85,8 @@ class Game:
         self.enable_command_menu = False
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
         self.clock = Clock()
+        pygame.mixer.music.load(self.current_map.music_file_path)
+        pygame.mixer.music.play(-1)
 
     def main(self):
         """
@@ -149,9 +151,9 @@ class Game:
 
         for staircase_location, staircase_dict in self.current_map.staircases.items():
             if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
-                if staircase_dict['direction'] == 'down':
+                if staircase_dict['stair_direction'] == 'down':
                     play_sound(stairs_down_sfx)
-                elif staircase_dict['direction'] == 'up':
+                elif staircase_dict['stair_direction'] == 'up':
                     play_sound(stairs_up_sfx)
                 self.map_change(staircase_dict['map'])
 
@@ -200,14 +202,21 @@ class Game:
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
+
         self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
+        pygame.mixer.music.stop()
         self.current_map.load_map()
+        pygame.mixer.music.load(self.current_map.music_file_path)
+        pygame.mixer.music.play(-1)
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
         # self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
+
         self.unpause_all_movement()
+
+        # play_music(self.current_map.music_file_path)
 
     def unlaunch_command_menu(self):
         """

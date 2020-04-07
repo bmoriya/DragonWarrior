@@ -220,7 +220,7 @@ class DragonWarriorMap:
         self.layout = [[]]
         self.layout_numpy_array = np.empty(0)
         self.center_pt = None
-        self.map_tiles = parse_map_tiles()
+        self.map_tiles = parse_map_tiles(map_path=MAP_TILES_PATH)
         self.impassable_tiles = all_impassable_tiles
         self.tile_group_dict = {}
         self.staircases = {}
@@ -444,10 +444,9 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
-        # staircase_list = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
-        self.staircases = {(14, 18): {'map': TantegelCourtyard(self.hero_images), 'direction': 'down'}}
+        self.staircases = {(14, 18): {'map': TantegelCourtyard(self.hero_images), 'stair_direction': 'down'}}
         self.music_file_path = tantegel_castle_throne_room_music
-        play_music(self.music_file_path)
+        # play_music(self.music_file_path)
 
 
 class TantegelCourtyard(DragonWarriorMap):
@@ -458,12 +457,17 @@ class TantegelCourtyard(DragonWarriorMap):
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = tantegel_castle_courtyard_music
-        play_music(self.music_file_path)
+        # play_music(self.music_file_path)
 
 
-def parse_map_tiles():
-    # Load the map tile spritesheet
-    map_sheet = get_image(MAP_TILES_PATH).convert()
+class Overworld(DragonWarriorMap):
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
+        self.layout = parse_map_tiles('data/images/alefgard.gif')
+
+
+def parse_map_tiles(map_path):
+    map_sheet = get_image(map_path).convert()
     map_tilesheet = scale(map_sheet, (map_sheet.get_width() * SCALE, map_sheet.get_height() * SCALE))
     map_tiles = []
     width, height = map_tilesheet.get_size()
