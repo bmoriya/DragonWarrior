@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from os.path import join
 
 import numpy as np
 from pygame.sprite import Group, RenderUpdates
@@ -9,8 +10,9 @@ from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
     GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
-    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH
-from src.config import TILE_SIZE, SCALE, COLOR_KEY
+    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH, \
+    overworld_music
+from src.config import TILE_SIZE, SCALE, COLOR_KEY, DATA_DIR, IMAGES_DIR
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
 from src.player import Player
@@ -168,6 +170,9 @@ tantegel_courtyard = [
     grass_line,
     grass_line,
     grass_line,
+]
+overworld = [
+
 ]
 
 current_map = None
@@ -463,7 +468,12 @@ class TantegelCourtyard(DragonWarriorMap):
 class Overworld(DragonWarriorMap):
     def __init__(self, hero_images):
         super().__init__(hero_images)
-        self.layout = parse_map_tiles('data/images/alefgard.gif')
+        self.layout = overworld
+        self.layout_tiles = parse_map_tiles(join(IMAGES_DIR, 'alefgard.gif'))
+        self.layout_numpy_array = np.array(self.layout)
+        self.height = len(self.layout * TILE_SIZE)
+        self.width = len(self.layout[0] * TILE_SIZE)
+        self.music_file_path = overworld_music
 
 
 def parse_map_tiles(map_path):

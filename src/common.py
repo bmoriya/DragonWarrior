@@ -36,6 +36,7 @@ _music_library = {}
 tantegel_castle_throne_room_music = join(MUSIC_DIR, '02 Dragon Quest 1 - Tantegel Castle (22khz_mono).ogg')
 tantegel_castle_courtyard_music = join(MUSIC_DIR, '03 Dragon Quest 1 - Tantegel Castle (Lower) (22khz mono).ogg')
 village_music = join(MUSIC_DIR, '04 Dragon Quest 1 - Peaceful Village (22khz mono).ogg')
+overworld_music = join(MUSIC_DIR, '05 Dragon Quest 1 - Kingdom of Alefgard (22khz mono).ogg')
 
 
 def play_music(path='data/sound/music'):
