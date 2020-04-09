@@ -14,7 +14,7 @@ from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, DRAGON_QUEST_FONT_PATH, stairs_down_sfx, stairs_up_sfx
-from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED
+from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED, MUSIC_ENABLED
 from src.maps import parse_animated_spritesheet
 
 
@@ -85,8 +85,9 @@ class Game:
         self.enable_command_menu = False
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
         self.clock = Clock()
-        pygame.mixer.music.load(self.current_map.music_file_path)
-        pygame.mixer.music.play(-1)
+        if MUSIC_ENABLED:
+            pygame.mixer.music.load(self.current_map.music_file_path)
+            pygame.mixer.music.play(-1)
 
     def main(self):
         """
@@ -206,8 +207,9 @@ class Game:
         self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
         pygame.mixer.music.stop()
         self.current_map.load_map()
-        pygame.mixer.music.load(self.current_map.music_file_path)
-        pygame.mixer.music.play(-1)
+        if MUSIC_ENABLED:
+            pygame.mixer.music.load(self.current_map.music_file_path)
+            pygame.mixer.music.play(-1)
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),

@@ -8,11 +8,11 @@ from pygame.transform import scale
 from src.RoamingCharacter import RoamingCharacter
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
-from src.common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
+from src.common import Direction, tantegel_castle_throne_room_music, KING_LORIK_PATH, get_image, \
     GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
     SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH, \
     overworld_music
-from src.config import TILE_SIZE, SCALE, COLOR_KEY, DATA_DIR, IMAGES_DIR
+from src.config import TILE_SIZE, SCALE, COLOR_KEY, IMAGES_DIR
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
 from src.player import Player
@@ -121,24 +121,24 @@ tantegel_throne_room = [
     roof_line,  # 21
 ]
 
-grass_line = tuple([13] * 44)
+courtyard_grass_line = tuple([13] * 44)
 
 tantegel_courtyard = [
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
     (13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 45, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 2, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 14, 14, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13),
-    (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13),
-    (13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 3, 36, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13),
+    (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 42, 13, 13, 13, 13, 13, 13, 13, 13, 13),
+    (13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 3, 36, 3, 3, 3, 3, 3, 3, 1, 1, 1, 5, 1, 1, 1, 1, 1, 3, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 7, 34, 3, 3, 3, 3, 1, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 41, 3, 3, 3, 1, 3, 38, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 13),
@@ -162,14 +162,14 @@ tantegel_courtyard = [
     (13, 13, 13, 13, 13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13),
     (13, 13, 13, 13, 13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22, 22, 22, 22, 22, 6, 13, 13, 13, 13, 13, 13, 13),
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
 ]
 overworld = [
 
@@ -435,7 +435,6 @@ class TestMap(DragonWarriorMap):
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = village_music
-        play_music(self.music_file_path)
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -451,7 +450,6 @@ class TantegelThroneRoom(DragonWarriorMap):
         self.width = len(self.layout[0] * TILE_SIZE)
         self.staircases = {(14, 18): {'map': TantegelCourtyard(self.hero_images), 'stair_direction': 'down'}}
         self.music_file_path = tantegel_castle_throne_room_music
-        # play_music(self.music_file_path)
 
 
 class TantegelCourtyard(DragonWarriorMap):
@@ -462,7 +460,6 @@ class TantegelCourtyard(DragonWarriorMap):
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = tantegel_castle_courtyard_music
-        # play_music(self.music_file_path)
 
 
 class Overworld(DragonWarriorMap):
