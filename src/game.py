@@ -61,8 +61,8 @@ class Game:
             unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
-        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
-        # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+        self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
 
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
