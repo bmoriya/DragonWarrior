@@ -46,7 +46,8 @@ class TestGame(TestCase):
                                               down_images=self.hero_images[Direction.DOWN.value],
                                               left_images=self.hero_images[Direction.LEFT.value],
                                               up_images=self.hero_images[Direction.UP.value],
-                                              right_images=self.hero_images[Direction.RIGHT.value])
+                                              right_images=self.hero_images[Direction.RIGHT.value],
+                                              underlying_tile=None)
         self.game.hero_row = 0
         self.game.hero_column = 0
         self.hero_layout_column, self.hero_layout_row = self.game.current_map.player.rect.x // TILE_SIZE, self.game.current_map.player.rect.y // TILE_SIZE
