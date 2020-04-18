@@ -43,7 +43,6 @@ class Game:
     def __init__(self):
 
         # Initialize pygame
-
         self.opacity = 0
         init()
         self.command_menu_launched, self.paused = False, False
@@ -61,8 +60,8 @@ class Game:
             unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
-        # self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
-        self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
+        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
 
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
@@ -80,6 +79,9 @@ class Game:
         self.background = Surface(self.screen.get_size()).convert()
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
+        self.next_tile = self.get_next_tile(character_column=self.hero_layout_column,
+                                            character_row=self.hero_layout_row,
+                                            direction=self.current_map.player.direction)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
         self.enable_command_menu = False
@@ -310,9 +312,6 @@ class Game:
                                title_offsetx=280,
                                title_offsety=71,
                                widget_alignment=pygameMenu.locals.ALIGN_LEFT,
-                               columns=2,
-                               rows=4,
-                               column_weights=None,
                                # force_fit_text=False
                                )
         menu.add_button('TALK', self.talk, align=pygameMenu.locals.ALIGN_LEFT)
@@ -458,8 +457,6 @@ class Game:
         roaming_character_locations = [(roaming_character.column, roaming_character.row) for roaming_character in
                                        self.current_map.roaming_characters]
         if not self.is_impassable(self.next_tile):
-            # for roaming_character in self.current_map.roaming_characters:
-            # if not self.current_map.player.rect.colliderect(roaming_character):
             if self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row,
                                          self.current_map.player.direction) not in roaming_character_locations:
                 if delta_x:
@@ -478,13 +475,13 @@ class Game:
 
     def get_next_tile(self, character_column: int, character_row: int, direction) -> str:
         """
-        Retrieve the next tile to be stepped on by the player.
+        Retrieve the next tile to be stepped on by a particular character.
         :type character_column: int
         :type character_row: int
-        :param character_column: The current player's column within the map layout.
-        :param character_row: The current player's row within the map layout.
-        :param direction: The direction which the current player is facing.
-        :return: str: The next tile that the player will step on (e.g., 'BRICK').
+        :param character_column: The character's column within the map layout.
+        :param character_row: The character's row within the map layout.
+        :param direction: The direction which the character is facing.
+        :return: str: The next tile that the character will step on (e.g., 'BRICK').
         """
         if direction == Direction.UP.value:
             return self.get_tile_by_coordinates(character_column, character_row - 1)
