@@ -1,3 +1,5 @@
+![Dragon Warrior](https://i.imgur.com/noZfPNO.gif)
+
 ABOUT
 =====
 
