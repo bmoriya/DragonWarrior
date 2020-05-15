@@ -2,7 +2,7 @@ import random
 import sys
 
 import pygame
-import pygameMenu
+import pygame_menu
 from pygame import init, Surface, USEREVENT, time, quit, FULLSCREEN
 from pygame.display import set_mode, set_caption, flip
 from pygame.event import get
@@ -277,53 +277,77 @@ class Game:
         menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
                                                      (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
                                                      TILE_SIZE * 8, TILE_SIZE * 5)
-        menu = pygameMenu.Menu(surface=menu_subsurface,
-                               window_width=TILE_SIZE * 5,
-                               window_height=TILE_SIZE * 8,
-                               font=DRAGON_QUEST_FONT_PATH,
-                               title='COMMAND',
-                               back_box=False,
-                               bgfun=self.update,
-                               color_selected=Game.RED,
-                               dopause=True,
-                               draw_region_x=89,
-                               draw_region_y=41,
-                               draw_select=False,
-                               enabled=False,
-                               font_color=Game.WHITE,
-                               font_size=16,
-                               font_size_title=16,
-                               font_title=DRAGON_QUEST_FONT_PATH,
-                               fps=60,
-                               joystick_enabled=True,
-                               menu_alpha=100,
-                               menu_color=Game.BLACK,
-                               # menu_color_title=Game.WHITE,
-                               # menu_height=_cfg.MENU_HEIGHT,
-                               # menu_width=_cfg.MENU_WIDTH,
-                               mouse_enabled=False,
-                               mouse_visible=False,
-                               # onclose=None,
-                               option_margin=15,
-                               option_shadow=False,
-                               # option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
-                               # option_shadow_position=_cfg.MENU_SHADOW_POSITION,
-                               # rect_width=_cfg.MENU_SELECTED_WIDTH,
-                               title_offsetx=280,
-                               title_offsety=71,
-                               widget_alignment=pygameMenu.locals.ALIGN_LEFT,
-                               # force_fit_text=False
-                               )
-        menu.add_button('TALK', self.talk, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('STATUS', self.status, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('STAIRS', self.stairs, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('SEARCH', self.search, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('SPELL', self.spell, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('ITEM', self.item, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('DOOR', self.door, align=pygameMenu.locals.ALIGN_LEFT)
-        menu.add_button('TAKE', self.take, align=pygameMenu.locals.ALIGN_LEFT)
+        dragon_warrior_menu_theme = pygame_menu.themes.Theme(background_color=self.BLACK,
+                                                             cursor_color=self.WHITE,
+                                                             title_background_color=self.BLACK,
+                                                             title_font=DRAGON_QUEST_FONT_PATH,
+                                                             title_font_size=14,
+                                                             # title_offset=(95, 0),
+                                                             widget_font=DRAGON_QUEST_FONT_PATH,
+                                                             widget_font_size=14,
+                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(arrow_size=(5, 5), blink_ms=500)
+                                                             )
+        menu = pygame_menu.Menu(width=menu_subsurface.get_width() * 2,
+                                height=menu_subsurface.get_height() * 3,
+                                title='COMMAND',
+                                back_box=False,
+                                center_content=False,
+                                columns=2,
+                                column_max_width=(TILE_SIZE * 3, TILE_SIZE * 3),
+                                enabled=True,
+                                joystick_enabled=True,
+                                mouse_enabled=False,
+                                mouse_visible=False,
+                                rows=4,
+                                theme=dragon_warrior_menu_theme
+                                )
+        # menu = pygame_menu.Menu(surface=menu_subsurface,
+        #                        window_width=TILE_SIZE * 5,
+        #                        window_height=TILE_SIZE * 8,
+        #                        font_name=DRAGON_QUEST_FONT_PATH,
+        #                        title='COMMAND',
+        #                        back_box=False,
+        #                        bgfun=self.update,
+        #                        color_selected=Game.RED,
+        #                        dopause=True,
+        #                        draw_region_x=89,
+        #                        draw_region_y=41,
+        #                        draw_select=False,
+        #                        enabled=False,
+        #                        font_color=Game.WHITE,
+        #                        font_size=16,
+        #                        font_size_title=16,
+        #                        font_title=DRAGON_QUEST_FONT_PATH,
+        #                        fps=60,
+        #                        joystick_enabled=True,
+        #                        menu_alpha=100,
+        #                        menu_color=Game.BLACK,
+        #                        # menu_color_title=Game.WHITE,
+        #                        # menu_height=_cfg.MENU_HEIGHT,
+        #                        # menu_width=_cfg.MENU_WIDTH,
+        #                        mouse_enabled=False,
+        #                        mouse_visible=False,
+        #                        # onclose=None,
+        #                        option_margin=15,
+        #                        option_shadow=False,
+        #                        # option_shadow_offset=_cfg.MENU_SHADOW_OFFSET,
+        #                        # option_shadow_position=_cfg.MENU_SHADOW_POSITION,
+        #                        # rect_width=_cfg.MENU_SELECTED_WIDTH,
+        #                        title_offsetx=280,
+        #                        title_offsety=71,
+        #                        widget_alignment=pygame_menu.locals.ALIGN_LEFT,
+        #                        # force_fit_text=False
+        #                        )
+        menu.add_button('TALK', self.talk, align=pygame_menu.locals.ALIGN_LEFT)
+        menu.add_button('STATUS', self.status, align=pygame_menu.locals.ALIGN_LEFT)
+        menu.add_button('STAIRS', self.stairs, align=pygame_menu.locals.ALIGN_LEFT)
+        menu.add_button('SEARCH', self.search, align=pygame_menu.locals.ALIGN_LEFT)
+        menu.add_button('SPELL', self.spell, align=pygame_menu.locals.ALIGN_RIGHT)
+        menu.add_button('ITEM', self.item, align=pygame_menu.locals.ALIGN_RIGHT)
+        menu.add_button('DOOR', self.door, align=pygame_menu.locals.ALIGN_RIGHT)
+        menu.add_button('TAKE', self.take, align=pygame_menu.locals.ALIGN_RIGHT)
 
-        menu.draw()
+        menu.draw(menu_subsurface)
         self.command_menu_launched = True
 
     def talk(self):
