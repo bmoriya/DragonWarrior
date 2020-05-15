@@ -277,23 +277,33 @@ class Game:
         menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
                                                      (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
                                                      TILE_SIZE * 8, TILE_SIZE * 5)
+
         dragon_warrior_menu_theme = pygame_menu.themes.Theme(background_color=self.BLACK,
                                                              cursor_color=self.WHITE,
+                                                             cursor_selection_color=self.WHITE,
+                                                             focus_background_color=self.BLACK,
                                                              title_background_color=self.BLACK,
                                                              title_font=DRAGON_QUEST_FONT_PATH,
-                                                             title_font_size=14,
-                                                             # title_offset=(95, 0),
+                                                             title_font_size=16,
+                                                             title_offset=(65, 0),
                                                              widget_font=DRAGON_QUEST_FONT_PATH,
-                                                             widget_font_size=14,
-                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(arrow_size=(5, 5), blink_ms=500)
+                                                             widget_alignment=pygame_menu.locals.ALIGN_LEFT,
+                                                             widget_background_color=self.BLACK,
+                                                             widget_font_color=self.WHITE,
+                                                             widget_font_size=15,
+                                                             widget_margin=(20, 10),
+                                                             widget_offset=(0, 10),
+                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(blink_ms=2000)
                                                              )
+
         menu = pygame_menu.Menu(width=menu_subsurface.get_width() * 2,
                                 height=menu_subsurface.get_height() * 3,
                                 title='COMMAND',
                                 back_box=False,
                                 center_content=False,
                                 columns=2,
-                                column_max_width=(TILE_SIZE * 3, TILE_SIZE * 3),
+                                column_force_fit_text=False,
+                                column_max_width=(TILE_SIZE * 1, TILE_SIZE * 3),
                                 enabled=True,
                                 joystick_enabled=True,
                                 mouse_enabled=False,
@@ -338,14 +348,22 @@ class Game:
         #                        widget_alignment=pygame_menu.locals.ALIGN_LEFT,
         #                        # force_fit_text=False
         #                        )
-        menu.add_button('TALK', self.talk, align=pygame_menu.locals.ALIGN_LEFT)
-        menu.add_button('STATUS', self.status, align=pygame_menu.locals.ALIGN_LEFT)
-        menu.add_button('STAIRS', self.stairs, align=pygame_menu.locals.ALIGN_LEFT)
-        menu.add_button('SEARCH', self.search, align=pygame_menu.locals.ALIGN_LEFT)
-        menu.add_button('SPELL', self.spell, align=pygame_menu.locals.ALIGN_RIGHT)
-        menu.add_button('ITEM', self.item, align=pygame_menu.locals.ALIGN_RIGHT)
-        menu.add_button('DOOR', self.door, align=pygame_menu.locals.ALIGN_RIGHT)
-        menu.add_button('TAKE', self.take, align=pygame_menu.locals.ALIGN_RIGHT)
+        menu.add_button('TALK', self.talk)
+        menu.add_button('STATUS', self.status)
+        menu.add_button('STAIRS', self.stairs)
+        menu.add_button('SEARCH', self.search)
+        menu.add_button('SPELL', self.spell)
+        menu.add_button('ITEM', self.item)
+        menu.add_button('DOOR', self.door)
+        menu.add_button('TAKE', self.take)
+        # menu.add_button('TALK', self.talk, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('STATUS', self.status, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('STAIRS', self.stairs, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('SEARCH', self.search, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('SPELL', self.spell, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('ITEM', self.item, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('DOOR', self.door, align=pygame_menu.locals.ALIGN_LEFT)
+        # menu.add_button('TAKE', self.take, align=pygame_menu.locals.ALIGN_LEFT)
 
         menu.draw(menu_subsurface)
         self.command_menu_launched = True
