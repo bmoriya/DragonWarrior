@@ -61,6 +61,7 @@ class Game:
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
         self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
         # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
 
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
@@ -172,10 +173,7 @@ class Game:
                 self.pause_all_movement()
             else:
                 # TODO(ELF): Make the menu wait until the player arrives at the next tile, and then launch.
-                # wait until arriving at the next square, and then
-                self.enable_command_menu = True
-                self.pause_all_movement()
-
+                print("K key pressed (A button) while moving.")
         if key[pygame.K_i]:
             # Start button
             if self.paused:
@@ -293,7 +291,8 @@ class Game:
                                                              widget_font_size=15,
                                                              widget_margin=(20, 10),
                                                              widget_offset=(0, 10),
-                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(blink_ms=2000)
+                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(
+                                                                 blink_ms=500)
                                                              )
 
         menu = pygame_menu.Menu(width=menu_subsurface.get_width() * 2,
