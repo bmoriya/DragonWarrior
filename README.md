@@ -18,9 +18,6 @@ Run it from the command line using the interpreter. If you are in the
 DragonWarrior directory, type:
 python src/game.py
 
-All you can do right now is scroll around the first map.
-
-
 Run on Repl.it
 ============
 
