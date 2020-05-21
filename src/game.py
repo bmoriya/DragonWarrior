@@ -205,7 +205,8 @@ class Game:
         self.bigmap.fill(self.BACK_FILL_COLOR)
 
         self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
-        pygame.mixer.music.stop()
+        if MUSIC_ENABLED:
+            pygame.mixer.music.stop()
         self.current_map.load_map()
         if MUSIC_ENABLED:
             pygame.mixer.music.load(self.current_map.music_file_path)
