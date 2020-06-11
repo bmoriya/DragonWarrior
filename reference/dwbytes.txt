@@ -1,0 +1,1033 @@
+ _____________________________
+|  Dragon Warrior Bytes v1.0  |
+ \___________________________/
+  |  _____________________  |
+  | |     By Sliver X     | |
+  | |(sliverx.panicus.org)| |
+  | |                     | |
+  | |                     | |
+  | |                     | | 
+  | \                     | |
+   \ \                   / /
+    \ \                 / /
+     \ \               / /
+      \ \_____________/ /
+       \______________ /
+
+
+#####################
+# Table of Contents #
+#####################
+
+I: Credits
+II: Text
+III: Character Graphics
+IV: Background Graphics
+V: Enemy Graphics
+VI: Music
+VII: Status Screen Hacking
+VIII: Ending Credits Hacking
+IX: Tile Table, Palettes, and Level Music
+X: Dragon Warrior Level Format
+XI: Moving People on Maps
+XII: Misc. Level Data
+XIII: Shop Prices
+XIV: Equipment Stats
+XV: Magic Data
+
+
+
+
+I: Credits
+~~~~~~~~~~
+Various sources of data culled from the internet are included in this
+as well as the data I've found myself. Thanks go to:
+
+Acmlm
+Blades
+DWEdit
+X-Grade
+
+
+
+
+
+II: Text
+~~~~~~~~ 
+Dragon Warrior doesn't use pointers in the text itself, so you can resize the blocks
+of text to a fair degree (Although if you go too far, it will mess things up. How the
+game determines that you've gone beyond the boundery is something I don't understand).
+All you'd have to do is insert your longer line, and put the control code FC at the end of it
+(This will, of course, shorten the following line).
+Here's a breakdown of some of the control codes:
+
+FB=Line Break
+FC=End of line
+FD=Line Break + Pause for Input
+
+Other codes:
+
+F8=Player's Name
+F1=Monster, as in "A <$F1> draws near!
+F4=Monster's Name while you're fighting it
+F5=Numerical Data: i.e., Damage amount, Stat increases at level up, etc.
+F6=Name of spell that has been cast
+
+
+
+
+III: Character Graphics
+~~~~~~~~~~~~~~~~~~~~~~~
+You can redefine what tiles people are composed of, as well as changing colors
+for the individual tiles. It's set up like this:
+
+Byte 1: Byte 2:
+Tile Value Tile Palette
+
+For example, the Hero's tile definitions are like this:
+--------------------------------------------------------
+Address in ROM: 15C4
+
+3400 3500 3600 3700
+
+Each group of two is the data for each of the four tiles that compose the Hero,
+unarmed, as he faces forward.
+--------------------------------------------------------------------------------
+
+Byte 1: 00-FF
+-------------
+This is the tile definition, so changing this can replace the tile with any other in
+the sprite pattern table. The layout for the characters' data is like this:
+
+12
+34
+
+(Imagine this is the Hero, facing forward)
+
+So the tile that makes up the left side of his head is 1, the right 2, etc.
+The data will always be found in this order.
+
+Byte 2: 00-03 OR 40-43
+----------------------
+This is the palette definition, and the values 00-03 correspond to palettes 1-4.
+However, some tiles use the values 40-43, which work the same as above.
+
+
+
+
+IV: Background Graphics
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Editing the background graphics is similar to editing character sprites.
+5 bytes are used to determine a tile's properties. It works
+like this:
+
+Byte 1: Byte 2: Byte 3: Byte 4: Byte 5:
+<------Tile definitions--------> Palette definition
+
+
+Here's an example of how it works for the Stone Wall tile:
+----------------------------------------------------------
+Adress in ROM: F615
+
+6F70717201
+----------------------------------------------------------
+
+Bytes 1-4: 00-FF
+----------------
+These bytes tell the game what tiles to draw the Stone Wall
+with. Like the character definitions, you can remap these
+to any other tile in the BG Pattern Table.
+
+Byte 5: 00-03
+-------------
+Unlike character graphics, you can only define the palette
+for the entire group of four tiles, instead of individual
+ones. 00-03 correspond to palette 1-4, respectively.
+
+
+
+
+V: Enemy Graphics
+~~~~~~~~~~~~~~~~~
+
+You can manipulate the graphics for the enemies to a decent degree. Each tile that
+composes the enemies' image has its data stored in three bytes, like this:
+
+Byte 1: Byte 2: Byte 3:
+Tile Value Y Position/Flip X Position/Palette
+
+For example, the Slimes' tile definitions are like this:
+--------------------------------------------------------
+Address in ROM: 5B21
+
+532B60 543360 536B7C 54737C
+
+Each group of three is the data for each of the four tiles that compose a Slime.
+--------------------------------------------------------------------------------
+
+Byte 1: 00-FF
+-------------
+See how 53 and 54 are used twice? The slimes are really made of two tiles that are mirrored,
+If you edit either of these tiles, it'll change the tile across from it. It you want to avoid
+this, you can substitute the hex value of another tile you're not using and you'll have 4
+unique tiles for the Slimes (I did this by removing all the "overlay" graphics from the
+enemies, like the Axe Knight's Axe, Skeleton Swords, etc, which gave me a nice amount of
+free tiles to use).
+
+Byte 2 00-FF:
+-------------
+This value determines the Y Position and can flip tiles.
+Here's how it works:
+
+00-3F: Standard Y positioning.
+40-7F: Y position + Flipped X
+80-BF: Y position + Flipped Y
+C0-FF: Y position + Flipped X & Y
+
+Byte 3: 00-FF
+-------------
+This value determines X position and the palette the tile uses.
+The palettes is determined in one byte increments, and the position
+is incremented every 5th byte.
+Here's an example of how it works:
+
+00: +0 X, palette 1
+01: +0 X, palette 2
+02: +0 X, palette 3
+03: +0 X, palette 4
+04: +1 X, palette 1
+05: +1 X, palette 2
+06: +1 X, palette 3
+07: +1 X, palette 4
+08: +2 X, palette 1
+
+Etc...
+
+
+
+
+VI: Music
+~~~~~~~~~
+
+The data for each song is in seperate strings for each channel for a few songs, and combined in 
+the others (i.e., a single line of hex that generates sound in multiple channels at once.).
+Typically, in songs with seperate channel data the order you'll find the data in is Square 1, 
+Square 2, and Triangle.
+No Noise (For music, anyway) or PCM channel data is in the game.
+
+Music Related Hex
+----------------------------
+
+01-7F are rests. The lower the value, the shorter the duration of the rest.
+
+80-BF are notes, (80 is the note "C"). Higher values are higher notes.
+
+FB followed by a value is a control byte that determines
+the tone of the notes following it. You can use it as many times in a channel
+(Assuming you have room) as you want, right before the note(s) you want to sound different.
+Try messing around with this to get different sounds.
+
+F7 followed by a hex value determines the tempo of the channel. The lower the following byte, 
+the faster the tempo.
+
+FE
+followed by two hex values is some kind of pointer telling the song to jump
+to another section of code. My general lack of knowledge dealing with
+pointers didn't let me use this to the fullest ability they can be used for.
+
+00
+Once the song the plays through and hits 00, the music in the channel the byte is inserted will 
+be completely halted until a new song is loaded by the game.
+
+--------
+Octaves:
+
+
+Starts at "C"
+
+80-8C, 8C-98, 98-A4, A4-B0, B0-BC
+
+This gives you a little over 5 octaves of notes; very close to the range of a 24 fret guitar.
+
+##############################################
+Some Music Locations in the Dragon Quest NSF:
+(Note that these are rough locations. Some
+I wrote down are where the notes start, others
+are where the control codes right before the
+notes start.)
+##############################################
+
+Ending Song:
+------------
+OFFSET 85: Square 1
+
+OFFSET 01D5: Square 2
+
+OFFSET 0351: Triangle (Also contains control codes on how long the certain credit
+screens should stay on screen. I basically fumbled through hacking this data.
+
+Using the Rainbow Drop Song:
+----------------------------
+OFFSET 13ED: Square 1 & 2 (Combined)
+
+Death Song:
+-----------
+OFFSET 1434: Square 1 & 2 (Combined)
+
+Sleeping at the Inn Song:
+-------------------------
+OFFSET 0DD5: Square 1
+
+OFFSET 0DF5: Square 2
+
+Silver Harp Song:
+-----------------
+OFFSET 1349: Square 1 & 2 (Combined)
+
+Happy Princess Song:
+--------------------
+OFFSET 0D61: Square 1
+
+OFFSET 0D87: Square 2
+
+OFFSET 0DBA: Triangle
+
+
+
+
+VII: Status Screen Hacking
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+I found this information when I added the character portrait in DXO.
+
+At the end of each line of text (Such at NAME:, there are two bytes that
+control the formatting of the following string. After NAME:, the bytes are
+8086
+
+80=Line break, next line begins at left most side of Status Screen.
+86=Space to the right 6 tiles.
+
+If you change 86 to 85, it'll remove the blank line between NAME: and STRENGTH:,
+and move STRENGTH one tile to the left (Because it's pulling the next string one tile
+to the left, which makes it go into the blank line above it).
+However, you'll notice that there will be a string of gibberish at the bottom.
+This is because there HAS to be 20 lines (including blank lines) in the Status Screen.
+And since you've removed one of them, it's showing the data that follows SHIELD.
+So to compensate for this, you'd have to add another line break somewhere. Also
+note that it won't display any tiles in the BG Pattern Table after 6F, I think.
+
+Here are some of the other bytes in this section of data:
+
+88=Line Break, add horizontal line
+B1=Player's Name
+D8=Strength Value
+D9=Agility Value
+DA=Attack Power
+DB=Defense Power
+DC=Maximun Hit Points
+DD=Maximum Magic Points
+B8=Current Weapon
+B9=Current Armor
+BA=Current Shield
+
+
+
+VIII: Ending Credits Hacking
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is how the string formatting for each screen that displays on the ending credits works.
+
+FC followed by two bytes controls the format of the following string of text.
+
+Example:
+
+FC2120
+
+This will display the following line at the topmost line, at the leftmost position.
+The way it increments is shown here:
+
+FC2120 (Display at leftmost position, first line down.)
+
+FC4120 (Line break, insert blank line, display at leftmost position, third line down.)
+
+FC6120 (Line break, insert blank line, display at leftmost position, fifth line down.)
+
+FC8120 (Line break, insert blank line, display at leftmost position, seventh line down.)
+
+FCA120 (Line break, insert blank line, display at leftmost position, ninth line down.)
+
+FCE120 (Line break, insert blank line, display at leftmost position, eleventh line down.)
+
+FC2121 (Line break, insert blank line, display at leftmost position, thirteenth line down.)
+
+FC4121 (Line break, insert blank line, display at leftmost position, fifthteenth line down.)
+
+FC6121 (Line break, insert blank line, display at leftmost position, seventeenth line down.)
+
+Etc..
+
+Notice how the last byte changes on the third to last string? It can go all the way to 23 as the
+last byte, at which you'll hit the bottom of the screen.
+
+Also, if you want the game to switch to a new screen of text, you'd do the same thing as above,
+but instead of using FC to control the format, use FD to tell it to go to the next screen of
+text. The actual time the screens will stay for is determined by the Ending Song's
+Triangle Wave data. I BARELY understand how that works, hence why I won't write about it.
+
+
+
+IX: Tile Table, Palettes, and Level Music
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tile Table
+
+With this info, you can have global tile changes.
+
+00-Grass 10-Stone Block
+01-Sand 11-Locked Door
+02-Mound 12-Craggy Mnts
+03-Stairs Up 13-Wepn Shop
+04-Floor 14-Inn
+05-Stairs Dn 15-Roof
+06-Swamp 16-Black Tile
+07-Town 17-Princess
+08-Cave 18-26horeline
+09-Castle 27-FF:Junk
+0A-Bridge
+0B-Forest
+0C-Chest
+0D-Barrier Bit 1
+0E-Desk |
+0F-Water |
+\|/
+Shoreline: (18+) -
++---+
+\ |^ .| /
+Bit 2 --->| |<--- Bit 3
+/ |. ^| \
++---+
+-
+/|\
+|
+|
+Bit 4
+
+======================================================================
+Tilesets: (Default data and hex addresses)
+
+Town Tileset: (1A10-1A1F)
+00 (for reference
+01 use the above
+0F chart)
+0C
+10
+03
+04
+05
+0B
+06
+0D
+11
+13
+14
+0A
+0E
+
+Cave Tileset: (1A20-1A27)
+10
+03
+04
+05
+0C
+11
+17
+16
+
+Overworld Tileset: (19F3-1A0F)
+
+00
+01
+02
+12
+0F
+10
+0B
+06
+07
+08
+09
+0A
+05
+0F (shoreline water begins here...)
+18
+19...26
+======================================================================
+Default Pallete Data and Hex addresses:
+
+Overworld (1A56) = 30 10 11, 10 00 29, 29 1A 27, 29 37 11
+Normal (1A66) = 30 10 11, 10 00 16, 29 1A 27, 29 37 11
+Dungeon (1A76) = 30 0E 0E, 10 00 16, 0E 0E 0E, 0E 0E 0E
+
+======================================================================
+Music Bytes (31BF for overworld, add 1 for each page)
+00=no music
+01=Title Music
+02=Throne Room
+03=Castle
+04=Town
+05=Overworld
+06=Cave 1
+07=Cave 2
+08=Cave 3
+09=Cave 4
+0A=Cave 5
+0B=Cave 6
+0C=Cave 7
+0D=Cave 8
+0E=Battle
+0F=Dragonlord
+10=Ending
+11=Silver Harp
+12=Fairy Flute
+13=Rainbow Drop Music
+14=Death
+15=Inn
+16=Gwaelin
+17=Curse
+18=Battle music w/o intro
+19=Win Battle
+1A=Level up
+(Begin Sound Effects)
+1B=Wings of Wyvern
+1C=Triangle Wave
+1D=Yes/No prompt
+1E=You fight
+1F=Enemy fights
+20-XX=More sounds...
+
+
+
+XI: Dragon Warrior Level Format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+All the town data is stored as 4 bit format,
+each half-byte (nibble) is one tile.
+For example: FF FF FF
+F6 FF 6F results in:
+
+þþþþþþ (FFFFFF
+þ°þþ°þ F6FF6F)
+
+For actual bytes used in tileset, see charts at top.
+Listing:
+
+Number| Tile
+------+-------------------
+0 | Grass
+1 | Desert
+2 | Water
+3 | Treasure Chest
+4 | Solid Stone
+5 | Stairs up
+6 | Red brick floor
+7 | Stairs down
+8 | Forest
+9 | Poisonous Swamp
+A | Barrier
+B | Locked Door
+C | Weapon shop symbol
+D | Inn Sign
+E | Bridge
+F | Desk
+
+All town maps come in the following sizes:
+30x30
+24x24
+20x20
+10x10
+(Cave maps can come in odder sizes.)
+0
+For the 'Shrines', the last bit is igonred. Only tiles 0-7 are used.
+The last bit is used for roofing on previous maps.
+
+The dungeons also use only tiles 0-7, but also use a different tileset.
+(last bit is still used for roofing)
+
+Number| Tile
+------+------------------
+0 | Stone wall
+1 | Stairs up
+2 | Red floor
+3 | Stairs down
+4 | Treasure Chest
+5 | Locked door
+6 | Princess Gwaelin
+7 | Black wall
+
+======================================================================
+Overworld format: (RLE)
+
+The first half byte determines which terrain is drawn, the second how many.
+Example:
+02 12 02 01 14 01 00 16 00 13 20 13 00 16 00 01 14 01 02 12 02
+
+This produces this:
+
+°°°²²²°°°
+°°²²²²²°°
+°²²²²²²²°
+²²²²^²²²²
+°²²²²²²²°
+°°²²²²²°°
+°°°²²²°°°
+
+Number| Tile
+------+-------------------
+0 | Grass
+1 | Desert
+2 | Hills
+3 | Mountains
+4 | Auto coastline water
+5 | Stone wall
+6 | Forest
+7 | Poisonous Marsh
+8 | Town tile
+9 | Cave Tile
+A | Castle
+B | Bridge
+C | Stairs Down
+D | Non connectable water
+E | North coastline
+F | West coastline
+
+
+
+
+XI: Moving People on Maps
+~~~~~~~~~~~~~~~~~~~~~~~~~
+The easiest way to find people (I'm not going to list all the offsets here) is to use the
+utility Townedit: Find the blue square of the person you want to manipulate, count how many
+tiles down and across they are, then note the character type and initial facing position.
+Using the following information, you can track them down quite easily.
+
+The data for each character on a map is stored in three bytes.
+
+~~~~~~~~~~
+Example 1:
+(Lorik)
+
+Offset: 17B6-17B8
+Data: 83 43 6E
+~~~~~~~~~~~~~~~~~
+
+Byte 1: (Character Type/X Coordinate)
+~ Character types have a range of 31 bytes: Adding 1 to to the value
+moves the person 1 tile to the right on the map. ~
+
+00-1F = Townsman
+20-3F = Knight
+40-5F = Guard
+60-7F = Merchant
+80-9F = King/Dragonlord in Charlock???
+A0-BF = Old Man
+C0-DF = Princess/Townswoman (In some maps)
+E0-FF = Guard at Attention (From Ending Sequence)
+
+
+Byte 2: (Initial Facing Direction/Y Coordinate)
+
+~ Facing Directions have a range of 31 bytes: Adding 1 to to the value
+moves the person down by one. 80-FF seem to be redundant. ~
+
+00-1F = Facing Upwards
+20-3F = Facing Right
+40-5F = Facing Downward
+60-7F = Facing Left
+80-9F = Facing Upwards
+A0-BF = Facing Right
+C0-DF = Facing Downwards
+E0-FF = Facing Left
+
+Byte 3: (Dialouge Block)
+
+~ Obviously, determines what the person says. ~
+
+00 = Weapon Shop
+01 = Weapon Shop
+02 = Weapon Shop
+03 = Weapon Shop
+04 = Weapon Shop
+05 = Weapon Shop
+06 = Weapon Shop
+07 = Tool Shop
+08 = Tool Shop
+09 = Tool Shop
+0A = Tool Shop
+0B = Tool Shop
+0C = Key Shop (98G)
+0D = Key Shop (53G)
+0E = Key Shop (85G)
+0F = Fairy Water (38G)
+10 = Fairy Water (38G)
+11 = Inn (20G)
+12 = Inn (6G)
+13 = Inn (25G)
+14 = Inn (100G)
+15 = Inn (55G)
+16 = "I am looking for the castle cellar. I heard it is not easily found."
+17 = "Thou must have a key to open a door."
+18 = "To become strong enough to face future trials thou must first battle many foes."
+19 = "King Lorik will record thy deeds in his Imperial Scroll so thou may return to thy quest later."
+1A = "When the sun and rain meet, a Rainbow Bridge shall appear. It's a legend"
+1B = "Never does a brave person steal."
+1C = "There was a time when Brecconary was a paradise. Then the Dragonlord's minions came."
+1D = "Let us wish the warrior well! May the light be thy strength."
+1E = "If thy Hit Points are high enough, by all means, enter."
+1F = "We are merchants who have traveled much in this land. Many of our colleagues have been killed by servants of the Dragonlord."
+20 = "Rumor has it that entire towns have been destroyed by the Dragonlord's servants."
+21 = "Welcome to Tantegel Castle."
+22 = "In Garinham, look for the grave of Garin. Thou must push on a wall of darkness there."
+23 = "A word of advice. Save thy money for more expensive armor."
+24 = "Listen to what people say. It can be of great help."
+25 = "Beware the bridges! Danger grows when thou crosses."
+26 = "There is a town where magic keys can be purchased."
+27 = "Some say that Garin's grave is home to a Silver Harp."
+28 = "Enter where thou can."
+29 = "Welcome! Enter the shop and speak to its keeper across the desk."
+2A = "Thou art most welcome in Brecconary."
+2B = "Watch thy Hit Points when in the Poisonous Marsh."
+2C = "Go north to the seashore, then follow the coastline west until thou hath reached Garinham."
+2D = "No,I am no Princess Gwaelin."
+2E = "Please,save us from the minions of the Dragonlord."
+2F = "See King Lorik when thy experience levels are raised."
+30 = "Art thou the descendant of Erdrick? Hast thou any proof?"
+31 = "Within sight of Tantegel Castle to the south is Charlock, The fortress of the Dragonlord."
+32 = "This bath cures rheumatism."
+33 = "East of Hauksness there is a town, 'tis said, where one may purchase weapons of extraordinary quality."
+34 = "Rimuldar is the place to buy keys."
+35 = "Has thou seen Nester? I think he may need help."
+36 = "Dreadful is the South Island. Great strength and skill and wit only will bring thee back from that place."
+37 = "Golem is afraid of the music of the flute, so 'tis said."
+38 = "This is the village of Kol."
+39 = "In legends it is said that fairies know how to put Golem to sleep."
+3A = "The harp attracts enemies. Stay away from the grave in Garinham."
+3B = "I'm too busy. Ask the other guard."
+3C = "I suggest making a map if thy path leads into darkness."
+3D = "Once there was a town called Hauksness far to the south,but I do not know if it still exists."
+3E = "I hate people! Go! Leave me!"
+3F = "They say that Erdrick's armor was hidden long ago."
+40 = "Many believe that Princess Gwaelin is hidden away in a cave."
+41 = "I have heard of one named Nester. Dost thou know such a one?"
+42 = "Garin, a wandering minstrel of legendary fame, is said to have built this town."
+43 = "Welcome to Garinham. May thy stay be a peaceful one."
+44 = "It is said that the Princess was kidnapped and taken eastward."
+45 = "Come buy my radishes! They are fresh and cheap. Buy thy radishes today!"
+46 = "To learn how proof may be obtained that thy ancestor was the great Erdrick, see a man in this very town."
+47 = "'Tis said that Erdrick's sword could cleave steel."
+48 = "Welcome to Cantlin, the castle town."
+49 = "What shall I get for thy dinner?"
+4A = "I know nothing."
+4B = "I'm Nester. Hey, where am I? No, don't tell me!"
+4C = "Grandfather used to say that his friend, Wynn, had buried something of great value at the foot of a tree behind his shop."
+4D = "It is said that many have held Erdrick's armor. The last to have it was a fellow named Wynn."
+4E = "My Grandfather Wynn once had a shop on the east side of Hauksness."
+4F = "Welcome!"
+50 = "Who art thou? Leave at once or I will call my friends."
+51 = "I am Orwick, and I am waiting for my girl friend."
+52 = "The scales of the Dragonlord are as hard as steel."
+53 = "Over the western part of this island Erdrick created a rainbow. 'Tis also said that he entered the darkness from a hidden entrance in the room of the Dragonlord."
+54 = "Thou shalt find the Stones of Sunlight in Tantegel Castle, if thou has not found them yet."
+55 = "Welcome to the town of Rimuldar."
+56 = "No, I have no tomatoes. I have no tomatoes today."
+57 = "You are |Player's Name|? It has been long since last we met."
+58 = "Good day,I am Howard. Four steps south of the bath in Kol thou shalt find a magic item."
+59 = "Before long the enemy will arrive."
+5A = "Heed my warning! Travel not to the south for there the monsters are fierce and terrible."
+5B = "In this world is there any sword that can pierce the scales of the Dragonlord?"
+5C = "Orwick is late again. I'm starving."
+5D = "Many have been the warrior who have perished on this quest. But for thee I wish success, |Player's Name|."
+5E = "Has thou found the flute?" |Yes/No|
+5F = "Hast thou been to the southern island?" |Yes/No|
+60 = "'Tis said that the Dragonlord hat claws that can cleave iron and fiery breath that can melt stone. Dost thou still wish to go on?" |Yes/No|
+61 = "This is a magic place. Hast thou found a magic temple?" |Yes/No|
+62 = "Where oh where can I find Princess Gwaelin?"
+63 = "Where oh where can I find Princess Gwaelin?"
+64 = "Tell King Lorik that the search for his daughter hat failed. I am almost gone...."
+65 = "Dost thou know about Princess Gwaelin?" |Yes/No|
+66 = "I have been waiting long for one such as thee. Take the Treasure Chest."
+67 = "If thou art cursed, come again."
+68 = "Though thou art as brave as thy ancestor, |Player's Name|, thou cannot defeat the great Dragonlord with such weapons. Thou shouldst come here again."
+69 = "All true warrior wear a ring."
+6A = "|Player's Name|'s coming was foretold by legend. May the light shine upon this brave warrior." |Regenerates MP|
+6B = "Let us wish the warrior well! May the light be thy strength! Thou may go and search. From Tantegel Castle travel |?| leagues to the |?| and |?| to the |?|."
+6C = "Thy bravery must be proven. Thus, I propose a test. There is a Silver Harp that beckons to the creatures of the Dragonlord. Bring this to me and I will reward thee with the Staff of Rain."
+6D = "In thy task thou has failed. Alas, I fear thou art not the one Erdrick predicted would save us. Go now!" |Kicks you outside of map if Rainbow Drop pieces/Token aren't possessed|
+6E = "I am greatly pleased that thou hast returned, |Player's Name|.... |This is King Lorik's game save speech, so making anyone use this turns them into a save point!|
+6F = "Dost thou love me, |Player's Name|?" |Yes/No|
+70 = "Welcome, |Player's Name|. I am the Dragonlord--King of Kings."....
+71 = "If thou art planning to take a rest, first see King Lorik."
+72 = "When entering the cave, take with thee a torch."
+73-FF = Useless(?)
+
+The town map data. Each byte can be a value from 00-FF, with each byte representing 2 tiles. Each hex character in the byte represents one tile (i.e. 00 is a pair of grass tiles, 01 is a grass tile and a sand tile). The throne room (where you start) is from 412-443. C1-1324
+The graphic layout data for the overworld fight background. 1C9F-1D62
+The title screen data. 3F30-3FB8
+The game program? 4000-????
+The ending text. 549F-58D9
+The menu text. 6FC7-752B
+The item, enemy, and spell menu text. 7AC0-7EAD
+The dialogue text. 8039-BCBA 
+
+
+
+XII: Misc. Level Data
+~~~~~~~~~~~~~~~~~~~~~~
+DW1 uses the standard SetoffX 8000 pointer format.
+After the pointer, comes the width and height, so map resizing and moving can take place.
+
+
+
+XIII: Shop Prices
+~~~~~~~~~~~~~~~~~
+Weapons Price:
+--------------
+Bamboo Pole = $1957 - $1958 (0A 00)
+Club = $1959 - $195A (3C 00)
+Copper Sword = $195B - $195C (B4 00)
+Hand Axe = $195D - $195E (30 02)
+Broad Sword = $195F - $1960 (DC 05)
+Flame Sword = $1961 - $1962 (48 26)
+Erdrick's Sword = $1963 - $1964 (02 00)
+
+==================================================
+
+Armors Price:
+-------------
+Clothes = $1965 - $1966 (14 00)
+Leather Armor = $1967 - $1968 (46 00)
+Chain Mail = $1969 - $196A (2C 01)
+Half-Plate = $196B - $196C (E8 03)
+Full Plate = $196D - $196E (B8 0B)
+Magic Armor = $196F - $1970 (14 1E)
+Erdrick's Armor = $1971 - $1972 (02 00)
+
+==================================================
+
+Shield Price:
+-------------
+
+Small Shield = $1973 - $1974 (5A 00)
+Large Shield = $1975 - $1976 (20 03)
+Silver Shield = $1977 - $1978 (D0 39)
+
+==================================================
+
+Items Price:
+------------
+Herbs = $1979 - $197A (18 00)
+Key = $197B - $197C (35 00)
+Torch = $197D - $197E (08 00)
+Fairy Water = $197F - $1980 (26 00)
+Wings = $1981 - $1982 (46 00)
+Dragon's
+Scale = $1983 - $1984 (14 00)
+
+==================================================
+
+$1985 - $1998 = ?
+
+==================================================
+
+Key:
+----
+Cantlin = $1999 (62)
+Rimuldar = $199A (35)
+Tantegel = $199B (55)
+
+==================================================
+
+Inn:
+----
+Kol = $199C (14)
+Brecconary = $199D (06)
+Garinham = $199E (19)
+Cantlin = $199F (64)
+Rimuldar = $19A0 (37)
+
+==================================================
+
+Kol Weapon Shop:
+----------------
+Item 1 - $19A1 (02)
+Item 2 - $19A2 (03)
+Item 3 - $19A3 (0A)
+Item 4 - $19A4 (0B)
+Item 5 - $19A5 (0E)
+
+Brecconary Weapon Shop:
+-----------------------
+Item 1 - $19A7 (00)
+Item 2 - $19A8 (01)
+Item 3 - $19A9 (02)
+Item 4 - $19AA (07)
+Item 5 - $19AB (08)
+Item 6 - $19AC (0E)
+
+Garinham Weapon Shop:
+---------------------
+Item 1 - $19AE (01)
+Item 2 - $19AF (02)
+Item 3 - $19B0 (03)
+Item 4 - $19B1 (08)
+Item 5 - $19B2 (09)
+Item 6 - $19B3 (0A)
+Item 7 - $19B4 (0F)
+
+Cantlin Weapon Shop:
+--------------------
+Item 1 - $19B6 (00)
+Item 2 - $19B7 (01)
+Item 3 - $19B8 (02)
+Item 4 - $19B9 (08)
+Item 5 - $19BA (09)
+Item 6 - $19BB (0F)
+
+Cantlin Weapon Shop:
+--------------------
+Item 1 - $19BD (03)
+Item 2 - $19BE (04)
+Item 3 - $19BF (0B)
+Item 4 - $19C0 (0C)
+
+Cantlin Weapon Shop:
+--------------------
+Item 1 - $19C2 (05)
+Item 2 - $19C3 (10)
+
+Rimuldar Weapon Shop:
+---------------------
+Item 1 - $19C5 (02)
+Item 2 - $19C6 (03)
+Item 3 - $19C7 (04)
+Item 4 - $19C8 (0A)
+Item 5 - $19C9 (0B)
+Item 6 - $19CA (0C)
+
+Kol Tool Shop:
+--------------
+Item 1 - $19CC (11)
+Item 2 - $19CD (13)
+Item 3 - $19CE (16)
+Item 4 - $19CF (15)
+
+Brecconary Tool Shop:
+---------------------
+Item 1 - $19D1 (11)
+Item 2 - $19D2 (13)
+Item 3 - $19D3 (16)
+
+Garinham Tool shop:
+-------------------
+Item 1 - $19D5 (11)
+Item 2 - $19D6 (13)
+Item 3 - $19D7 (16)
+
+Cantlin Tool Shop:
+------------------
+Item 1 - $19D9 (11)
+Item 2 - $19DA (13)
+
+Cantlin Tool Shop:
+------------------
+Item 1 - $19DC (16)
+Item 2 - $19DD (15)
+
+00 - Bamboo Pole
+01 - Club
+02 - Copper Sword
+03 - Hand Axe
+04 - Broad Sword
+05 - Flame Sword
+06 - Erdrick's Sword
+07 - Clothes
+08 - Leather Armor
+09 - Chain Mail
+0A - Half Plate
+0B - Full Plate
+0C - Magic Armor
+0D - Erdrick's Armor
+0E - Small Shield
+0F - Large Shield
+10 - Silver Shield
+11 - Herb
+12 - Herb
+13 - Torch
+14 - Torch
+15 - Wings
+16 - Dragon's Scale
+17 - Dragon's Scale
+18 - Dragon's Scale
+
+
+
+
+XIV: Equipment Stats
+~~~~~~~~~~~~~~~~~~~~
+Weapon Power:
+-------------
+Bamboo Pole - $19E0 (02)
+Club - $19E1 (04)
+Copper Sword - $19E2 (0A)
+Hand Axe - $19E3 (0F)
+Broad Sword - $19E4 (14)
+Flame Sword - $19E5 (1C)
+Erdrick's
+Sword - $19E6 (28)
+
+Armor Power:
+------------
+Clothes - $19E8 (02)
+Leather Armor - $19E9 (04)
+Chain Mail - $19EA (0A)
+Half-Plate - $19EB (10)
+Full Plate - $19EC (18)
+Magic Armor - $19ED (18)
+Erdrick's
+Armor - $19EE (1C)
+
+Shield Power:
+-------------
+Small Shield = $19F0 (04)
+Large Shield = $19F1 (0A)
+Silver Shield = $19F2 (14)
+
+==================================================
+
+XV: Magic Data 
+~~~~~~~~~~~~~~
+Magic MP:
+---------
+Heal - $1D63 (04)
+Hurt - $1D64 (02)
+Sleep - $1D65 (02)
+Radiant - $1D66 (03)
+Stopspell - $1D67 (02)
+Outside - $1D68 (06)
+Return - $1D69 (08)
+Repel - $1D6A (02)
+Healmore - $1D6B (0A)
+Hurtmore - $1D6C (05)
+
+Misc. Magic Data:
+-----------------
+starting at $60CD in the ROM
+04 04 0F 00 00 00 for Level 1
+strength, agility, HP, MP, spells
+05 04 16 00 00 00 for Level 2
+07 06 18 05 00 01 for Level 3
+07 08 1F 10 00 03 for Level 4
+HEAL, HURT, SLEEP, RADIANT, STOPSPELL, RETURN, OUTSIDE, REPELL, HEALMORE, HURTMORE
+and another
+REPEL
+the table ends at $6180
+03 FF for all 10 spells
+
+
+

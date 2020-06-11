@@ -1,19 +1,21 @@
 from collections import OrderedDict
+from os.path import join
 
 import numpy as np
 from pygame.sprite import Group, RenderUpdates
 from pygame.transform import scale
 
-from RoamingCharacter import RoamingCharacter
-from animated_sprite import AnimatedSprite
-from base_sprite import BaseSprite
-from common import Direction, tantegel_castle_throne_room_music, play_music, KING_LORIK_PATH, get_image, \
+from src.RoamingCharacter import RoamingCharacter
+from src.animated_sprite import AnimatedSprite
+from src.base_sprite import BaseSprite
+from src.common import Direction, tantegel_castle_throne_room_music, KING_LORIK_PATH, get_image, \
     GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
-    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH
-from config import TILE_SIZE, SCALE, COLOR_KEY
+    SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH, \
+    overworld_music
+from src.config import TILE_SIZE, SCALE, COLOR_KEY, IMAGES_DIR
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
-from player import Player
+from src.player import Player
 
 all_impassable_tiles = (
     'ROOF', 'WALL', 'WOOD', 'DOOR', 'BARRIER', 'WEAPON_SIGN', 'INN_SIGN', 'MOUNTAINS', 'WATER', 'BOTTOM_COAST',
@@ -22,62 +24,111 @@ all_impassable_tiles = (
     'DOWN_FACE_GUARD', 'LEFT_FACE_GUARD', 'UP_FACE_GUARD', 'RIGHT_FACE_GUARD', 'MAN', 'WOMAN', 'WISE_MAN', 'SOLDIER',
     'MERCHANT')
 
+ROOF = 0
+WALL = 1
+WOOD = 2
+BRICK = 3
+CHEST = 4
+DOOR = 5
+BRICK_STAIRDN = 6
+BRICK_STAIRUP = 7
+BARRIER = 8
+WEAPON_SIGN = 9
+INN_SIGN = 10
+CASTLE = 11
+TOWN = 12
+GRASS = 13
+TREES = 14
+HILLS = 15
+MOUNTAINS = 16
+CAVE = 17
+GRASS_STAIRDN = 18
+SAND = 19
+MARSH = 20
+BRIDGE = 21
+WATER = 22
+BOTTOM_COAST = 23
+BOTTOM_LEFT_COAST = 24
+LEFT_COAST = 25
+TOP_LEFT_COAST = 26
+TOP_COAST = 27
+TOP_RIGHT_COAST = 28
+RIGHT_COAST = 29
+BOTTOM_RIGHT_COAST = 30
+BOTTOM_TOP_LEFT_COAST = 31
+BOTTOM_TOP_COAST = 32
+BOTTOM_TOP_RIGHT_COAST = 33
+
 character_key = OrderedDict([
     ('HERO',
-     {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False}),
+     {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
     ('KING_LORIK',
-     {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False}),
+     {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
     ('DOWN_FACE_GUARD',
-     {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('LEFT_FACE_GUARD',
-     {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value}),
+     {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value,
+      'underlying_tile': 'BRICK'}),
     ('UP_FACE_GUARD',
-     {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value}),
+     {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value,
+      'underlying_tile': 'BRICK'}),
     ('RIGHT_FACE_GUARD',
-     {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value}),
+     {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value,
+      'underlying_tile': 'BRICK'}),
     ('ROAMING_GUARD',
-     {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value}),
+     {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('MAN',
-     {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('WOMAN',
-     {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'GRASS'}),
     ('WISE_MAN',
-     {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('SOLDIER',
-     {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('MERCHANT',
-     {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
     ('PRINCESS_GWAELIN',
      {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False,
-      'direction': Direction.DOWN.value}),
+      'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
     ('DRAGONLORD',
-     {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value}),
+     {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+      'underlying_tile': 'BRICK'}),
 ])
 
-all_characters_values = [dict['val'] for dict in character_key.values()]
+all_characters_values = [character_dict['val'] for character_dict in character_key.values()]
 all_characters_values.insert(0, 3)
 all_characters_values.append(3)
 
 brick_line = tuple([3] * 16)
 test_map = [
     brick_line,
-    [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3],
-    [3, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 3],
-    [3, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 4, 3],
-    [3, 4, 6, 7, 4, 4, 4, 4, 4, 4, 4, 4, 7, 6, 4, 3],
-    [3, 4, 6, 7, 4, 3, 3, 3, 3, 3, 3, 4, 7, 6, 4, 3],
+    [3] + [4] * 14 + [3],
+    [3, 4] + [6] * 12 + [4, 3],
+    [3, 4, 6] + [7] * 10 + [6, 4, 3],
+    [3, 4, 6, 7] + [4] * 8 + [7, 6, 4, 3],
+    [3, 4, 6, 7, 4] + [3] * 6 + [4, 7, 6, 4, 3],
     [3, 40, 40, 40, 40, 40, 40, 40, 40, 4, 3, 4, 7, 6, 4, 3],
     all_characters_values,
     [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
-    [3, 4, 6, 7, 4, 3, 3, 3, 3, 3, 3, 4, 7, 6, 4, 3],
-    [3, 4, 6, 7, 4, 4, 4, 4, 4, 4, 4, 4, 7, 6, 4, 3],
-    [3, 4, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 6, 4, 3],
-    [3, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 3],
-    [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3],
+    [3, 4, 6, 7, 4] + [3] * 6 + [4, 7, 6, 4, 3],
+    [3, 4, 6, 7] + [4] * 8 + [7, 6, 4, 3],
+    [3, 4, 6] + [7] * 10 + [6, 4, 3],
+    [3, 4] + [6] * 12 + [4, 3],
+    [3] + [4] * 14 + [3],
     brick_line
 ]
 
-roof_line = tuple([0] * 27)
+# test_map = [[3, 3],
+#             [34, 3]]
+
+roof_line = tuple([ROOF] * 27)
 
 tantegel_throne_room = [
     # Using the following dims: coord maps will be 0,0 top left and positive axes towards
@@ -90,16 +141,16 @@ tantegel_throne_room = [
     roof_line,  # 3
     roof_line,  # 4
     roof_line,  # 5
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0),  # 6
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 4, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 7
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 2, 2, 2, 2, 2, 2, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 8
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 2, 35, 2, 2, 3, 2, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 9
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 34, 4, 4, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 10
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 40, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 11
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 39, 3, 37, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0),  # 12
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 5, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0),  # 13
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3, 3, 6, 1, 0, 0, 0, 0, 0, 0, 0),  # 14
-    (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0),  # 15
+    [ROOF] * 10 + [1] * 10 + [ROOF] * 7,  # 6
+    [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 3, 4, 3, 1] + [ROOF] * 7,  # 7
+    [ROOF] * 10 + [1, 3, 2, 2, 2, 2, 2, 2, 3, 1] + [ROOF] * 7,  # 8
+    [ROOF] * 10 + [1, 3, 2, 35, 2, 2, 3, 2, 3, 1] + [ROOF] * 7,  # 9
+    [ROOF] * 10 + [1, 3, 3, 34, 4, 4, 3, 3, 3, 1] + [ROOF] * 7,  # 10
+    [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 40, 3, 3, 1] + [ROOF] * 7,  # 11
+    [ROOF] * 10 + [1, 3, 3, 39, 3, 37, 3, 3, 3, 1] + [ROOF] * 7,  # 12
+    [ROOF] * 10 + [1, 1, 1, 1, 3, 1, 1, 1, 1, 1] + [ROOF] * 7,  # 13
+    [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 3, 3, 6, 1] + [ROOF] * 7,  # 14
+    [ROOF] * 10 + [1] * 10 + [ROOF] * 7,  # 15
     roof_line,  # 16
     roof_line,  # 17
     roof_line,  # 18
@@ -108,88 +159,60 @@ tantegel_throne_room = [
     roof_line,  # 21
 ]
 
-grass_line = tuple([13] * 36)
+courtyard_grass_line = [GRASS] * 30
 
 tantegel_courtyard = [
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    (13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 13, 1, 1, 1, 13, 14, 13,
-     13, 13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 14, 13, 14, 14, 13, 14, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 45, 1, 13, 13, 13,
-     13, 13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 13, 1, 2, 1, 13, 13, 13,
-     13, 13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13, 14, 14, 13, 13, 13,
-     13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 14, 14, 14, 13, 13, 13, 13,
-     13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13, 13, 13, 13, 13, 13,
-     13, 13),
-    (13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 3, 36, 3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 1, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 7, 34, 3, 3, 3, 3, 1, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 3, 41, 3, 3, 3, 1, 3, 38, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
-     13),
-    (
-    13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 13, 13, 13, 13),
-    (13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 14, 14, 3, 3, 3, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
-     13),
-    (
-    13, 13, 13, 13, 1, 3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
-    13),
-    (
-    13, 13, 13, 13, 1, 3, 40, 3, 1, 3, 1, 14, 13, 3, 3, 3, 3, 13, 14, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
-    13),
-    (13, 13, 13, 13, 1, 4, 3, 4, 5, 3, 1, 13, 42, 3, 3, 3, 3, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 3, 4, 3, 1, 3, 1, 13, 13, 3, 3, 3, 3, 13, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 4, 3, 4, 1, 3, 1, 13, 3, 3, 3, 3, 3, 3, 13, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 3, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 1, 1, 1, 1, 3, 1, 13, 3, 22, 22, 22, 22, 3, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 13, 13,
-     13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 22, 8, 8, 22, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 3, 22, 8, 8, 22, 3, 3, 3, 3, 3, 3, 3, 3, 1, 8, 8, 8, 8, 8, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 1, 1, 3, 3, 1, 1, 1, 3, 22, 22, 22, 22, 3, 1, 1, 3, 3, 3, 3, 3, 1, 8, 8, 8, 8, 8, 1, 13, 13, 13,
-     13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 1, 39, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13,
-     13),
-    (
-    13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 3, 3, 3, 1, 22, 13, 13, 13),
-    (
-    13, 13, 13, 13, 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 22, 13, 13, 13),
-    (13, 13, 13, 13, 1, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 1, 22, 22, 22, 22, 22, 22, 22, 13,
-     13, 13),
-    (13, 13, 13, 13, 1, 3, 22, 22, 3, 3, 1, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
-     13, 13),
-    (13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22,
-     13, 13, 13),
-    (13, 13, 13, 13, 1, 22, 22, 22, 22, 3, 3, 3, 1, 1, 3, 3, 1, 1, 3, 3, 3, 3, 3, 2, 3, 1, 22, 22, 22, 22, 22, 22, 22,
-     13, 13, 13),
-    (
-    13, 13, 13, 13, 1, 22, 22, 22, 22, 22, 3, 3, 1, 39, 3, 3, 37, 1, 3, 3, 1, 3, 3, 1, 3, 1, 22, 22, 22, 22, 22, 22, 22,
-    13, 13, 13),
-    (13, 13, 13, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 22, 22, 22, 22, 22, 22, 22, 13,
-     13, 13),
-    (13, 13, 13, 13, 22, 22, 13, 13, 13, 13, 13, 13, 13, 13, 3, 3, 13, 13, 13, 13, 13, 13, 13, 13, 22, 22, 22, 22, 22,
-     22, 22, 22, 22, 6, 13, 13),
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
-    grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    [1] * 7 + [13] * 8 + [1] * 7 + [13] + [1, 1, 1] + [13, 14] + [13] * 2,
+    [1] + [3] * 5 + [1, 13, 14, 13, 14, 14, 13, 14, 13, 1] + [3] * 5 + [1, 13, 1, 45, 1] + [13] * 4,
+    [1] + [3] * 5 + [1] + [13] * 8 + [1] + [3] * 5 + [1, 13, 1, 2, 1] + [13] * 4,
+    [1] + [3, 3, 1, 3, 3] + [1] * 4 + [3, 3] + [1] * 4 + [3, 3, 1] * 2 + [13, 13, 13, 14, 14] + [13] * 3,
+    [1] + [3] * 20 + [1, 13, 14, 14, 14] + [13] * 4,
+    [1] + [3] * 5 + [1] * 10 + [3] * 5 + [1] + [13] * 5 + [42] + [13] * 2,
+    [1] * 5 + [3, 1, 3, 36] + [3] * 6 + [1, 1, 1, 5] + [1] * 5 + [3, 1, 1, 1] + [13] * 2,
+    [1] + [3, 3, 3, 1, 3, 1, 7, 34] + [3] * 4 + [1, 3] + [1] + [3] * 11 + [1] + [13] * 2,
+    [1] + [3, 41, 3, 3, 3, 1, 3, 38] + [3] * 6 + [1] + [3] * 11 + [1] + [13] * 2,
+    [1] + [3, 3, 3, 1, 3, 1, 1, 1] + [3] * 4 + [1] * 12 + [3, 3, 1] + [13] * 2,
+    [1] * 5 + [3, 1, 14, 14] + [3] * 4 + [14, 14, 1] + [3, 3, 1] * 4 + [13] * 2,
+    [1] + [3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1] + [3, 3, 1] * 4 + [13] * 2,
+    [1] + [3, 40, 3, 1, 3, 1, 14, 13] + [3] * 4 + [13, 14] + [1] + [3] * 11 + [1] + [13] * 2,
+    [1] + [4, 3, 4, 5, 3, 1, 13, 42] + [3] * 4 + [13, 13] + [1] + [3] * 11 + [1] + [13] * 2,
+    [1] + [3, 4, 3, 1, 3, 1, 13, 13] + [3] * 4 + [13, 13, 1] + [3, 3, 1] * 4 + [13] * 2,
+    [1] + [4, 3, 4, 1, 3, 1, 13] + [3] * 6 + [13, 1] + [3, 3, 1] * 4 + [13] * 2,
+    [1] * 5 + [3, 1, 13, 3] + [22] * 4 + [3, 13] + [1] * 10 + [3, 1, 1] + [13] * 2,
+    [1] + [3] * 8 + [22, 8, 8, 22] + [3] * 6 + [3, 3, 1] + [3] * 5 + [1] + [13] * 2,
+    [1] + [3] * 8 + [22, 8, 8, 22] + [3] * 6 + [3, 3, 1] + [8] * 5 + [1] + [13] * 2,
+    [1] + [1, 1, 3, 3, 1, 1, 1, 3, 22, 22, 22, 22, 3, 1, 1] + [3] * 5 + [1] + [8] * 5 + [1] + [13] * 2,
+    [1] + [3] * 5 + [3, 1] + [3] * 6 + [1, 39] + [3] * 5 + [1] + [3] * 5 + [1] + [13] * 2,
+    [1] + [3] * 5 + [3, 1, 1] + [3] * 4 + [1] * 6 + [3, 3, 1, 44] + [3] * 4 + [1, 22] + [13],
+    [1] + [3, 3, 1] + [3] * 4 + [1] + [3] * 4 + [1] + [3] * 7 + [1] * 6 + [1, 22] + [13],
+    [1] + [3] * 5 + [3, 3, 1] + [3] * 4 + [1] + [3] * 6 + [3, 1] + [22] * 7 + [13],
+    [1] + [3, 22, 22, 3, 3, 1, 45, 1] + [3] * 4 + [1, 3, 3] + [1] * 6 + [22] * 7 + [13],
+    [1] + [22] * 4 + [3, 45, 3, 1] + [3] * 4 + [1] + [3, 3, 1] * 2 + [3, 1] + [22] * 7 + [13],
+    [1] + [22] * 4 + [3] + [3, 3, 1, 1] * 2 + [3] * 5 + [2, 43, 1] + [22] * 7 + [13],
+    [1] + [22] * 5 + [3, 3, 1, 39, 3, 3, 37, 1] + [3, 3, 1] * 2 + [3, 1] + [22] * 7 + [13],
+    [1] * 10 + [3, 3] + [1] * 10 + [22] * 7 + [13],
+    [22, 22] + [13] * 8 + [3, 3] + [13] * 8 + [22] * 9 + [6],
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+    courtyard_grass_line,
+]
+
+tantegel_courtyard = [[13] * 7 + row + [13] * 7 for row in tantegel_courtyard]
+
+overworld = [
+
 ]
 
 current_map = None
@@ -203,7 +226,6 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
     """
     sheet.set_colorkey(COLOR_KEY)
     sheet.convert_alpha()
-    # width, height = sheet.get_size()
 
     facing_down, facing_left, facing_up, facing_right = [], [], [], []
 
@@ -226,7 +248,7 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
 
 
 class DragonWarriorMap:
-    def __init__(self, map_tiles, hero_images):
+    def __init__(self, hero_images):
 
         # Character variables
 
@@ -241,10 +263,12 @@ class DragonWarriorMap:
 
         self.tiles_in_current_loaded_map = None
         self.layout = [[]]
+        self.layout_numpy_array = np.empty(0)
         self.center_pt = None
-        self.map_tiles = map_tiles
+        self.map_tiles = parse_map_tiles(map_path=MAP_TILES_PATH)
         self.impassable_tiles = all_impassable_tiles
         self.tile_group_dict = {}
+        self.staircases = {}
 
         self.roof_group = Group()  # 0
         self.wall_group = Group()  # 1
@@ -317,15 +341,18 @@ class DragonWarriorMap:
             ('BOTTOM_TOP_COAST', {'val': 32, 'group': self.bottom_top_coast_group}),
             ('BOTTOM_TOP_RIGHT_COAST', {'val': 33, 'group': self.bottom_top_right_coast_group}),
         ])
-        self.tile_character_key = self.tile_key.update(character_key)
+        self.tile_key.update(character_key)
 
     def get_tile_by_value(self, position):
         return list(self.tile_key.keys())[position]
 
     def get_initial_character_location(self, character_name):
-        layout_numpy_array = np.array(self.layout)
-        hero_layout_position = np.asarray(np.where(layout_numpy_array == self.tile_key[character_name]['val'])).T
+        hero_layout_position = np.asarray(np.where(self.layout_numpy_array == self.tile_key[character_name]['val'])).T
         return hero_layout_position
+
+    # def get_staircase_locations(self):
+    #     staircase_locations = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
+    #     return staircase_locations
 
     def draw_map(self, surface):
         """
@@ -340,14 +367,14 @@ class DragonWarriorMap:
         # start_time = time.time()
         current_loaded_map = self
 
-        x_offset = TILE_SIZE / 2
-        y_offset = TILE_SIZE / 2
+        x_offset = TILE_SIZE // 2
+        y_offset = TILE_SIZE // 2
 
         tiles_in_current_loaded_map = set([self.get_tile_by_value(tile) for row in self.layout for tile in row])
         self.impassable_tiles = tuple(tiles_in_current_loaded_map & set(all_impassable_tiles))
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
-                self.center_pt = [(x * TILE_SIZE) + x_offset, (y * TILE_SIZE) + y_offset]
+                self.center_pt = (x * TILE_SIZE) + x_offset, (y * TILE_SIZE) + y_offset
                 self.map_floor_tiles(x, y)
                 self.map_character_tiles(current_loaded_map, x, y)
         # print("--- %s seconds ---" % (time.time() - start_time))
@@ -357,16 +384,16 @@ class DragonWarriorMap:
             if self.layout[y][x] >= 34:
                 if self.layout[y][x] == character_dict['val']:
                     if self.layout[y][x] == character_key['HERO']['val']:
-                        self.map_player(current_loaded_map)
+                        self.map_player(current_loaded_map, character_dict['underlying_tile'])
                     elif character_dict['four_sided']:
-                        self.map_four_sided_npc(direction=character_dict['direction'], name=character,
-                                                underlying_tile='BRICK',
+                        self.map_four_sided_npc(name=character, direction=character_dict['direction'],
+                                                underlying_tile=character_dict['underlying_tile'],
                                                 image_path=character_dict['path'], is_roaming=character_dict['roaming'])
                     else:
                         self.map_two_sided_npc(image_path=character_dict['path'], name=character,
-                                               underlying_tile='BRICK')
+                                               underlying_tile=character_dict['underlying_tile'])
 
-    def map_four_sided_npc(self, direction, name, underlying_tile, image_path, is_roaming=False):
+    def map_four_sided_npc(self, name, direction, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet, is_roaming=True)
@@ -404,7 +431,7 @@ class DragonWarriorMap:
         self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
                       tile_group=self.tile_key[underlying_tile]['group'])
 
-    def map_player(self, current_loaded_map, underlying_tile='BRICK'):
+    def map_player(self, current_loaded_map, underlying_tile):
         # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
         self.player = Player(center_point=self.center_pt,
                              down_images=self.hero_images[Direction.DOWN.value],
@@ -441,13 +468,13 @@ class DragonWarriorMap:
 
 class TestMap(DragonWarriorMap):
 
-    def __init__(self, map_tiles, hero_images):
-        super().__init__(map_tiles, hero_images)
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
         self.layout = test_map
+        self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = village_music
-        play_music(self.music_file_path)
 
 
 class TantegelThroneRoom(DragonWarriorMap):
@@ -455,20 +482,48 @@ class TantegelThroneRoom(DragonWarriorMap):
     This is the first map in the game.
     """
 
-    def __init__(self, map_tiles, hero_images):
-        super().__init__(map_tiles, hero_images)
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
         self.layout = tantegel_throne_room
+        self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
+        self.staircases = {(14, 18): {'map': TantegelCourtyard(self.hero_images), 'stair_direction': 'down'}}
         self.music_file_path = tantegel_castle_throne_room_music
-        play_music(self.music_file_path)
 
 
 class TantegelCourtyard(DragonWarriorMap):
-    def __init__(self, map_tiles, hero_images):
-        super().__init__(map_tiles, hero_images)
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
         self.layout = tantegel_courtyard
+        self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = tantegel_castle_courtyard_music
-        play_music(self.music_file_path)
+
+
+class Overworld(DragonWarriorMap):
+    def __init__(self, hero_images):
+        super().__init__(hero_images)
+        self.layout = overworld
+        self.layout_tiles = parse_map_tiles(join(IMAGES_DIR, 'alefgard.gif'))
+        self.layout_numpy_array = np.array(self.layout)
+        self.height = len(self.layout * TILE_SIZE)
+        self.width = len(self.layout[0] * TILE_SIZE)
+        self.music_file_path = overworld_music
+
+
+def parse_map_tiles(map_path):
+    map_sheet = get_image(map_path).convert()
+    map_tilesheet = scale(map_sheet, (map_sheet.get_width() * SCALE, map_sheet.get_height() * SCALE))
+    map_tiles = []
+    width, height = map_tilesheet.get_size()
+
+    for x in range(0, width // TILE_SIZE):
+        row = []
+        map_tiles.append(row)
+
+        for y in range(0, height // TILE_SIZE):
+            rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            row.append(map_tilesheet.subsurface(rect))
+    return map_tiles
