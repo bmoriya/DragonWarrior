@@ -3,7 +3,7 @@ import sys
 
 import pygame as pg
 import pygame_menu
-from pygame import init, Surface, USEREVENT, time, quit, FULLSCREEN
+from pygame import init, Surface, USEREVENT, time, quit, FULLSCREEN, RESIZABLE, DOUBLEBUF
 from pygame.display import set_mode, set_caption
 from pygame.event import get
 from pygame.time import Clock
@@ -49,13 +49,14 @@ class Game:
                                                              focus_background_color=self.BLACK,
                                                              title_background_color=self.BLACK,
                                                              title_font=DRAGON_QUEST_FONT_PATH,
-                                                             title_font_size=16, title_offset=(65, 0),
+                                                             title_font_size=8 * SCALE, title_offset=(32 * SCALE, 0),
                                                              widget_font=DRAGON_QUEST_FONT_PATH,
                                                              widget_alignment=pygame_menu.locals.ALIGN_LEFT,
                                                              widget_background_color=self.BLACK,
                                                              widget_font_color=self.WHITE,
-                                                             widget_font_size=15, widget_margin=(20, 10),
-                                                             widget_offset=(0, 10),
+                                                             widget_font_size=8 * SCALE,
+                                                             widget_margin=(10 * SCALE, 5 * SCALE),
+                                                             widget_offset=(0, 5 * SCALE),
                                                              widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(
                                                                  blink_ms=500))
         self.opacity = 0
@@ -63,9 +64,11 @@ class Game:
         self.command_menu_launched, self.paused = False, False
         # Create the game window.
         if FULLSCREEN_ENABLED:
-            self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT), FULLSCREEN)
+            flags = FULLSCREEN | DOUBLEBUF
         else:
-            self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT))
+            flags = RESIZABLE | DOUBLEBUF
+        self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT), flags)
+        self.screen.set_alpha(None)
         set_caption(self.GAME_TITLE)
         self.roaming_character_go_cooldown = 3000
         self.next_tile_checked = False
@@ -80,8 +83,6 @@ class Game:
         self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
 
         # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
-
-
 
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
@@ -143,6 +144,98 @@ class Game:
             self.draw()
             self.update()
 
+    def get_events(self):
+        """
+        Handle all events in main loop.
+        :return: None
+        """
+        self.events = get()
+
+        for event in self.events:
+            if event.type == pg.QUIT or (event.type == pg.K_LCTRL and event.key == pg.K_q):
+                quit()
+                sys.exit()
+        key = pg.key.get_pressed()
+        self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
+        if self.enable_roaming and self.current_map.roaming_characters:
+            self.move_roaming_characters()
+        if self.enable_movement:
+            self.move_player(key)
+
+        for staircase_location, staircase_dict in self.current_map.staircases.items():
+            if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
+                if staircase_dict['stair_direction'] == 'down':
+                    play_sound(stairs_down_sfx)
+                elif staircase_dict['stair_direction'] == 'up':
+                    play_sound(stairs_up_sfx)
+                self.map_change(staircase_dict['map'])
+
+        if key[pg.K_j]:
+            # B button
+            self.unlaunch_command_menu()
+            # print("J key pressed (B button).")
+        if key[pg.K_k]:
+            self.command_menu_launch_flag = True
+            # A button
+            # print("K key pressed (A button).")
+            if not self.player_moving:
+                self.allow_command_menu_launch = True
+                self.pause_all_movement()
+        if key[pg.K_i]:
+            # Start button
+            if self.paused:
+                self.unpause_all_movement()
+            else:
+                self.pause_all_movement()
+            # print("I key pressed (Start button).")
+        if key[pg.K_u]:
+            # Select button
+            pass
+            # print("U key pressed (Select button).")
+
+        # For debugging purposes, this prints out the current tile that the hero is standing on.
+        # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
+        #                                    self.current_map.player.rect.x // TILE_SIZE))
+
+        # For debugging purposes, this prints out the current coordinates that the hero is standing on.
+        # print(self.current_map.player.rect.y // TILE_SIZE, self.current_map.player.rect.x // TILE_SIZE)
+        pg.event.pump()
+
+    def draw(self):
+        """
+        Draw map, sprites, background, menu and other surfaces.
+        :return: None
+        """
+        self.current_map.draw_map(self.bigmap)
+        for sprites in self.current_map.character_sprites:
+            sprites.clear(self.screen, self.background)
+        self.screen.fill(self.BACK_FILL_COLOR)
+        self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
+                                                 self.current_map.height).convert()
+
+        for character in self.current_map.characters:
+            if self.enable_animate:
+                character.animate()
+        for sprites in self.current_map.character_sprites:
+            sprites.draw(self.background)
+        if self.command_menu_launch_flag:
+            if self.allow_command_menu_launch:
+                self.command_menu_subsurface = self.background.subsurface(
+                    (self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
+                    (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
+                    TILE_SIZE * 8, TILE_SIZE * 5)
+                if not self.command_menu_launched:
+                    self.launch_command_menu()
+                else:
+                    self.command_menu.draw(self.command_menu_subsurface)
+        self.screen.blit(self.background, self.camera.get_pos())
+
+    def update(self):
+        """Update the screen's display."""
+        if self.command_menu_launched:
+            self.command_menu.update(self.events)
+        pg.display.update()
+
     def fade_out(self, width, height):
         """
         Fade from current scene to black.
@@ -178,61 +271,6 @@ class Game:
 
     def hero_underlying_tile(self):
         return 'BRICK' if self.current_map == TantegelThroneRoom else 'GRASS'
-
-    def get_events(self):
-        """
-        Handle all events in main loop.
-        :return: None
-        """
-        self.events = get()
-
-        for event in self.events:
-            if event.type == pg.QUIT or (event.type == pg.K_LCTRL and event.key == pg.K_q):
-                quit()
-                sys.exit()
-        key = pg.key.get_pressed()
-        self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
-        if self.enable_roaming and self.current_map.roaming_characters:
-            self.move_roaming_characters()
-        if self.enable_movement:
-            self.move_player(key)
-
-        for staircase_location, staircase_dict in self.current_map.staircases.items():
-            if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
-                if staircase_dict['stair_direction'] == 'down':
-                    play_sound(stairs_down_sfx)
-                elif staircase_dict['stair_direction'] == 'up':
-                    play_sound(stairs_up_sfx)
-                self.map_change(staircase_dict['map'])
-
-        if key[pg.K_j]:
-            # B button
-            self.unlaunch_command_menu()
-            print("J key pressed (B button).")
-        if key[pg.K_k]:
-            self.command_menu_launch_flag = True
-            # A button
-            print("K key pressed (A button).")
-            if not self.player_moving:
-                self.allow_command_menu_launch = True
-                self.pause_all_movement()
-        if key[pg.K_i]:
-            # Start button
-            if self.paused:
-                self.unpause_all_movement()
-            else:
-                self.pause_all_movement()
-            print("I key pressed (Start button).")
-        if key[pg.K_u]:
-            # Select button
-            print("U key pressed (Select button).")
-
-        # For debugging purposes, this prints out the current tile that the hero is standing on.
-        # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
-        #                                    self.current_map.player.rect.x // TILE_SIZE))
-
-        # For debugging purposes, this prints out the current coordinates that the hero is standing on.
-        # print(self.current_map.player.rect.y // TILE_SIZE, self.current_map.player.rect.x // TILE_SIZE)
 
     def map_change(self, next_map):
         """
@@ -289,35 +327,6 @@ class Game:
         """
         self.enable_animate, self.enable_roaming, self.enable_movement = False, False, False
         self.paused = True
-
-    def draw(self):
-        """
-        Draw map, sprites, background, menu and other surfaces.
-        :return: None
-        """
-        self.current_map.draw_map(self.bigmap)
-        for sprites in self.current_map.character_sprites:
-            sprites.clear(self.screen, self.background)
-        self.screen.fill(self.BACK_FILL_COLOR)
-        self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
-                                                 self.current_map.height).convert()
-
-        for character in self.current_map.characters:
-            if self.enable_animate:
-                character.animate()
-        for sprites in self.current_map.character_sprites:
-            sprites.draw(self.background)
-        if self.command_menu_launch_flag:
-            if self.allow_command_menu_launch:
-                self.command_menu_subsurface = self.background.subsurface(
-                    (self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
-                    (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
-                    TILE_SIZE * 8, TILE_SIZE * 5)
-                if not self.command_menu_launched:
-                    self.launch_command_menu()
-                else:
-                    self.command_menu.draw(self.command_menu_subsurface)
-        self.screen.blit(self.background, self.camera.get_pos())
 
     def launch_command_menu(self):
         """
@@ -384,12 +393,6 @@ class Game:
         :return: To be determined upon implementation
         """
         print("TAKE")
-
-    def update(self):
-        """Update the screen's display."""
-        if self.command_menu_launched:
-            self.command_menu.update(self.events)
-        pg.display.update()
 
     def get_tile_by_coordinates(self, column, row):
         """
