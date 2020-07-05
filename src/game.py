@@ -1,10 +1,10 @@
 import random
 import sys
 
-import pygame
+import pygame as pg
 import pygame_menu
 from pygame import init, Surface, USEREVENT, time, quit, FULLSCREEN
-from pygame.display import set_mode, set_caption, flip
+from pygame.display import set_mode, set_caption
 from pygame.event import get
 from pygame.time import Clock
 from pygame.time import get_ticks
@@ -44,6 +44,20 @@ class Game:
 
         # Initialize pygame
 
+        self.dragon_warrior_theme = pygame_menu.themes.Theme(background_color=self.BLACK, cursor_color=self.WHITE,
+                                                             cursor_selection_color=self.WHITE,
+                                                             focus_background_color=self.BLACK,
+                                                             title_background_color=self.BLACK,
+                                                             title_font=DRAGON_QUEST_FONT_PATH,
+                                                             title_font_size=16, title_offset=(65, 0),
+                                                             widget_font=DRAGON_QUEST_FONT_PATH,
+                                                             widget_alignment=pygame_menu.locals.ALIGN_LEFT,
+                                                             widget_background_color=self.BLACK,
+                                                             widget_font_color=self.WHITE,
+                                                             widget_font_size=15, widget_margin=(20, 10),
+                                                             widget_offset=(0, 10),
+                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(
+                                                                 blink_ms=500))
         self.opacity = 0
         init()
         self.command_menu_launched, self.paused = False, False
@@ -86,12 +100,33 @@ class Game:
                                             direction=self.current_map.player.direction)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
-        self.enable_command_menu = False
+        self.allow_command_menu_launch = False
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
         self.clock = Clock()
         if MUSIC_ENABLED:
-            pygame.mixer.music.load(self.current_map.music_file_path)
-            pygame.mixer.music.play(-1)
+            pg.mixer.music.load(self.current_map.music_file_path)
+            pg.mixer.music.play(-1)
+        self.events = get()
+        self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
+                                                 self.current_map.height).convert()
+        self.command_menu_launch_flag = False
+        self.command_menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
+                                                                  (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
+                                                                  TILE_SIZE * 8, TILE_SIZE * 5)
+        self.command_menu = pygame_menu.Menu(height=self.command_menu_subsurface.get_height() * 3,
+                                             width=self.command_menu_subsurface.get_width() * 2, title='COMMAND',
+                                             center_content=False, column_force_fit_text=False,
+                                             column_max_width=(TILE_SIZE * 1, TILE_SIZE * 3), columns=2, enabled=True,
+                                             joystick_enabled=True, mouse_enabled=False, mouse_visible=False, rows=4,
+                                             theme=self.dragon_warrior_theme)
+        self.command_menu.add_button('TALK', self.talk)
+        self.command_menu.add_button('STATUS', self.status)
+        self.command_menu.add_button('STAIRS', self.stairs)
+        self.command_menu.add_button('SEARCH', self.search)
+        self.command_menu.add_button('SPELL', self.spell)
+        self.command_menu.add_button('ITEM', self.item)
+        self.command_menu.add_button('DOOR', self.door)
+        self.command_menu.add_button('TAKE', self.take)
 
     def main(self):
         """
@@ -109,7 +144,7 @@ class Game:
         Fade from current scene to black.
         :return: None
         """
-        fade = pygame.Surface((width, height))
+        fade = pg.Surface((width, height))
         fade.fill(self.BLACK)
         self.opacity = 0
         for r in range(300):
@@ -117,8 +152,8 @@ class Game:
             fade.set_alpha(self.opacity)
             self.background.fill(self.BLACK)
             self.screen.blit(fade, (0, 0))
-            pygame.display.update()
-            pygame.time.delay(5)
+            pg.display.update()
+            pg.time.delay(5)
 
     def fade_in(self, width, height):
         # TODO(ELF): Fix fade_in.
@@ -126,7 +161,7 @@ class Game:
         Fade from black to current screen.
         :return: None
         """
-        fade = pygame.Surface((width, height))
+        fade = pg.Surface((width, height))
         fade.fill(self.BLACK)
         self.opacity = 300
         for alpha in range(300):
@@ -134,20 +169,21 @@ class Game:
             fade.set_alpha(self.opacity)
             self.background.fill(self.BLACK)
             self.screen.blit(fade, (0, 0))
-            pygame.display.update()
-            pygame.time.delay(5)
+            pg.display.update()
+            pg.time.delay(5)
 
     def get_events(self):
         """
         Handle all events in main loop.
         :return: None
         """
+        self.events = get()
 
-        for event in get():
-            if event.type == pygame.QUIT or (event.type == pygame.K_LCTRL and event.key == pygame.K_q):
+        for event in self.events:
+            if event.type == pg.QUIT or (event.type == pg.K_LCTRL and event.key == pg.K_q):
                 quit()
                 sys.exit()
-        key = pygame.key.get_pressed()
+        key = pg.key.get_pressed()
         self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
         if self.enable_roaming and self.current_map.roaming_characters:
             self.move_roaming_characters()
@@ -162,27 +198,25 @@ class Game:
                     play_sound(stairs_up_sfx)
                 self.map_change(staircase_dict['map'])
 
-        if key[pygame.K_j]:
+        if key[pg.K_j]:
             # B button
             self.unlaunch_command_menu()
             print("J key pressed (B button).")
-        if key[pygame.K_k]:
+        if key[pg.K_k]:
+            self.command_menu_launch_flag = True
             # A button
             print("K key pressed (A button).")
             if not self.player_moving:
-                self.enable_command_menu = True
+                self.allow_command_menu_launch = True
                 self.pause_all_movement()
-            else:
-                # TODO(ELF): Make the menu wait until the player arrives at the next tile, and then launch.
-                print("K key pressed (A button) while moving.")
-        if key[pygame.K_i]:
+        if key[pg.K_i]:
             # Start button
             if self.paused:
                 self.unpause_all_movement()
             else:
                 self.pause_all_movement()
             print("I key pressed (Start button).")
-        if key[pygame.K_u]:
+        if key[pg.K_u]:
             # Select button
             print("U key pressed (Select button).")
 
@@ -207,11 +241,11 @@ class Game:
 
         self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
         if MUSIC_ENABLED:
-            pygame.mixer.music.stop()
+            pg.mixer.music.stop()
         self.current_map.load_map()
         if MUSIC_ENABLED:
-            pygame.mixer.music.load(self.current_map.music_file_path)
-            pygame.mixer.music.play(-1)
+            pg.mixer.music.load(self.current_map.music_file_path)
+            pg.mixer.music.play(-1)
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
@@ -227,7 +261,8 @@ class Game:
         Unlaunch the command menu.
         :return: None
         """
-        self.enable_command_menu = False
+        self.allow_command_menu_launch = False
+        self.command_menu_launch_flag = False
         self.unpause_all_movement()
         self.command_menu_launched = False
 
@@ -258,13 +293,23 @@ class Game:
         self.screen.fill(self.BACK_FILL_COLOR)
         self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
                                                  self.current_map.height).convert()
+
         for character in self.current_map.characters:
             if self.enable_animate:
                 character.animate()
         for sprites in self.current_map.character_sprites:
             sprites.draw(self.background)
-        if self.enable_command_menu:
-            self.launch_command_menu()
+        if self.command_menu_launch_flag:
+            if self.allow_command_menu_launch:
+                self.command_menu_subsurface = self.background.subsurface(
+                    (self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
+                    (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
+                    TILE_SIZE * 8, TILE_SIZE * 5)
+                if not self.command_menu_launched:
+                    self.launch_command_menu()
+                else:
+                    self.command_menu.draw(self.command_menu_subsurface)
+        self.screen.blit(self.background, self.camera.get_pos())
 
     def launch_command_menu(self):
         """
@@ -273,55 +318,7 @@ class Game:
         """
         if not self.command_menu_launched:
             play_sound(menu_button_sfx)
-
-        command_menu_subsurface = self.background.subsurface((self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
-                                                             (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
-                                                             TILE_SIZE * 8, TILE_SIZE * 5)
-
-        dragon_warrior_menu_theme = pygame_menu.themes.Theme(background_color=self.BLACK,
-                                                             cursor_color=self.WHITE,
-                                                             cursor_selection_color=self.WHITE,
-                                                             focus_background_color=self.BLACK,
-                                                             title_background_color=self.BLACK,
-                                                             title_font=DRAGON_QUEST_FONT_PATH,
-                                                             title_font_size=16,
-                                                             title_offset=(65, 0),
-                                                             widget_font=DRAGON_QUEST_FONT_PATH,
-                                                             widget_alignment=pygame_menu.locals.ALIGN_LEFT,
-                                                             widget_background_color=self.BLACK,
-                                                             widget_font_color=self.WHITE,
-                                                             widget_font_size=15,
-                                                             widget_margin=(20, 10),
-                                                             widget_offset=(0, 10),
-                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(
-                                                                 blink_ms=500)
-                                                             )
-
-        menu = pygame_menu.Menu(height=command_menu_subsurface.get_height() * 3,
-                                width=command_menu_subsurface.get_width() * 2,
-                                title='COMMAND',
-                                center_content=False,
-                                column_force_fit_text=False,
-                                column_max_width=(TILE_SIZE * 1, TILE_SIZE * 3),
-                                columns=2,
-                                enabled=True,
-                                joystick_enabled=True,
-                                mouse_enabled=False,
-                                mouse_visible=False,
-                                rows=4,
-                                theme=dragon_warrior_menu_theme
-                                )
-        menu.add_button('TALK', self.talk)
-        menu.add_button('STATUS', self.status)
-        menu.add_button('STAIRS', self.stairs)
-        menu.add_button('SEARCH', self.search)
-        menu.add_button('SPELL', self.spell)
-        menu.add_button('ITEM', self.item)
-        menu.add_button('DOOR', self.door)
-        menu.add_button('TAKE', self.take)
-
-        menu.update(pygame.event.get())
-        menu.draw(command_menu_subsurface)
+        self.command_menu.draw(self.command_menu_subsurface)
         self.command_menu_launched = True
 
     def talk(self):
@@ -382,8 +379,9 @@ class Game:
 
     def update(self):
         """Update the screen's display."""
-        self.screen.blit(self.background, self.camera.get_pos())
-        flip()
+        if self.command_menu_launched:
+            self.command_menu.update(self.events)
+        pg.display.update()
 
     def get_tile_by_coordinates(self, column, row):
         """
@@ -405,13 +403,13 @@ class Game:
         curr_pos_x, curr_pos_y = self.camera.get_pos()
 
         if not self.player_moving:
-            if key[pygame.K_UP] or key[pygame.K_w]:
+            if key[pg.K_UP] or key[pg.K_w]:
                 self.current_map.player.direction = Direction.UP.value
-            elif key[pygame.K_DOWN] or key[pygame.K_s]:
+            elif key[pg.K_DOWN] or key[pg.K_s]:
                 self.current_map.player.direction = Direction.DOWN.value
-            elif key[pygame.K_LEFT] or key[pygame.K_a]:
+            elif key[pg.K_LEFT] or key[pg.K_a]:
                 self.current_map.player.direction = Direction.LEFT.value
-            elif key[pygame.K_RIGHT] or key[pygame.K_d]:
+            elif key[pg.K_RIGHT] or key[pg.K_d]:
                 self.current_map.player.direction = Direction.RIGHT.value
             else:  # player not moving and no moving key pressed
                 return
