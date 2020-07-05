@@ -15,7 +15,7 @@ from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, DRAGON_QUEST_FONT_PATH, stairs_down_sfx, stairs_up_sfx
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED, MUSIC_ENABLED
-from src.maps import parse_animated_spritesheet
+from src.maps import parse_animated_spritesheet, TantegelThroneRoom
 
 
 def get_next_coordinates(character_column, character_row, direction):
@@ -75,9 +75,13 @@ class Game:
             unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
-        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
-        # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
         # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
+        self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
+
+        # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
+
+
 
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
@@ -172,6 +176,9 @@ class Game:
             pg.display.update()
             pg.time.delay(5)
 
+    def hero_underlying_tile(self):
+        return 'BRICK' if self.current_map == TantegelThroneRoom else 'GRASS'
+
     def get_events(self):
         """
         Handle all events in main loop.
@@ -223,8 +230,9 @@ class Game:
         # For debugging purposes, this prints out the current tile that the hero is standing on.
         # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
         #                                    self.current_map.player.rect.x // TILE_SIZE))
-        # THESE ARE THE VALUES WE ARE AIMING FOR FOR INITIAL TANTEGEL THRONE ROOM
-        # camera_pos = -160, -96
+
+        # For debugging purposes, this prints out the current coordinates that the hero is standing on.
+        # print(self.current_map.player.rect.y // TILE_SIZE, self.current_map.player.rect.x // TILE_SIZE)
 
     def map_change(self, next_map):
         """
