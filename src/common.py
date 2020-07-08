@@ -1,10 +1,15 @@
 # Constants
+import ntpath
+import os
 from enum import IntEnum
-from os.path import join, sep
+from os.path import join, sep, exists
 
 import pygame
 
 from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR, FONTS_DIR
+
+separator = 'DragonWarrior'
+root_project_path = os.getcwd().split(separator, 1)[0]
 
 
 class Direction(IntEnum):
@@ -69,11 +74,24 @@ def get_image(path):
     image = _image_library.get(path)
     if image is None:
         canonicalized_path = path.replace('/', sep).replace('\\', sep)
-        image = pygame.image.load(canonicalized_path)
-        _image_library[path] = image
+        if exists(canonicalized_path):
+            image = pygame.image.load(canonicalized_path)
+            _image_library[path] = image
+        else:
+            image = pygame.image.load(find_file(ntpath.basename(canonicalized_path), root_project_path))
+            _image_library[path] = image
     return image
+
+
+def find_file(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
 
 
 pygame.font.init()
 DRAGON_QUEST_FONT_PATH = join(FONTS_DIR, 'dragon-quest.ttf')
-DRAGON_QUEST_FONT = pygame.font.Font(DRAGON_QUEST_FONT_PATH, 15)
+if exists(DRAGON_QUEST_FONT_PATH):
+    DRAGON_QUEST_FONT = pygame.font.Font(DRAGON_QUEST_FONT_PATH, 15)
+else:
+    DRAGON_QUEST_FONT = pygame.font.Font(find_file('dragon-quest.ttf', root_project_path), 15)

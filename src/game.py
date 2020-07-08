@@ -15,7 +15,7 @@ from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, DRAGON_QUEST_FONT_PATH, stairs_down_sfx, stairs_up_sfx
 from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED, MUSIC_ENABLED
-from src.maps import parse_animated_spritesheet, TantegelThroneRoom
+from src.maps import parse_animated_spritesheet
 
 
 def get_next_coordinates(character_column, character_row, direction):
@@ -43,7 +43,10 @@ class Game:
     def __init__(self):
 
         # Initialize pygame
-
+        self.all_sprites = []
+        self.rects = []
+        self.oldrects = []
+        self.activerects = []
         self.dragon_warrior_theme = pygame_menu.themes.Theme(background_color=self.BLACK, cursor_color=self.WHITE,
                                                              cursor_selection_color=self.WHITE,
                                                              focus_background_color=self.BLACK,
@@ -79,8 +82,8 @@ class Game:
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
         # self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
-        # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
-        self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
+        self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
 
         # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
 
@@ -95,7 +98,6 @@ class Game:
             roaming_character.last_roaming_clock_check = get_ticks()
             roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
         # Make the big scrollable map
-        # TODO(ELF): Refactor these into the actual values and remove the None assignments that they replace.
 
         self.background = Surface(self.screen.get_size()).convert()
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
@@ -132,6 +134,7 @@ class Game:
         self.command_menu.add_button('ITEM', self.item)
         self.command_menu.add_button('DOOR', self.door)
         self.command_menu.add_button('TAKE', self.take)
+        pg.event.set_allowed([pg.QUIT])
 
     def main(self):
         """
@@ -141,7 +144,7 @@ class Game:
         while 1:
             self.clock.tick(self.FPS)
             self.get_events()
-            self.draw()
+            self.draw_all()
             self.update()
 
     def get_events(self):
@@ -152,9 +155,10 @@ class Game:
         self.events = get()
 
         for event in self.events:
-            if event.type == pg.QUIT or (event.type == pg.K_LCTRL and event.key == pg.K_q):
+            if event.type == pg.QUIT:
                 quit()
                 sys.exit()
+        pg.event.pump()
         key = pg.key.get_pressed()
         self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
         if self.enable_roaming and self.current_map.roaming_characters:
@@ -187,28 +191,38 @@ class Game:
                 self.unpause_all_movement()
             else:
                 self.pause_all_movement()
-            # print("I key pressed (Start button).")
+            print("I key pressed (Start button).")
         if key[pg.K_u]:
             # Select button
             pass
-            # print("U key pressed (Select button).")
+            print("U key pressed (Select button).")
 
-        # For debugging purposes, this prints out the current tile that the hero is standing on.
+        # For debugging purposes, this prints out the current tile that the player is standing on.
         # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
         #                                    self.current_map.player.rect.x // TILE_SIZE))
 
-        # For debugging purposes, this prints out the current coordinates that the hero is standing on.
+        # For debugging purposes, this prints out the current coordinates that the player is standing on.
         # print(self.current_map.player.rect.y // TILE_SIZE, self.current_map.player.rect.x // TILE_SIZE)
+
+        # player_next_coordinates = get_next_coordinates(self.current_map.player.rect.x // TILE_SIZE,
+        #                                                self.current_map.player.rect.y // TILE_SIZE,
+        #                                                self.current_map.player.direction)
+        # For debugging purposes, this prints out the next coordinates that the player will land on.
+        # print(player_next_coordinates)
+
+        # For debugging purposes, this prints out the next tile that the player will land on.
+        # print(self.get_tile_by_coordinates(player_next_coordinates[1], player_next_coordinates[0]))
+
         pg.event.pump()
 
-    def draw(self):
+    def draw_all(self):
         """
         Draw map, sprites, background, menu and other surfaces.
         :return: None
         """
-        self.current_map.draw_map(self.bigmap)
-        for sprites in self.current_map.character_sprites:
-            sprites.clear(self.screen, self.background)
+        map_rect = self.current_map.draw_map(self.bigmap)
+        if map_rect:
+            self.rects.append(map_rect)
         self.screen.fill(self.BACK_FILL_COLOR)
         self.background = self.bigmap.subsurface(self.ORIGIN[0], self.ORIGIN[1], self.current_map.width,
                                                  self.current_map.height).convert()
@@ -216,8 +230,12 @@ class Game:
         for character in self.current_map.characters:
             if self.enable_animate:
                 character.animate()
+            else:
+                character.pause()
         for sprites in self.current_map.character_sprites:
-            sprites.draw(self.background)
+            if sprites:
+                self.all_sprites.append(sprites)
+                self.rects.append(sprites.draw(self.background))
         if self.command_menu_launch_flag:
             if self.allow_command_menu_launch:
                 self.command_menu_subsurface = self.background.subsurface(
@@ -227,14 +245,17 @@ class Game:
                 if not self.command_menu_launched:
                     self.launch_command_menu()
                 else:
-                    self.command_menu.draw(self.command_menu_subsurface)
+                    command_menu_rect = self.command_menu.draw(self.command_menu_subsurface)
+                    if command_menu_rect:
+                        self.rects.append(command_menu_rect)
         self.screen.blit(self.background, self.camera.get_pos())
 
     def update(self):
         """Update the screen's display."""
         if self.command_menu_launched:
             self.command_menu.update(self.events)
-        pg.display.update()
+        flat_rects_list = [val for sublist in self.rects for val in sublist]
+        pg.display.update(flat_rects_list)
 
     def fade_out(self, width, height):
         """
@@ -268,9 +289,6 @@ class Game:
             self.screen.blit(fade, (0, 0))
             pg.display.update()
             pg.time.delay(5)
-
-    def hero_underlying_tile(self):
-        return 'BRICK' if self.current_map == TantegelThroneRoom else 'GRASS'
 
     def map_change(self, next_map):
         """
@@ -335,7 +353,9 @@ class Game:
         """
         if not self.command_menu_launched:
             play_sound(menu_button_sfx)
-        self.command_menu.draw(self.command_menu_subsurface)
+        command_menu_rect = self.command_menu.draw(self.command_menu_subsurface)
+        if command_menu_rect:
+            self.rects.append(command_menu_rect)
         self.command_menu_launched = True
 
     def talk(self):
@@ -426,6 +446,7 @@ class Game:
                 return
             self.player_moving = True
         else:  # determine if player has reached new tile
+            self.current_map.player_sprites.dirty = 1
             if (self.current_map.player.direction == Direction.UP.value or
                     self.current_map.player.direction == Direction.DOWN.value):
                 if curr_pos_y % TILE_SIZE == 0:
@@ -446,6 +467,7 @@ class Game:
             self.move(delta_x=-self.speed, delta_y=0)
         elif self.current_map.player.direction == Direction.RIGHT.value:
             self.move(delta_x=self.speed, delta_y=0)
+        self.current_map.player_sprites.dirty = 1
 
     def move(self, delta_x, delta_y):
         """

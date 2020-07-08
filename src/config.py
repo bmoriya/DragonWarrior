@@ -1,7 +1,7 @@
 from os.path import join
 
-REPLIT_DATA_DIR = '../data'
-DATA_DIR = '../data'
+REPLIT_DATA_DIR = '..\\data'
+DATA_DIR = '..\\data'
 FONTS_DIR = join(DATA_DIR, 'fonts')
 IMAGES_DIR = join(DATA_DIR, 'images')
 SOUND_DIR = join(DATA_DIR, 'sound')
@@ -9,7 +9,7 @@ SOUND_DIR = join(DATA_DIR, 'sound')
 MUSIC_DIR = join(SOUND_DIR, 'music')
 SFX_DIR = join(SOUND_DIR, 'sfx')
 
-SCALE = 3
+SCALE = 2
 TILE_SIZE = 16 * SCALE
 NES_RES = (256, 240)
 WIN_WIDTH = NES_RES[0] * SCALE

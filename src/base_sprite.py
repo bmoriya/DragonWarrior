@@ -1,7 +1,7 @@
-from pygame.sprite import Sprite
+from pygame.sprite import DirtySprite
 
 
-class BaseSprite(Sprite):
+class BaseSprite(DirtySprite):
     """
     All sprites in this game need this basic functionality.
     """
@@ -10,7 +10,7 @@ class BaseSprite(Sprite):
         """
         Constructor
         """
-        Sprite.__init__(self)
+        DirtySprite.__init__(self)
 
         # Set up the image and rect for the image.
         self.image = image

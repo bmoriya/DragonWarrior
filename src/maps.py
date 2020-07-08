@@ -1,8 +1,7 @@
 from collections import OrderedDict
-from os.path import join
 
 import numpy as np
-from pygame.sprite import Group, RenderUpdates
+from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
 
 from src.RoamingCharacter import RoamingCharacter
@@ -12,7 +11,7 @@ from src.common import Direction, tantegel_castle_throne_room_music, KING_LORIK_
     GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
     SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH, \
     overworld_music
-from src.config import TILE_SIZE, SCALE, COLOR_KEY, IMAGES_DIR
+from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
 from src.player import Player
@@ -182,45 +181,45 @@ class DragonWarriorMap:
         ])
         self.character_key = OrderedDict([
             ('HERO',
-             {'val': 34, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False,
+             {'val': 33, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False,
               'underlying_tile': self.hero_underlying_tile()}),
             ('KING_LORIK',
-             {'val': 35, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
+             {'val': 34, 'four_sided': False, 'path': KING_LORIK_PATH, 'roaming': False, 'underlying_tile': 'BRICK'}),
             ('DOWN_FACE_GUARD',
-             {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+             {'val': 35, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
             ('LEFT_FACE_GUARD',
-             {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value,
+             {'val': 36, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.LEFT.value,
               'underlying_tile': 'BRICK'}),
             ('UP_FACE_GUARD',
-             {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value,
+             {'val': 37, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.UP.value,
               'underlying_tile': 'BRICK'}),
             ('RIGHT_FACE_GUARD',
-             {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value,
+             {'val': 38, 'four_sided': True, 'path': GUARD_PATH, 'roaming': False, 'direction': Direction.RIGHT.value,
               'underlying_tile': 'BRICK'}),
             ('ROAMING_GUARD',
-             {'val': 40, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value,
+             {'val': 39, 'four_sided': True, 'path': GUARD_PATH, 'roaming': True, 'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
             ('MAN',
-             {'val': 41, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+             {'val': 40, 'four_sided': True, 'path': MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
             ('WOMAN',
-             {'val': 42, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+             {'val': 41, 'four_sided': True, 'path': WOMAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
               'underlying_tile': 'GRASS'}),
             ('WISE_MAN',
-             {'val': 43, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+             {'val': 42, 'four_sided': True, 'path': WISE_MAN_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
             ('SOLDIER',
-             {'val': 44, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+             {'val': 43, 'four_sided': True, 'path': SOLDIER_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
             ('MERCHANT',
-             {'val': 45, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
+             {'val': 44, 'four_sided': True, 'path': MERCHANT_PATH, 'roaming': False, 'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
             ('PRINCESS_GWAELIN',
-             {'val': 46, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False,
+             {'val': 45, 'four_sided': False, 'path': PRINCESS_GWAELIN_PATH, 'roaming': False,
               'direction': Direction.DOWN.value, 'underlying_tile': 'BRICK'}),
             ('DRAGONLORD',
-             {'val': 47, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False,
+             {'val': 46, 'four_sided': True, 'path': DRAGONLORD_PATH, 'roaming': False,
               'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
         ])
@@ -264,7 +263,7 @@ class DragonWarriorMap:
 
     def map_character_tiles(self, current_loaded_map, x, y):
         for character, character_dict in self.character_key.items():
-            if self.layout[y][x] >= 34:
+            if self.layout[y][x] >= 33: # 'HERO' hardcoded value
                 if self.layout[y][x] == character_dict['val']:
                     if self.layout[y][x] == self.character_key['HERO']['val']:
                         self.map_player(current_loaded_map, character_dict['underlying_tile'])
@@ -280,7 +279,7 @@ class DragonWarriorMap:
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet, is_roaming=True)
-        character_sprites = RenderUpdates()
+        character_sprites = LayeredDirty()
         if is_roaming:
             character = RoamingCharacter(self.center_pt, direction,
                                          images[Direction.DOWN.value],
@@ -302,7 +301,7 @@ class DragonWarriorMap:
         self.character_sprites.append(character_sprites)
 
     def map_two_sided_npc(self, image_path, name, underlying_tile):
-        sprites = RenderUpdates()
+        sprites = LayeredDirty()
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet)
@@ -321,7 +320,7 @@ class DragonWarriorMap:
                              left_images=self.hero_images[Direction.LEFT.value],
                              up_images=self.hero_images[Direction.UP.value],
                              right_images=self.hero_images[Direction.RIGHT.value])
-        self.player_sprites = RenderUpdates(self.player)
+        self.player_sprites = LayeredDirty(self.player)
         self.player.direction = self.hero_initial_direction()
         self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
                       tile_group=self.tile_key[underlying_tile]['group'])
@@ -330,7 +329,7 @@ class DragonWarriorMap:
 
     def map_floor_tiles(self, x, y):
         for tile, tile_dict in self.tile_key.items():
-            if self.layout[y][x] <= 33:
+            if self.layout[y][x] < 33:
                 if self.layout[y][x] == tile_dict['val']:
                     self.add_tile(tile_value=tile_dict['val'], tile_group=tile_dict['group'])
 
@@ -415,10 +414,10 @@ class TantegelThroneRoom(DragonWarriorMap):
             [ROOF] * 10 + [1] * 10 + [ROOF] * 7,  # 6
             [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 3, 4, 3, 1] + [ROOF] * 7,  # 7
             [ROOF] * 10 + [1, 3, 2, 2, 2, 2, 2, 2, 3, 1] + [ROOF] * 7,  # 8
-            [ROOF] * 10 + [1, 3, 2, 35, 2, 2, 3, 2, 3, 1] + [ROOF] * 7,  # 9
-            [ROOF] * 10 + [1, 3, 3, 34, 4, 4, 3, 3, 3, 1] + [ROOF] * 7,  # 10
-            [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 40, 3, 3, 1] + [ROOF] * 7,  # 11
-            [ROOF] * 10 + [1, 3, 3, 39, 3, 37, 3, 3, 3, 1] + [ROOF] * 7,  # 12
+            [ROOF] * 10 + [1, 3, 2, 34, 2, 2, 3, 2, 3, 1] + [ROOF] * 7,  # 9
+            [ROOF] * 10 + [1, 3, 3, 33, 4, 4, 3, 3, 3, 1] + [ROOF] * 7,  # 10
+            [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 39, 3, 3, 1] + [ROOF] * 7,  # 11
+            [ROOF] * 10 + [1, 3, 3, 38, 3, 36, 3, 3, 3, 1] + [ROOF] * 7,  # 12
             [ROOF] * 10 + [1, 1, 1, 1, 3, 1, 1, 1, 1, 1] + [ROOF] * 7,  # 13
             [ROOF] * 10 + [1, 3, 3, 3, 3, 3, 3, 3, 6, 1] + [ROOF] * 7,  # 14
             [ROOF] * 10 + [1] * 10 + [ROOF] * 7,  # 15
@@ -460,33 +459,33 @@ class TantegelCourtyard(DragonWarriorMap):
             courtyard_grass_line,
             courtyard_grass_line,
             [1] * 7 + [13] * 8 + [1] * 7 + [13] + [1, 1, 1] + [13, 14] + [13] * 2,
-            [1] + [3] * 5 + [1, 13, 14, 13, 14, 14, 13, 14, 13, 1] + [3] * 5 + [1, 13, 1, 45, 1] + [13] * 4,
+            [1] + [3] * 5 + [1, 13, 14, 13, 14, 14, 13, 14, 13, 1] + [3] * 5 + [1, 13, 1, 44, 1] + [13] * 4,
             [1] + [3] * 5 + [1] + [13] * 8 + [1] + [3] * 5 + [1, 13, 1, 2, 1] + [13] * 4,
             [1] + [3, 3, 1, 3, 3] + [1] * 4 + [3, 3] + [1] * 4 + [3, 3, 1] * 2 + [13, 13, 13, 14, 14] + [13] * 3,
             [1] + [3] * 20 + [1, 13, 14, 14, 14] + [13] * 4,
-            [1] + [3] * 5 + [1] * 10 + [3] * 5 + [1] + [13] * 5 + [42] + [13] * 2,
-            [1] * 5 + [3, 1, 3, 36] + [3] * 6 + [1, 1, 1, 5] + [1] * 5 + [3, 1, 1, 1] + [13] * 2,
-            [1] + [3, 3, 3, 1, 3, 1, 34, 3] + [3] * 4 + [1, 3] + [1] + [3] * 11 + [1] + [13] * 2,
-            [1] + [3, 41, 3, 3, 3, 1, 3, 38] + [3] * 6 + [1] + [3] * 11 + [1] + [13] * 2,
+            [1] + [3] * 5 + [1] * 10 + [3] * 5 + [1] + [13] * 5 + [41] + [13] * 2,
+            [1] * 5 + [3, 1, 3, 35] + [3] * 6 + [1, 1, 1, 5] + [1] * 5 + [3, 1, 1, 1] + [13] * 2,
+            [1] + [3, 3, 3, 1, 3, 1, 33, 3] + [3] * 4 + [1, 3] + [1] + [3] * 11 + [1] + [13] * 2,
+            [1] + [3, 40, 3, 3, 3, 1, 3, 37] + [3] * 6 + [1] + [3] * 11 + [1] + [13] * 2,
             [1] + [3, 3, 3, 1, 3, 1, 1, 1] + [3] * 4 + [1] * 12 + [3, 3, 1] + [13] * 2,
             [1] * 5 + [3, 1, 14, 14] + [3] * 4 + [14, 14, 1] + [3, 3, 1] * 4 + [13] * 2,
-            [1] + [3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 41, 3, 14, 14, 1] + [3, 3, 1] * 4 + [13] * 2,
-            [1] + [3, 40, 3, 1, 3, 1, 14, 13] + [3] * 4 + [13, 14] + [1] + [3] * 11 + [1] + [13] * 2,
-            [1] + [4, 3, 4, 5, 3, 1, 13, 42] + [3] * 4 + [13, 13] + [1] + [3] * 11 + [1] + [13] * 2,
+            [1] + [3, 3, 3, 1, 3, 1, 14, 14, 3, 3, 40, 3, 14, 14, 1] + [3, 3, 1] * 4 + [13] * 2,
+            [1] + [3, 39, 3, 1, 3, 1, 14, 13] + [3] * 4 + [13, 14] + [1] + [3] * 11 + [1] + [13] * 2,
+            [1] + [4, 3, 4, 5, 3, 1, 13, 41] + [3] * 4 + [13, 13] + [1] + [3] * 11 + [1] + [13] * 2,
             [1] + [3, 4, 3, 1, 3, 1, 13, 13] + [3] * 4 + [13, 13, 1] + [3, 3, 1] * 4 + [13] * 2,
             [1] + [4, 3, 4, 1, 3, 1, 13] + [3] * 6 + [13, 1] + [3, 3, 1] * 4 + [13] * 2,
             [1] * 5 + [3, 1, 13, 3] + [22] * 4 + [3, 13] + [1] * 10 + [3, 1, 1] + [13] * 2,
             [1] + [3] * 8 + [22, 8, 8, 22] + [3] * 6 + [3, 3, 1] + [3] * 5 + [1] + [13] * 2,
             [1] + [3] * 8 + [22, 8, 8, 22] + [3] * 6 + [3, 3, 1] + [8] * 5 + [1] + [13] * 2,
             [1] + [1, 1, 3, 3, 1, 1, 1, 3, 22, 22, 22, 22, 3, 1, 1] + [3] * 5 + [1] + [8] * 5 + [1] + [13] * 2,
-            [1] + [3] * 5 + [3, 1] + [3] * 6 + [1, 39] + [3] * 5 + [1] + [3] * 5 + [1] + [13] * 2,
-            [1] + [3] * 5 + [3, 1, 1] + [3] * 4 + [1] * 6 + [3, 3, 1, 44] + [3] * 4 + [1, 22] + [13],
+            [1] + [3] * 5 + [3, 1] + [3] * 6 + [1, 38] + [3] * 5 + [1] + [3] * 5 + [1] + [13] * 2,
+            [1] + [3] * 5 + [3, 1, 1] + [3] * 4 + [1] * 6 + [3, 3, 1, 43] + [3] * 4 + [1, 22] + [13],
             [1] + [3, 3, 1] + [3] * 4 + [1] + [3] * 4 + [1] + [3] * 7 + [1] * 6 + [1, 22] + [13],
             [1] + [3] * 5 + [3, 3, 1] + [3] * 4 + [1] + [3] * 6 + [3, 1] + [22] * 7 + [13],
-            [1] + [3, 22, 22, 3, 3, 1, 45, 1] + [3] * 4 + [1, 3, 3] + [1] * 6 + [22] * 7 + [13],
-            [1] + [22] * 4 + [3, 45, 3, 1] + [3] * 4 + [1] + [3, 3, 1] * 2 + [3, 1] + [22] * 7 + [13],
-            [1] + [22] * 4 + [3] + [3, 3, 1, 1] * 2 + [3] * 5 + [2, 43, 1] + [22] * 7 + [13],
-            [1] + [22] * 5 + [3, 3, 1, 39, 3, 3, 37, 1] + [3, 3, 1] * 2 + [3, 1] + [22] * 7 + [13],
+            [1] + [3, 22, 22, 3, 3, 1, 44, 1] + [3] * 4 + [1, 3, 3] + [1] * 6 + [22] * 7 + [13],
+            [1] + [22] * 4 + [3, 44, 3, 1] + [3] * 4 + [1] + [3, 3, 1] * 2 + [3, 1] + [22] * 7 + [13],
+            [1] + [22] * 4 + [3] + [3, 3, 1, 1] * 2 + [3] * 5 + [2, 42, 1] + [22] * 7 + [13],
+            [1] + [22] * 5 + [3, 3, 1, 38, 3, 3, 36, 1] + [3, 3, 1] * 2 + [3, 1] + [22] * 7 + [13],
             [1] * 10 + [3, 3] + [1] * 10 + [22] * 7 + [13],
             [22, 22] + [13] * 8 + [3, 3] + [13] * 8 + [22] * 9 + [6],
             courtyard_grass_line,
@@ -523,7 +522,7 @@ class TantegelCourtyard(DragonWarriorMap):
             (37, 24): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
             (37, 25): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
             (37, 26): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-                           }
+        }
         self.music_file_path = tantegel_castle_courtyard_music
 
     def hero_underlying_tile(self):
@@ -572,7 +571,7 @@ class Overworld(DragonWarriorMap):
             [13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 13],
             [32, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 12, 13, 13],
             [13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 13, 13, 26, 27],
-            [13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 34, 13, 13, 13, 26, 27, 22, 22],
+            [13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 33, 13, 13, 13, 26, 27, 22, 22],
             [13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 26, 27, 22, 22, 22, 22],
             [13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 26, 27, 22, 22, 22, 22, 23, 30],
             [13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 26, 27, 22, 22, 22, 22, 23, 30, 16, 16],
@@ -583,11 +582,12 @@ class Overworld(DragonWarriorMap):
             [14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 25, 22, 22, 22, 32, 16, 16, 16, 16, 19, 19],
         ]
         self.layout = overworld
-        self.layout_tiles = parse_map_tiles(join(IMAGES_DIR, 'alefgard.gif'))
+        # self.layout_tiles = parse_map_tiles(join(IMAGES_DIR, 'alefgard.gif'))
         self.layout_numpy_array = np.array(self.layout)
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.music_file_path = overworld_music
+        self.staircases = {}
 
     def hero_underlying_tile(self):
         return 'CASTLE'

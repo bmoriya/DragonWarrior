@@ -3,6 +3,7 @@ from unittest import TestCase
 import numpy as np
 import pygame
 from pygame.imageext import load_extended
+from pygame.sprite import LayeredDirty
 from pygame.transform import scale
 
 from src.camera import Camera
@@ -25,11 +26,14 @@ def create_key_mock(pressed_key):
 class TestMockMap(DragonWarriorMap):
     def __init__(self, hero_images):
         super().__init__(None)
-        self.layout = [[34, 0],
+        self.layout = [[33, 0],
                        [1, 2]]
         self.height = len(self.layout * TILE_SIZE)
         self.width = len(self.layout[0] * TILE_SIZE)
         self.layout_numpy_array = np.array(self.layout)
+
+    def hero_underlying_tile(self):
+        return 'BRICK'
 
 
 class TestGame(TestCase):
@@ -51,6 +55,7 @@ class TestGame(TestCase):
                                               left_images=self.hero_images[Direction.LEFT.value],
                                               up_images=self.hero_images[Direction.UP.value],
                                               right_images=self.hero_images[Direction.RIGHT.value])
+        self.game.current_map.player_sprites = LayeredDirty(self.game.current_map.player)
         self.game.hero_row = 0
         self.game.hero_column = 0
         self.hero_layout_column, self.hero_layout_row = self.game.current_map.player.rect.x // TILE_SIZE, self.game.current_map.player.rect.y // TILE_SIZE
@@ -83,10 +88,10 @@ class TestGame(TestCase):
         self.assertEqual(self.game.move_player(key), None)
 
     def test_get_tile_by_coordinates(self):
-        self.assertEqual(self.game.get_tile_by_coordinates(0, 0), 'HERO')
-        self.assertEqual(self.game.get_tile_by_coordinates(1, 0), 'ROOF')
-        self.assertEqual(self.game.get_tile_by_coordinates(0, 1), 'WALL')
-        self.assertEqual(self.game.get_tile_by_coordinates(1, 1), 'WOOD')
+        self.assertEqual('HERO', self.game.get_tile_by_coordinates(0, 0))
+        self.assertEqual('ROOF', self.game.get_tile_by_coordinates(1, 0))
+        self.assertEqual('WALL', self.game.get_tile_by_coordinates(0, 1))
+        self.assertEqual('WOOD', self.game.get_tile_by_coordinates(1, 1))
 
     # TODO: implement test_handle_roaming_character_map_edge_side_collision.
 

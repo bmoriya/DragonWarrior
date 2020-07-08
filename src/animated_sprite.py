@@ -43,3 +43,7 @@ class AnimatedSprite(BaseSprite):
             self.image = self.up_images[self.current_frame]
         elif self.direction == Direction.RIGHT.value:
             self.image = self.right_images[self.current_frame]
+        self.dirty = 1
+
+    def pause(self):
+        self.dirty = 1
