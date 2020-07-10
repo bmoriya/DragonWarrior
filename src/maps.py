@@ -144,7 +144,7 @@ class DragonWarriorMap:
         self.bottom_top_left_coast_group = Group()  # 31
         self.bottom_top_right_coast_group = Group()  # 32
 
-        self.tile_key = OrderedDict([
+        self.floor_tile_key = OrderedDict([
             ('ROOF', {'val': 0, 'group': self.roof_group}),
             ('WALL', {'val': 1, 'group': self.wall_group}),
             ('WOOD', {'val': 2, 'group': self.wood_group}),
@@ -223,50 +223,41 @@ class DragonWarriorMap:
               'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
         ])
-        self.tile_key.update(self.character_key)
+        self.tile_key = OrderedDict(list(self.floor_tile_key.items()) + list(self.character_key.items()))
+        self.all_floor_sprite_groups = [val.get('group') for val in self.floor_tile_key.values()]
 
     def get_tile_by_value(self, position):
         return list(self.tile_key.keys())[position]
 
     def get_initial_character_location(self, character_name):
-        hero_layout_position = np.asarray(np.where(self.layout_numpy_array == self.tile_key[character_name]['val'])).T
+        hero_layout_position = np.asarray(
+            np.where(self.layout_numpy_array == self.character_key[character_name]['val'])).T
         return hero_layout_position
 
     # def get_staircase_locations(self):
     #     staircase_locations = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
     #     return staircase_locations
 
-    def draw_map(self, surface):
-        """
-        Draw static sprites on the big map.
-        """
-        for col_dict in self.tile_key.values():
-            group = col_dict.get('group')
-            if group is not None:
-                group.draw(surface)
-
     def load_map(self):
         # start_time = time.time()
         current_loaded_map = self
-
         x_offset = TILE_SIZE // 2
         y_offset = TILE_SIZE // 2
-
         tiles_in_current_loaded_map = set([self.get_tile_by_value(tile) for row in self.layout for tile in row])
         self.impassable_tiles = tuple(tiles_in_current_loaded_map & set(all_impassable_tiles))
         for y in range(len(self.layout)):
             for x in range(len(self.layout[y])):
                 self.center_pt = (x * TILE_SIZE) + x_offset, (y * TILE_SIZE) + y_offset
                 self.map_floor_tiles(x, y)
-                self.map_character_tiles(current_loaded_map, x, y)
+                self.map_character_tiles(x, y)
         # print("--- %s seconds ---" % (time.time() - start_time))
 
-    def map_character_tiles(self, current_loaded_map, x, y):
+    def map_character_tiles(self, x, y):
         for character, character_dict in self.character_key.items():
-            if self.layout[y][x] >= 33: # 'HERO' hardcoded value
+            if self.layout[y][x] >= 33:  # 'HERO' hardcoded value
                 if self.layout[y][x] == character_dict['val']:
                     if self.layout[y][x] == self.character_key['HERO']['val']:
-                        self.map_player(current_loaded_map, character_dict['underlying_tile'])
+                        self.map_player(character_dict['underlying_tile'])
                     elif character_dict['four_sided']:
                         self.map_four_sided_npc(name=character, direction=character_dict['direction'],
                                                 underlying_tile=character_dict['underlying_tile'],
@@ -313,7 +304,7 @@ class DragonWarriorMap:
         self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
                       tile_group=self.tile_key[underlying_tile]['group'])
 
-    def map_player(self, current_loaded_map, underlying_tile):
+    def map_player(self, underlying_tile):
         # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
         self.player = Player(center_point=self.center_pt,
                              down_images=self.hero_images[Direction.DOWN.value],

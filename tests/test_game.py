@@ -35,6 +35,9 @@ class TestMockMap(DragonWarriorMap):
     def hero_underlying_tile(self):
         return 'BRICK'
 
+    def hero_initial_direction(self):
+        return Direction.DOWN.value()
+
 
 class TestGame(TestCase):
 
@@ -42,7 +45,9 @@ class TestGame(TestCase):
         self.game = Game()
         self.game.camera_pos = 0, 0
         self.center_pt = 0, 0
+        # TODO: Fix camera edge case when using TestMockMap (smaller than + 8 and + 7).
         self.game.current_map = TestMockMap(hero_images=None)
+        # self.game.current_map = TestMap(hero_images=None)
 
         self.initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
 
@@ -59,8 +64,7 @@ class TestGame(TestCase):
         self.game.hero_row = 0
         self.game.hero_column = 0
         self.hero_layout_column, self.hero_layout_row = self.game.current_map.player.rect.x // TILE_SIZE, self.game.current_map.player.rect.y // TILE_SIZE
-        # self.camera = Camera(self.game.current_map, self.initial_hero_location, speed=2)
-        self.camera = Camera(hero_position=(self.hero_layout_row, self.hero_layout_column),
+        self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.game.current_map, speed=None)
         pygame.key.get_pressed = create_key_mock(pygame.K_RIGHT)
         pygame.key.get_pressed = create_key_mock(pygame.K_UP)
@@ -69,23 +73,13 @@ class TestGame(TestCase):
 
     # def test_get_initial_camera_position(self):
     #     initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-    #     self.assertEqual(self.camera.set_camera_position(initial_hero_location), (0, 0))
-    #     self.game.current_map.layout = [[1, 0],
-    #                                     [34, 2]]
-    #     initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-    #     self.assertEqual(self.camera.set_camera_position(initial_hero_location), (-16, 0))
-    #     self.game.current_map.layout = [[1, 34],
-    #                                     [0, 2]]
-    #     initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-    #     self.assertEqual(self.camera.set_camera_position(initial_hero_location), (0, -7))
-    #     self.game.current_map.layout = [[1, 0],
-    #                                     [2, 34]]
-    #     initial_hero_location = self.game.current_map.get_initial_character_location('HERO')
-    #     self.assertEqual(self.camera.set_camera_position(initial_hero_location), (-16, -7))
+    #     self.camera.set_camera_position(initial_hero_location)
+    #     self.assertEqual(0, self.camera.x)
+    #     self.assertEqual(0, self.camera.y)
 
     def test_move_player_return_value(self):
         key = pygame.key.get_pressed()
-        self.assertEqual(self.game.move_player(key), None)
+        self.assertIsNone(self.game.move_player(key))
 
     def test_get_tile_by_coordinates(self):
         self.assertEqual('HERO', self.game.get_tile_by_coordinates(0, 0))
@@ -105,3 +99,26 @@ class TestGame(TestCase):
     #     self.game.current_map.roaming_characters.append(self.roaming_guard)
     #     self.game.move_roaming_characters()
     #     self.assertEqual(initial_roaming_guard_position, )  # current roaming guard position)
+
+    def test_get_next_coordinates(self):
+        self.assertEqual((0, 1), self.game.get_next_coordinates(0, 0, Direction.DOWN.value))
+        self.assertEqual((1, 0), self.game.get_next_coordinates(0, 0, Direction.RIGHT.value))
+
+        self.assertEqual((1, 1), self.game.get_next_coordinates(1, 0, Direction.DOWN.value))
+        self.assertEqual((0, 0), self.game.get_next_coordinates(1, 0, Direction.LEFT.value))
+
+        self.assertEqual((0, 0), self.game.get_next_coordinates(0, 1, Direction.UP.value))
+        self.assertEqual((1, 1), self.game.get_next_coordinates(0, 1, Direction.RIGHT.value))
+
+        self.assertEqual((1, 0), self.game.get_next_coordinates(1, 1, Direction.UP.value))
+        self.assertEqual((0, 1), self.game.get_next_coordinates(1, 1, Direction.LEFT.value))
+
+    def test_unpause_all_movement(self):
+        self.game.pause_all_movement()
+        self.assertFalse(self.game.enable_animate)
+        self.assertFalse(self.game.enable_roaming)
+        self.assertFalse(self.game.enable_movement)
+        self.game.unpause_all_movement()
+        self.assertTrue(self.game.enable_animate)
+        self.assertTrue(self.game.enable_roaming)
+        self.assertTrue(self.game.enable_movement)

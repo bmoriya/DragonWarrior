@@ -1,3 +1,4 @@
+from config import TILE_SIZE
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 
@@ -31,3 +32,20 @@ class RoamingCharacter(AnimatedSprite):
         self.right_images = right_images
         self.direction = direction
         self.center_point = center_point
+
+
+def handle_roaming_character_sides_collision(current_map, roaming_character):
+    """
+    Handle collision with the sides of the map (for roaming characters).
+    :type roaming_character:
+    :param roaming_character: Roaming character to check for sides collision.
+    :return: None
+    """
+    if roaming_character.rect.x < 0:  # Simple Sides Collision
+        roaming_character.rect.x = 0  # Reset Player Rect Coord
+    elif roaming_character.rect.x > current_map.width - TILE_SIZE:
+        roaming_character.rect.x = current_map.width - TILE_SIZE
+    if roaming_character.rect.y < 0:
+        roaming_character.rect.y = 0
+    elif roaming_character.rect.y > current_map.height - TILE_SIZE:
+        roaming_character.rect.y = current_map.height - TILE_SIZE

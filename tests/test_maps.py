@@ -14,7 +14,7 @@ from src.camera import Camera
 from src.common import UNARMED_HERO_PATH, get_image, \
     DRAGON_QUEST_FONT_PATH
 from src.config import SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED, NES_RES
-from src.maps import parse_animated_spritesheet, TestMap
+from src.maps import parse_animated_spritesheet
 from tests.test_game import TestMockMap
 
 
@@ -48,8 +48,8 @@ class TestDragonWarriorMap(TestCase):
                                                              widget_font_size=8 * SCALE,
                                                              widget_margin=(10 * SCALE, 5 * SCALE),
                                                              widget_offset=(0, 5 * SCALE),
-                                                             widget_selection_effect=pygame_menu.widgets.LeftArrowSelection(
-                                                                 blink_ms=500))
+                                                             widget_selection_effect=pygame_menu.widgets.
+                                                             LeftArrowSelection(blink_ms=500))
         self.opacity = 0
         init()
         self.command_menu_launched, self.paused = False, False

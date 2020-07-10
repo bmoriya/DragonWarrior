@@ -8,9 +8,6 @@ import pygame
 
 from src.config import SFX_DIR, SOUND_ENABLED, MUSIC_ENABLED, MUSIC_DIR, IMAGES_DIR, FONTS_DIR
 
-separator = 'DragonWarrior'
-root_project_path = os.getcwd().split(separator, 1)[0]
-
 
 class Direction(IntEnum):
     DOWN = 0
@@ -18,6 +15,18 @@ class Direction(IntEnum):
     UP = 2
     RIGHT = 3
 
+
+# Files/Directories
+root_project_path = os.getcwd().split('DragonWarrior', 1)[0]
+
+
+def find_file(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+
+
+# Sound
 
 _sound_library = {}
 bump_sfx = join(SFX_DIR, '42 Dragon Quest 1 - Bumping into Walls (22khz mono).wav')
@@ -35,6 +44,9 @@ def play_sound(path='data/sound/sfx'):
             sound = pygame.mixer.Sound(canonicalized_path)
             _sound_library[path] = sound
         sound.play()
+
+
+# Music
 
 
 _music_library = {}
@@ -55,6 +67,9 @@ def play_music(path='data/sound/music'):
         music.play(-1)
 
 
+# Images
+
+BLACK, WHITE, RED = (0, 0, 0), (255, 255, 255), (255, 0, 0)
 _image_library = {}
 MAP_TILES_PATH = join(IMAGES_DIR, 'tileset.png')
 UNARMED_HERO_PATH = join(IMAGES_DIR, 'unarmed_hero.png')
@@ -83,11 +98,7 @@ def get_image(path):
     return image
 
 
-def find_file(name, path):
-    for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
-
+# Fonts
 
 pygame.font.init()
 DRAGON_QUEST_FONT_PATH = join(FONTS_DIR, 'dragon-quest.ttf')
