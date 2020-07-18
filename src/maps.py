@@ -4,6 +4,8 @@ import numpy as np
 from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
 
+from common import Direction
+from config import TILE_SIZE
 from src.RoamingCharacter import RoamingCharacter
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
@@ -92,6 +94,7 @@ class DragonWarriorMap:
 
         # Character variables
 
+        self.scale = SCALE
         self.player = None
         self.player_sprites = None
         self.characters = []
@@ -268,7 +271,7 @@ class DragonWarriorMap:
 
     def map_four_sided_npc(self, name, direction, underlying_tile, image_path, is_roaming=False):
         sheet = get_image(image_path)
-        sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
+        sheet = scale(sheet, (sheet.get_width() * self.scale, sheet.get_height() * self.scale))
         images = parse_animated_spritesheet(sheet, is_roaming=True)
         character_sprites = LayeredDirty()
         if is_roaming:
@@ -601,3 +604,18 @@ def parse_map_tiles(map_path):
             rect = (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             row.append(map_tilesheet.subsurface(rect))
     return map_tiles
+
+
+def get_next_coordinates(character_column, character_row, direction):
+    if direction == Direction.UP.value:
+        return character_row - 1, character_column
+    elif direction == Direction.DOWN.value:
+        return character_row + 1, character_column
+    elif direction == Direction.LEFT.value:
+        return character_row, character_column - 1
+    elif direction == Direction.RIGHT.value:
+        return character_row, character_column + 1
+
+
+def get_roaming_character_position(roaming_character):
+    roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE

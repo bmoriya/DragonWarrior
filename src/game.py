@@ -11,41 +11,26 @@ from pygame.transform import scale
 
 import menu
 from RoamingCharacter import handle_roaming_character_sides_collision
+from config import NES_RES
+from maps import get_roaming_character_position
 from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
     menu_button_sfx, stairs_down_sfx, stairs_up_sfx, BLACK
-from src.config import NES_RES, SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED, MUSIC_ENABLED
+from src.config import SCALE, TILE_SIZE, FULLSCREEN_ENABLED, MUSIC_ENABLED
 from src.maps import parse_animated_spritesheet
-
-
-def get_next_coordinates(character_column, character_row, direction):
-    if direction == Direction.UP.value:
-        return character_row - 1, character_column
-    elif direction == Direction.DOWN.value:
-        return character_row + 1, character_column
-    elif direction == Direction.LEFT.value:
-        return character_row, character_column - 1
-    elif direction == Direction.RIGHT.value:
-        return character_row, character_column + 1
-
-
-def get_roaming_character_position(roaming_character):
-    roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
 
 
 class Game:
     GAME_TITLE = "Dragon Warrior"
     FPS = 60
-    WIN_WIDTH, WIN_HEIGHT = NES_RES[0] * SCALE, NES_RES[1] * SCALE
-
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = USEREVENT + 1
     time.set_timer(MOVE_EVENT, 100)
 
     def __init__(self):
-
         # Initialize pygame
+        self.command_menu_subsurface = None
         self.character_rects = []
         self.map_rects = []
         self.opacity = 0
@@ -57,15 +42,17 @@ class Game:
             flags = FULLSCREEN | DOUBLEBUF
         else:
             flags = RESIZABLE | DOUBLEBUF
-        self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT), flags)
+        self.scale = SCALE
+        self.win_width = NES_RES[0] * self.scale
+        self.win_height = NES_RES[1] * self.scale
+        self.screen = set_mode((self.win_width, self.win_height), flags)
         self.screen.set_alpha(None)
         set_caption(self.GAME_TITLE)
         self.roaming_character_go_cooldown = 3000
         self.next_tile_checked = False
-
         unarmed_hero_sheet = get_image(UNARMED_HERO_PATH)
         unarmed_hero_tilesheet = scale(unarmed_hero_sheet, (
-            unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
+            unarmed_hero_sheet.get_width() * self.scale, unarmed_hero_sheet.get_height() * self.scale))
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
         self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
@@ -103,7 +90,7 @@ class Game:
         self.background = self.bigmap.subsurface(0, 0, self.current_map.width,
                                                  self.current_map.height).convert()
 
-        pg.event.set_allowed([pg.QUIT])
+        # pg.event.set_allowed([pg.QUIT])
 
     def main(self):
         """
@@ -164,6 +151,10 @@ class Game:
             # Select button
             pass
             print("U key pressed (Select button).")
+        # TODO: Allow for zoom in and out if Ctrl + PLUS | MINUS is pressed.
+
+        # if key[pg.K_LCTRL] and (key[pg.K_PLUS] or key[pg.K_KP_PLUS]):
+        #     self.scale = self.scale + 1
 
         # For debugging purposes, this prints out the current tile that the player is standing on.
         # print(self.get_tile_by_coordinates(self.current_map.player.rect.y // TILE_SIZE,
@@ -264,8 +255,7 @@ class Game:
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
         self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
-
-        self.fade_out(self.WIN_WIDTH, self.WIN_HEIGHT)
+        self.fade_out(self.win_width, self.win_height)
         if MUSIC_ENABLED:
             pg.mixer.music.stop()
         self.current_map.load_map()
@@ -276,7 +266,7 @@ class Game:
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
-        self.fade_in(self.WIN_WIDTH, self.WIN_HEIGHT)
+        self.fade_in(self.win_width, self.win_height)
 
         self.unpause_all_movement()
 

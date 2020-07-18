@@ -13,7 +13,7 @@ from src import maps
 from src.camera import Camera
 from src.common import UNARMED_HERO_PATH, get_image, \
     DRAGON_QUEST_FONT_PATH
-from src.config import SCALE, WIN_WIDTH, WIN_HEIGHT, TILE_SIZE, FULLSCREEN_ENABLED, NES_RES
+from src.config import SCALE, TILE_SIZE, FULLSCREEN_ENABLED, NES_RES
 from src.maps import parse_animated_spritesheet
 from tests.test_game import TestMockMap
 
@@ -21,7 +21,6 @@ from tests.test_game import TestMockMap
 class TestDragonWarriorMap(TestCase):
     GAME_TITLE = "Dragon Warrior"
     FPS = 60
-    WIN_WIDTH, WIN_HEIGHT = NES_RES[0] * SCALE, NES_RES[1] * SCALE
 
     ORIGIN = (0, 0)
     BLACK, WHITE, RED = (0, 0, 0), (255, 255, 255), (255, 0, 0)
@@ -58,7 +57,7 @@ class TestDragonWarriorMap(TestCase):
             flags = FULLSCREEN | DOUBLEBUF
         else:
             flags = RESIZABLE | DOUBLEBUF
-        self.screen = set_mode((WIN_WIDTH, WIN_HEIGHT), flags)
+        self.screen = set_mode((NES_RES[0] * SCALE, NES_RES[1] * SCALE), flags)
         self.screen.set_alpha(None)
         set_caption(self.GAME_TITLE)
         self.roaming_character_go_cooldown = 3000
