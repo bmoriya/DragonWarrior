@@ -89,9 +89,9 @@ class Game:
         self.background = self.bigmap.subsurface(0, 0, self.current_map.width,
                                                  self.current_map.height).convert()
         self.command_menu_subsurface = self.background.subsurface((self.hero_layout_column - 2) * TILE_SIZE,
-                                                             (self.hero_layout_row - 6) * TILE_SIZE,
-                                                             8 * TILE_SIZE,
-                                                             5 * TILE_SIZE)
+                                                                  (self.hero_layout_row - 6) * TILE_SIZE,
+                                                                  8 * TILE_SIZE,
+                                                                  5 * TILE_SIZE)
 
         # pg.event.set_allowed([pg.QUIT])
 

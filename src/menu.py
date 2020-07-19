@@ -21,7 +21,7 @@ class Menu:
                                                                   widget_margin=(10 * SCALE, 5 * SCALE),
                                                                   widget_offset=(0, 5 * SCALE),
                                                                   widget_selection_effect=pygame_menu.widgets.
-                                                                  LeftArrowSelection(blink_ms=500))
+                                                                  LeftArrowSelection(blink_ms=500, arrow_size=(SCALE * 5, SCALE * 6)))
         # TODO: Fix LeftArrowSelection size.
 
 
@@ -29,15 +29,22 @@ class CommandMenu(Menu):
 
     def __init__(self, background, column, row):
         super().__init__()
-        self.command_menu_subsurface = background.subsurface((column - 2) * TILE_SIZE,
-                                                             (row - 6) * TILE_SIZE,
-                                                             8 * TILE_SIZE,
-                                                             5 * TILE_SIZE)
-        self.command_menu = pygame_menu.Menu(height=self.command_menu_subsurface.get_height() * 3,
-                                             width=self.command_menu_subsurface.get_width() * 2, title='COMMAND',
-                                             center_content=False, column_force_fit_text=False,
-                                             column_max_width=(TILE_SIZE * 1, TILE_SIZE * 3), columns=2, enabled=True,
-                                             joystick_enabled=True, mouse_enabled=False, mouse_visible=False, rows=4,
+        command_menu_subsurface = background.subsurface((column - 2) * TILE_SIZE,
+                                                        (row - 6) * TILE_SIZE,
+                                                        8 * TILE_SIZE,
+                                                        5 * TILE_SIZE)
+        self.command_menu = pygame_menu.Menu(height=command_menu_subsurface.get_height() * 3,
+                                             width=command_menu_subsurface.get_width() * 2,
+                                             title='COMMAND',
+                                             center_content=False,
+                                             column_force_fit_text=False,
+                                             column_max_width=(TILE_SIZE * 1, TILE_SIZE * 3),
+                                             columns=2,
+                                             enabled=True,
+                                             joystick_enabled=True,
+                                             mouse_enabled=False,
+                                             mouse_visible=False,
+                                             rows=4,
                                              theme=self.dragon_warrior_menu_theme)
         self.command_menu.add_button('TALK', self.talk)
         self.command_menu.add_button('STATUS', self.status)

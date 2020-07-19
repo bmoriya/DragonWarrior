@@ -9,7 +9,7 @@ SOUND_DIR = join(DATA_DIR, 'sound')
 MUSIC_DIR = join(SOUND_DIR, 'music')
 SFX_DIR = join(SOUND_DIR, 'sfx')
 
-SCALE = 1
+SCALE = 2
 TILE_SIZE = 16 * SCALE
 NES_RES = (256, 240)
 MUSIC_ENABLED = False
