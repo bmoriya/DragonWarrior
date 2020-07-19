@@ -4,8 +4,6 @@ import numpy as np
 from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
 
-from common import Direction
-from config import TILE_SIZE
 from src.RoamingCharacter import RoamingCharacter
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
@@ -574,6 +572,7 @@ class Overworld(DragonWarriorMap):
             [14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 13, 25, 22, 22, 22, 30, 16, 16, 20, 20, 20, 19],
             [14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 25, 22, 22, 29, 16, 16, 16, 16, 16, 16, 16],
             [14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 13, 25, 22, 22, 22, 32, 16, 16, 16, 16, 19, 19],
+            [14, 14, 14, 14, 14, 14, 13, 13, 13, 13, 13, 13, 26, 22, 22, 22, 29, 16, 16, 16, 16, 16, 19, 19],
         ]
         self.layout = overworld
         # self.layout_tiles = parse_map_tiles(join(IMAGES_DIR, 'alefgard.gif'))

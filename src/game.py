@@ -30,7 +30,6 @@ class Game:
 
     def __init__(self):
         # Initialize pygame
-        self.command_menu_subsurface = None
         self.character_rects = []
         self.map_rects = []
         self.opacity = 0
@@ -55,9 +54,9 @@ class Game:
             unarmed_hero_sheet.get_width() * self.scale, unarmed_hero_sheet.get_height() * self.scale))
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
-        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
         # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
-        # self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
+        self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
 
         # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
         self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
@@ -74,7 +73,7 @@ class Game:
         self.current_map.load_map()
         initial_hero_location = self.current_map.get_initial_character_location('HERO')
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
-        self.cmd_menu = menu.CommandMenu(self.background, self.hero_layout_row, self.hero_layout_column)
+        self.cmd_menu = menu.CommandMenu(self.background, self.hero_layout_column, self.hero_layout_row)
         self.next_tile = self.get_next_tile(character_column=self.hero_layout_column,
                                             character_row=self.hero_layout_row,
                                             direction=self.current_map.player.direction)
@@ -89,6 +88,10 @@ class Game:
         self.events = get()
         self.background = self.bigmap.subsurface(0, 0, self.current_map.width,
                                                  self.current_map.height).convert()
+        self.command_menu_subsurface = self.background.subsurface((self.hero_layout_column - 2) * TILE_SIZE,
+                                                             (self.hero_layout_row - 6) * TILE_SIZE,
+                                                             8 * TILE_SIZE,
+                                                             5 * TILE_SIZE)
 
         # pg.event.set_allowed([pg.QUIT])
 
@@ -192,10 +195,10 @@ class Game:
         for sprites in self.current_map.character_sprites:
             self.character_rects.append(sprites.draw(self.background))
         if self.command_menu_launch_signaled:
-            self.command_menu_subsurface = self.background.subsurface(
-                (self.hero_layout_column * TILE_SIZE) - TILE_SIZE * 2,
-                (self.hero_layout_row * TILE_SIZE) - (TILE_SIZE * 6),
-                TILE_SIZE * 8, TILE_SIZE * 5)
+            self.command_menu_subsurface = self.background.subsurface((self.hero_layout_column - 2) * TILE_SIZE,
+                                                                      (self.hero_layout_row - 6) * TILE_SIZE,
+                                                                      8 * TILE_SIZE,
+                                                                      5 * TILE_SIZE)
             if not self.command_menu_launched:
                 self.launch_command_menu()
             else:

@@ -29,9 +29,10 @@ class CommandMenu(Menu):
 
     def __init__(self, background, column, row):
         super().__init__()
-        self.command_menu_subsurface = background.subsurface((column * TILE_SIZE) - TILE_SIZE * 2,
-                                                             (row * TILE_SIZE) - (TILE_SIZE * 6),
-                                                             TILE_SIZE * 8, TILE_SIZE * 5)
+        self.command_menu_subsurface = background.subsurface((column - 2) * TILE_SIZE,
+                                                             (row - 6) * TILE_SIZE,
+                                                             8 * TILE_SIZE,
+                                                             5 * TILE_SIZE)
         self.command_menu = pygame_menu.Menu(height=self.command_menu_subsurface.get_height() * 3,
                                              width=self.command_menu_subsurface.get_width() * 2, title='COMMAND',
                                              center_content=False, column_force_fit_text=False,
