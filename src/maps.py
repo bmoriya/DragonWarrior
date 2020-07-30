@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 import numpy as np
 from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
@@ -145,7 +143,7 @@ class DragonWarriorMap:
         self.bottom_top_left_coast_group = Group()  # 31
         self.bottom_top_right_coast_group = Group()  # 32
 
-        self.floor_tile_key = OrderedDict([
+        self.floor_tile_key = dict([
             ('ROOF', {'val': 0, 'group': self.roof_group}),
             ('WALL', {'val': 1, 'group': self.wall_group}),
             ('WOOD', {'val': 2, 'group': self.wood_group}),
@@ -180,7 +178,7 @@ class DragonWarriorMap:
             ('BOTTOM_TOP_LEFT_COAST', {'val': 31, 'group': self.bottom_top_left_coast_group}),
             ('BOTTOM_TOP_RIGHT_COAST', {'val': 32, 'group': self.bottom_top_right_coast_group}),
         ])
-        self.character_key = OrderedDict([
+        self.character_key = dict([
             ('HERO',
              {'val': 33, 'four_sided': True, 'path': UNARMED_HERO_PATH, 'roaming': False,
               'underlying_tile': self.hero_underlying_tile()}),
@@ -224,7 +222,7 @@ class DragonWarriorMap:
               'direction': Direction.DOWN.value,
               'underlying_tile': 'BRICK'}),
         ])
-        self.tile_key = OrderedDict(list(self.floor_tile_key.items()) + list(self.character_key.items()))
+        self.tile_key = dict(list(self.floor_tile_key.items()) + list(self.character_key.items()))
         self.all_floor_sprite_groups = [val.get('group') for val in self.floor_tile_key.values()]
 
     def get_tile_by_value(self, position):
