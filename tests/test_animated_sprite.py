@@ -54,3 +54,8 @@ class TestAnimatedSprite(TestCase):
         self.anim_sprite.direction = Direction.RIGHT.value
         self.anim_sprite.animate()
         self.assertEqual(self.anim_sprite.image, self.anim_sprite.images_map[self.anim_sprite.direction][self.anim_sprite.current_frame])
+
+    def test_pause(self):
+        self.anim_sprite.pause()
+        self.assertEqual(1, self.anim_sprite.dirty)
+

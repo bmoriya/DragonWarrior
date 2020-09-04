@@ -9,6 +9,8 @@ from pygame.time import Clock
 from pygame.time import get_ticks
 from pygame.transform import scale
 
+from common import village_music, Direction
+from maps import DragonWarriorMap
 from src import maps
 from src.camera import Camera
 from src.common import UNARMED_HERO_PATH, get_image, \
@@ -16,6 +18,41 @@ from src.common import UNARMED_HERO_PATH, get_image, \
 from src.config import SCALE, TILE_SIZE, FULLSCREEN_ENABLED, NES_RES
 from src.maps import parse_animated_spritesheet
 from tests.test_game import TestMockMap
+
+
+class TestMap(DragonWarriorMap):
+
+    def __init__(self, hero_images):
+        all_characters_values = [character_dict['val'] for character_dict in self.character_key.values()]
+        all_characters_values.insert(0, 3)
+        all_characters_values.append(3)
+        brick_line = tuple([3] * 16)
+        test_map = [
+            brick_line,
+            [3] + [4] * 14 + [3],
+            [3, 4] + [6] * 12 + [4, 3],
+            [3, 4, 6] + [7] * 10 + [6, 4, 3],
+            [3, 4, 6, 7] + [4] * 8 + [7, 6, 4, 3],
+            [3, 4, 6, 7, 4] + [3] * 6 + [4, 7, 6, 4, 3],
+            [3, 40, 40, 40, 40, 40, 40, 40, 40, 4, 3, 4, 7, 6, 4, 3],
+            all_characters_values,
+            [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
+            [3, 4, 6, 7, 4] + [3] * 6 + [4, 7, 6, 4, 3],
+            [3, 4, 6, 7] + [4] * 8 + [7, 6, 4, 3],
+            [3, 4, 6] + [7] * 10 + [6, 4, 3],
+            [3, 4] + [6] * 12 + [4, 3],
+            [3] + [4] * 14 + [3],
+            brick_line
+        ]
+        super().__init__(hero_images, test_map)
+
+        self.music_file_path = village_music
+
+    def hero_underlying_tile(self):
+        return 'BRICK'
+
+    def hero_initial_direction(self):
+        return Direction.DOWN.value
 
 
 class TestDragonWarriorMap(TestCase):

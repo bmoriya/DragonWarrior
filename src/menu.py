@@ -6,7 +6,8 @@ from config import SCALE, TILE_SIZE
 
 class Menu:
     def __init__(self):
-        self.dragon_warrior_menu_theme = pygame_menu.themes.Theme(background_color=BLACK, cursor_color=WHITE,
+        self.dragon_warrior_menu_theme = pygame_menu.themes.Theme(background_color=BLACK,
+                                                                  cursor_color=WHITE,
                                                                   cursor_selection_color=WHITE,
                                                                   focus_background_color=BLACK,
                                                                   title_background_color=BLACK,

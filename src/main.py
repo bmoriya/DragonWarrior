@@ -4,7 +4,7 @@
 from src.game import Game
 
 
-def run():
+def run():  # pragma: no cover
     game = Game()
     game.main()
 

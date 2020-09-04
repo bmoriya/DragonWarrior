@@ -18,7 +18,7 @@ class Camera:
         self.x = (-hero_position[0] + 8) * TILE_SIZE
         self.y = (-hero_position[1] + 7) * TILE_SIZE
 
-    def get_pos(self):
+    def get_pos(self) -> tuple:
         """
         Gets the position of a particular rectangle.
         """

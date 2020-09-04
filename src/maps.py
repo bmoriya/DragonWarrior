@@ -1,11 +1,12 @@
 import numpy as np
 from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
+from typing import Tuple
 
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, KING_LORIK_PATH, get_image, \
-    GUARD_PATH, MAN_PATH, village_music, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
+    GUARD_PATH, MAN_PATH, tantegel_castle_courtyard_music, WOMAN_PATH, WISE_MAN_PATH, \
     SOLDIER_PATH, MERCHANT_PATH, PRINCESS_GWAELIN_PATH, DRAGONLORD_PATH, UNARMED_HERO_PATH, MAP_TILES_PATH, \
     overworld_music
 from src.config import TILE_SIZE, SCALE, COLOR_KEY
@@ -56,7 +57,7 @@ BOTTOM_TOP_LEFT_COAST = 31
 BOTTOM_TOP_RIGHT_COAST = 32
 
 
-def parse_animated_spritesheet(sheet, is_roaming=False):
+def parse_animated_spritesheet(sheet, is_roaming=False) -> Tuple[list, list, list, list]:
     """
     Parses spritesheets and creates image lists. If is_roaming is True
     the sprite will have four lists of images, one for each direction. If
@@ -227,10 +228,10 @@ class DragonWarriorMap:
         self.tile_key = dict(list(self.floor_tile_key.items()) + list(self.character_key.items()))
         self.all_floor_sprite_groups = [val.get('group') for val in self.floor_tile_key.values()]
 
-    def get_tile_by_value(self, position):
+    def get_tile_by_value(self, position: int) -> str:
         return list(self.tile_key.keys())[position]
 
-    def get_initial_character_location(self, character_name):
+    def get_initial_character_location(self, character_name: str) -> np.ndarray:
         hero_layout_position = np.asarray(
             np.where(self.layout_numpy_array == self.character_key[character_name]['val'])).T
         return hero_layout_position
@@ -239,7 +240,7 @@ class DragonWarriorMap:
     #     staircase_locations = np.asarray(np.where(self.layout_numpy_array == self.tile_key['BRICK_STAIRDN']['val'])).T
     #     return staircase_locations
 
-    def load_map(self):
+    def load_map(self) -> None:
         # start_time = time.time()
         x_offset = TILE_SIZE // 2
         y_offset = TILE_SIZE // 2
@@ -252,7 +253,7 @@ class DragonWarriorMap:
                 self.map_character_tiles(x, y)
         # print("--- %s seconds ---" % (time.time() - start_time))
 
-    def map_character_tiles(self, x, y):
+    def map_character_tiles(self, x, y) -> None:
         for character, character_dict in self.character_key.items():
             if self.layout[y][x] > 32:  # anything below 32 is a floor tile
                 if self.layout[y][x] == character_dict['val']:
@@ -266,7 +267,7 @@ class DragonWarriorMap:
                         self.map_two_sided_npc(image_path=character_dict['path'], name=character,
                                                underlying_tile=character_dict['underlying_tile'])
 
-    def map_four_sided_npc(self, name, direction, underlying_tile, image_path, is_roaming=False):
+    def map_four_sided_npc(self, name, direction, underlying_tile, image_path, is_roaming=False) -> None:
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * self.scale, sheet.get_height() * self.scale))
         images = parse_animated_spritesheet(sheet, is_roaming=True)
@@ -282,11 +283,11 @@ class DragonWarriorMap:
         self.characters.append(character)
         self.character_sprites.append(character_sprites)
 
-    def add_tile_by_value_and_group(self, underlying_tile):
+    def add_tile_by_value_and_group(self, underlying_tile) -> None:
         self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
                       tile_group=self.tile_key[underlying_tile]['group'])
 
-    def map_two_sided_npc(self, image_path, name, underlying_tile):
+    def map_two_sided_npc(self, image_path, name, underlying_tile) -> None:
         sprites = LayeredDirty()
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
@@ -297,7 +298,7 @@ class DragonWarriorMap:
         self.character_sprites.append(sprites)
         self.add_tile_by_value_and_group(underlying_tile)
 
-    def map_player(self, underlying_tile):
+    def map_player(self, underlying_tile) -> None:
         # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
         self.player = Player(center_point=self.center_pt,
                              images=self.hero_images)
@@ -307,13 +308,13 @@ class DragonWarriorMap:
         self.characters.append(self.player)
         self.character_sprites.append(self.player_sprites)
 
-    def map_floor_tiles(self, x, y):
+    def map_floor_tiles(self, x, y) -> None:
         for tile, tile_dict in self.tile_key.items():
             if self.layout[y][x] < 33:
                 if self.layout[y][x] == tile_dict['val']:
                     self.add_tile(tile_value=tile_dict['val'], tile_group=tile_dict['group'])
 
-    def add_tile(self, tile_value, tile_group):
+    def add_tile(self, tile_value, tile_group) -> None:
         if tile_value < 10:
             tile = BaseSprite(self.center_pt, self.map_tiles[tile_value][0])
         elif 21 > tile_value >= 10:
@@ -332,41 +333,6 @@ class DragonWarriorMap:
     @property
     def hero_initial_direction(self):
         raise NotImplementedError("Method not implemented")
-
-
-class TestMap(DragonWarriorMap):
-
-    def __init__(self, hero_images):
-        all_characters_values = [character_dict['val'] for character_dict in self.character_key.values()]
-        all_characters_values.insert(0, 3)
-        all_characters_values.append(3)
-        brick_line = tuple([3] * 16)
-        test_map = [
-            brick_line,
-            [3] + [4] * 14 + [3],
-            [3, 4] + [6] * 12 + [4, 3],
-            [3, 4, 6] + [7] * 10 + [6, 4, 3],
-            [3, 4, 6, 7] + [4] * 8 + [7, 6, 4, 3],
-            [3, 4, 6, 7, 4] + [3] * 6 + [4, 7, 6, 4, 3],
-            [3, 40, 40, 40, 40, 40, 40, 40, 40, 4, 3, 4, 7, 6, 4, 3],
-            all_characters_values,
-            [3, 4, 6, 7, 4, 3, 4, 4, 4, 4, 3, 4, 7, 6, 4, 3],
-            [3, 4, 6, 7, 4] + [3] * 6 + [4, 7, 6, 4, 3],
-            [3, 4, 6, 7] + [4] * 8 + [7, 6, 4, 3],
-            [3, 4, 6] + [7] * 10 + [6, 4, 3],
-            [3, 4] + [6] * 12 + [4, 3],
-            [3] + [4] * 14 + [3],
-            brick_line
-        ]
-        super().__init__(hero_images, test_map)
-
-        self.music_file_path = village_music
-
-    def hero_underlying_tile(self):
-        return 'BRICK'
-
-    def hero_initial_direction(self):
-        return Direction.DOWN.value
 
 
 class TantegelThroneRoom(DragonWarriorMap):

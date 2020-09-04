@@ -98,7 +98,7 @@ class Game:
 
         # pg.event.set_allowed([pg.QUIT])
 
-    def main(self):
+    def main(self) -> None:
         """
         Main loop.
         :return: None
@@ -109,7 +109,7 @@ class Game:
             self.draw_all()
             self.update_screen()
 
-    def get_events(self):
+    def get_events(self) -> None:
         """
         Handle all events in main loop.
         :return: None
@@ -176,7 +176,7 @@ class Game:
 
         pg.event.pump()
 
-    def process_staircase_warps(self, staircase_dict: dict, staircase_location):
+    def process_staircase_warps(self, staircase_dict: dict, staircase_location) -> None:
         if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
             if staircase_dict['stair_direction'] == 'down':
                 play_sound(stairs_down_sfx)
@@ -184,7 +184,7 @@ class Game:
                 play_sound(stairs_up_sfx)
             self.map_change(staircase_dict['map'])
 
-    def draw_all(self):
+    def draw_all(self) -> None:
         """
         Draw map, sprites, background, menu and other surfaces.
         :return: None
@@ -220,7 +220,7 @@ class Game:
             self.cmd_menu.command_menu.update(self.events)
         pg.display.update()
 
-    def fade(self, width: int, height: int, fade_out: bool):
+    def fade(self, width: int, height: int, fade_out: bool) -> None:
         """
         Fade to/from current scene to/from black.
         :return: None
@@ -246,7 +246,7 @@ class Game:
             pg.display.update()
             pg.time.delay(5)
 
-    def map_change(self, next_map):
+    def map_change(self, next_map) -> None:
         """
         Change to a different map.
         :param next_map: The next map to be loaded.
@@ -274,7 +274,7 @@ class Game:
 
         # play_music(self.current_map.music_file_path)
 
-    def unlaunch_command_menu(self):
+    def unlaunch_command_menu(self) -> None:
         """
         Unlaunch the command menu.
         :return: None
@@ -283,7 +283,7 @@ class Game:
         self.unpause_all_movement()
         self.command_menu_launched = False
 
-    def unpause_all_movement(self):
+    def unpause_all_movement(self) -> None:
         """
         Unpause movement of animation, roaming, and character.
         :return: None
@@ -291,7 +291,7 @@ class Game:
         self.enable_animate, self.enable_roaming, self.enable_movement = True, True, True
         self.paused = False
 
-    def pause_all_movement(self):
+    def pause_all_movement(self) -> None:
         """
         Pause movement of animation, roaming, and character.
         :return: None
@@ -299,7 +299,7 @@ class Game:
         self.enable_animate, self.enable_roaming, self.enable_movement = False, False, False
         self.paused = True
 
-    def launch_command_menu(self):
+    def launch_command_menu(self) -> None:
         """
         Launch the command menu, which is used by the player to interact with the world in the game.
         :return: None
@@ -311,13 +311,12 @@ class Game:
             self.character_rects.append(command_menu_rect)
         self.command_menu_launched = True
 
-    def move_player(self, key):
+    def move_player(self, key) -> None:
         """
         Move the player in a specified direction.
         :param key: The key currently being pressed by the user.
         """
-        # block establishes direction if needed and whether to start
-        # or stop moving
+        # block establishes direction if needed and whether to start or stop moving
         # TODO(ELF): separate dependency of camera pos and player pos
         curr_pos_x, curr_pos_y = self.camera.get_pos()
 
@@ -346,18 +345,36 @@ class Game:
 
         self.camera.move(self.current_map.player.direction)
         if is_facing_medially(self.current_map.player):
-            if is_facing_up(self.current_map.player):
-                self.move(delta_x=0, delta_y=self.speed)
-            elif is_facing_down(self.current_map.player):
-                self.move(delta_x=0, delta_y=-self.speed)
+            self.move_medially(self.current_map.player)
         elif is_facing_laterally(self.current_map.player):
-            if is_facing_left(self.current_map.player):
-                self.move(delta_x=-self.speed, delta_y=0)
-            elif is_facing_right(self.current_map.player):
-                self.move(delta_x=self.speed, delta_y=0)
+            self.move_laterally(self.current_map.player)
         self.current_map.player_sprites.dirty = 1
 
-    def move(self, delta_x, delta_y):
+    def move_laterally(self, character) -> None:
+        if is_facing_left(character):
+            if character.name == "HERO":
+                self.move(delta_x=-self.speed, delta_y=0)
+            else:
+                self.move_roaming_character(character, delta_x=-self.speed, delta_y=0)
+        elif is_facing_right(character):
+            if character.name == "HERO":
+                self.move(delta_x=self.speed, delta_y=0)
+            else:
+                self.move_roaming_character(character, delta_x=self.speed, delta_y=0)
+
+    def move_medially(self, character) -> None:
+        if is_facing_up(character):
+            if character.name == "HERO":
+                self.move(delta_x=0, delta_y=self.speed)
+            else:
+                self.move_roaming_character(character, delta_x=0, delta_y=self.speed)
+        elif is_facing_down(character):
+            if character.name == "HERO":
+                self.move(delta_x=0, delta_y=-self.speed)
+            else:
+                self.move_roaming_character(character, delta_x=0, delta_y=-self.speed)
+
+    def move(self, delta_x, delta_y) -> None:
         """
         The method that actuates the movement of the player from within the move_player method.
         :param delta_x: Change in x position.
@@ -371,11 +388,9 @@ class Game:
                                                 character_row=self.hero_layout_row,
                                                 direction=self.current_map.player.direction)
             self.next_tile_checked = True
-        roaming_character_locations = [(roaming_character.column, roaming_character.row) for roaming_character in
-                                       self.current_map.roaming_characters]
+
         if not self.is_impassable(self.next_tile):
-            if self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row,
-                                         self.current_map.player.direction) not in roaming_character_locations:
+            if not self.roaming_character_in_path_of_character():
                 if delta_x:
                     self.current_map.player.rect.x += delta_x
                     next_cam_pos_x = curr_cam_pos_x + -delta_x
@@ -389,6 +404,12 @@ class Game:
 
         next_cam_pos_x, next_cam_pos_y = self.handle_sides_collision(next_cam_pos_x, next_cam_pos_y)
         self.camera.set_pos((next_cam_pos_x, next_cam_pos_y))
+
+    def roaming_character_in_path_of_character(self) -> bool:
+        roaming_character_locations = [(roaming_character.column, roaming_character.row) for roaming_character in
+                                       self.current_map.roaming_characters]
+        return self.get_next_coordinates(self.hero_layout_column, self.hero_layout_row,
+                                         self.current_map.player.direction) in roaming_character_locations
 
     def get_next_tile(self, character_column: int, character_row: int, direction) -> str:
         """
@@ -409,7 +430,7 @@ class Game:
         elif direction == Direction.RIGHT.value:
             return get_tile_by_coordinates(character_column + 1, character_row, self.current_map)
 
-    def get_next_coordinates(self, character_column, character_row, direction):
+    def get_next_coordinates(self, character_column: int, character_row: int, direction: int) -> tuple:
         if character_row < len(self.current_map.layout) and character_column < len(self.current_map.layout[0]):
             if direction == Direction.UP.value:
                 return character_column, character_row - 1
@@ -437,26 +458,26 @@ class Game:
         :param next_pos_y: Next y position (in terms of tile size).
         :return: tuple: The x, y coordinates (in terms of tile size) of the next position of the player.
         """
-        max_x_bound, max_y_bound, min_bound = self.current_map.width, self.current_map.height, 0
+        max_x_bound, max_y_bound, min_bound = self.current_map.width - TILE_SIZE, self.current_map.height - TILE_SIZE, 0
         if self.current_map.player.rect.x < min_bound:
             self.current_map.player.rect.x = min_bound
             play_sound(bump_sfx)
             next_pos_x += -self.speed
-        elif self.current_map.player.rect.x > max_x_bound - TILE_SIZE:
-            self.current_map.player.rect.x = max_x_bound - TILE_SIZE
+        elif self.current_map.player.rect.x > max_x_bound:
+            self.current_map.player.rect.x = max_x_bound
             play_sound(bump_sfx)
             next_pos_x += self.speed
         elif self.current_map.player.rect.y < min_bound:
             self.current_map.player.rect.y = min_bound
             play_sound(bump_sfx)
             next_pos_y -= self.speed
-        elif self.current_map.player.rect.y > max_y_bound - TILE_SIZE:
-            self.current_map.player.rect.y = max_y_bound - TILE_SIZE
+        elif self.current_map.player.rect.y > max_y_bound:
+            self.current_map.player.rect.y = max_y_bound
             play_sound(bump_sfx)
             next_pos_y += self.speed
         return next_pos_x, next_pos_y
 
-    def move_roaming_characters(self):
+    def move_roaming_characters(self) -> None:
         """
         Move all roaming characters in the current map.
         :return: None
@@ -484,20 +505,14 @@ class Game:
                         roaming_character.is_moving, roaming_character.next_tile_checked = False, False
                         return
             if is_facing_medially(roaming_character):
-                if roaming_character.direction == Direction.UP.value:
-                    self.move_roaming_character(roaming_character, delta_x=0, delta_y=self.speed)
-                elif roaming_character.direction == Direction.DOWN.value:
-                    self.move_roaming_character(roaming_character, delta_x=0, delta_y=-self.speed)
+                self.move_medially(roaming_character)
             elif is_facing_laterally(roaming_character):
-                if roaming_character.direction == Direction.LEFT.value:
-                    self.move_roaming_character(roaming_character, delta_x=-self.speed, delta_y=0)
-                elif roaming_character.direction == Direction.RIGHT.value:
-                    self.move_roaming_character(roaming_character, delta_x=self.speed, delta_y=0)
+                self.move_laterally(roaming_character)
             else:
                 print("Invalid direction.")
             handle_roaming_character_sides_collision(self.current_map, roaming_character)
 
-    def move_roaming_character(self, roaming_character, delta_x, delta_y):
+    def move_roaming_character(self, roaming_character, delta_x, delta_y) -> None:
         """
         The method that actuates the movement of the roaming characters from within the move_roaming_characters method.
         :param delta_x: Change in x position.
