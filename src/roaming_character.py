@@ -20,11 +20,12 @@ def handle_roaming_character_sides_collision(current_map, roaming_character):
     @param current_map: The current loaded map.
     @param roaming_character: Roaming character to check for sides collision.
     """
-    if roaming_character.rect.x < 0:  # Simple Sides Collision
-        roaming_character.rect.x = 0  # Reset Player Rect Coord
-    elif roaming_character.rect.x > current_map.width - TILE_SIZE:
-        roaming_character.rect.x = current_map.width - TILE_SIZE
-    if roaming_character.rect.y < 0:
-        roaming_character.rect.y = 0
-    elif roaming_character.rect.y > current_map.height - TILE_SIZE:
-        roaming_character.rect.y = current_map.height - TILE_SIZE
+    max_x_bound, max_y_bound, min_bound = current_map.width - TILE_SIZE, current_map.height - TILE_SIZE, 0
+    if roaming_character.rect.x < min_bound:  # Simple Sides Collision
+        roaming_character.rect.x = min_bound  # Reset Player Rect Coord
+    elif roaming_character.rect.x > max_x_bound:
+        roaming_character.rect.x = max_x_bound
+    if roaming_character.rect.y < min_bound:
+        roaming_character.rect.y = min_bound
+    elif roaming_character.rect.y > max_y_bound:
+        roaming_character.rect.y = max_y_bound

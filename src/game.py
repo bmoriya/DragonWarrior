@@ -10,10 +10,10 @@ from pygame.time import get_ticks
 from pygame.transform import scale
 
 import menu
-from roaming_character import handle_roaming_character_sides_collision
-from common import get_tile_by_coordinates
+from common import get_tile_by_coordinates, is_facing_up, is_facing_down, is_facing_left, is_facing_right
 from config import NES_RES
 from maps import get_character_position
+from roaming_character import handle_roaming_character_sides_collision
 from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
@@ -346,14 +346,14 @@ class Game:
 
         self.camera.move(self.current_map.player.direction)
         if is_facing_medially(self.current_map.player):
-            if self.current_map.player.direction == Direction.UP.value:
+            if is_facing_up(self.current_map.player):
                 self.move(delta_x=0, delta_y=self.speed)
-            elif self.current_map.player.direction == Direction.DOWN.value:
+            elif is_facing_down(self.current_map.player):
                 self.move(delta_x=0, delta_y=-self.speed)
         elif is_facing_laterally(self.current_map.player):
-            if self.current_map.player.direction == Direction.LEFT.value:
+            if is_facing_left(self.current_map.player):
                 self.move(delta_x=-self.speed, delta_y=0)
-            elif self.current_map.player.direction == Direction.RIGHT.value:
+            elif is_facing_right(self.current_map.player):
                 self.move(delta_x=self.speed, delta_y=0)
         self.current_map.player_sprites.dirty = 1
 

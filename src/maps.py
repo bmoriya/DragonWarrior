@@ -472,27 +472,10 @@ class TantegelCourtyard(DragonWarriorMap):
         tantegel_courtyard = [[13] * 7 + row + [13] * 7 for row in tantegel_courtyard]
         super().__init__(hero_images, tantegel_courtyard)
 
-        self.staircases = {
-            # TODO: There has to be a better way to do this (when player passes below a certain point, change map).
-            (37, 9): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 10): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 11): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 12): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 13): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 14): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 15): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 16): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 17): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 18): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 19): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 20): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 21): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 22): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 23): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 24): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 25): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-            (37, 26): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
-        }
+        up_staircase = {'map': Overworld(self.hero_images), 'stair_direction': 'up'}
+        staircases_keys = [(37, min(n, 26)) for n in range(9, 27, 1)]
+        staircases_values = [up_staircase] * len(staircases_keys)
+        self.staircases = dict(zip(staircases_keys, staircases_values))
         self.music_file_path = tantegel_castle_courtyard_music
 
     def hero_underlying_tile(self):

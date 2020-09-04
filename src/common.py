@@ -26,6 +26,14 @@ def find_file(name, path):
             return os.path.join(root, name)
 
 
+def retrieve_audio_resource(_sound_library, path, sound):
+    if sound is None:
+        canonicalized_path = path.replace('/', sep).replace('\\', sep)
+        sound = pygame.mixer.Sound(canonicalized_path)
+        _sound_library[path] = sound
+    return sound
+
+
 # Sound
 
 _sound_library = {}
@@ -39,15 +47,11 @@ def play_sound(path='data/sound/sfx'):
     if SOUND_ENABLED:
         global _sound_library
         sound = _sound_library.get(path)
-        if sound is None:
-            canonicalized_path = path.replace('/', sep).replace('\\', sep)
-            sound = pygame.mixer.Sound(canonicalized_path)
-            _sound_library[path] = sound
+        sound = retrieve_audio_resource(_sound_library, path, sound)
         sound.play()
 
 
 # Music
-
 
 _music_library = {}
 tantegel_castle_throne_room_music = join(MUSIC_DIR, '02 Dragon Quest 1 - Tantegel Castle (22khz_mono).ogg')
@@ -60,10 +64,7 @@ def play_music(path='data/sound/music'):
     if MUSIC_ENABLED:
         global _music_library
         music = _music_library.get(path)
-        if music is None:
-            canonicalized_path = path.replace('/', sep).replace('\\', sep)
-            music = pygame.mixer.Sound(canonicalized_path)
-            _music_library[path] = music
+        music = retrieve_audio_resource(_music_library, path, music)
         music.play(-1)
 
 
@@ -110,12 +111,30 @@ else:
 
 # Characters
 
+
+def is_facing_down(character):
+    return character.direction == Direction.DOWN.value
+
+
+def is_facing_up(character):
+    return character.direction == Direction.UP.value
+
+
+def is_facing_right(character):
+    return character.direction == Direction.RIGHT.value
+
+
+def is_facing_left(character):
+    return character.direction == Direction.LEFT.value
+
+
 def is_facing_medially(character):
-    return character.direction == Direction.UP.value or character.direction == Direction.DOWN.value
+    return is_facing_up(character) or is_facing_down(character)
 
 
 def is_facing_laterally(character):
-    return character.direction == Direction.LEFT.value or character.direction == Direction.RIGHT.value
+    return is_facing_left(character) or is_facing_right(character)
+
 
 # Maps
 
