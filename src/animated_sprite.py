@@ -4,8 +4,7 @@ from src.common import Direction
 
 class AnimatedSprite(BaseSprite):
     def __init__(self, center_point, direction, down_images, left_images, up_images, right_images, name):
-        BaseSprite.__init__(self, center_point, down_images[0])
-
+        super().__init__(center_point, down_images[0])
         self.name = name
         if down_images is None:
             down_images = []

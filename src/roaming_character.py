@@ -4,7 +4,7 @@ from src.animated_sprite import AnimatedSprite
 
 class RoamingCharacter(AnimatedSprite):
     def __init__(self, center_point, direction, down_images, left_images, up_images, right_images, name):
-        AnimatedSprite.__init__(self, center_point, direction, down_images, left_images, up_images, right_images, name)
+        super().__init__(center_point, direction, down_images, left_images, up_images, right_images, name)
         self.last_roaming_clock_check = None
         self.column = None
         self.row = None
