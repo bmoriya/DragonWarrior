@@ -2,7 +2,6 @@ import numpy as np
 from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
 
-from src.roaming_character import RoamingCharacter
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, KING_LORIK_PATH, get_image, \
@@ -13,6 +12,7 @@ from src.config import TILE_SIZE, SCALE, COLOR_KEY
 # Tile Key:
 # Index values for the map tiles corresponding to location on tilesheet.
 from src.player import Player
+from src.roaming_character import RoamingCharacter
 
 all_impassable_tiles = (
     'ROOF', 'WALL', 'WOOD', 'DOOR', 'BARRIER', 'WEAPON_SIGN', 'INN_SIGN', 'MOUNTAINS', 'WATER', 'BOTTOM_COAST',
@@ -272,19 +272,11 @@ class DragonWarriorMap:
         images = parse_animated_spritesheet(sheet, is_roaming=True)
         character_sprites = LayeredDirty()
         if is_roaming:
-            character = RoamingCharacter(self.center_pt, direction,
-                                         images[Direction.DOWN.value],
-                                         images[Direction.LEFT.value],
-                                         images[Direction.UP.value],
-                                         images[Direction.RIGHT.value], name=name)
-            character.position = self.get_initial_character_location(character_name=character.name)
+            character = RoamingCharacter(self.center_pt, direction, images, name)
+            character.position = self.get_initial_character_location(character.name)
             self.roaming_characters.append(character)
         else:
-            character = AnimatedSprite(self.center_pt, direction,
-                                       images[Direction.DOWN.value],
-                                       images[Direction.LEFT.value],
-                                       images[Direction.UP.value],
-                                       images[Direction.RIGHT.value], name=name)
+            character = AnimatedSprite(self.center_pt, direction, images, name)
         character_sprites.add(character)
         self.add_tile_by_value_and_group(underlying_tile)
         self.characters.append(character)
@@ -299,7 +291,7 @@ class DragonWarriorMap:
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet)
-        character = AnimatedSprite(self.center_pt, Direction.DOWN.value, images[0], images[1], images[2], images[3], name)
+        character = AnimatedSprite(self.center_pt, Direction.DOWN.value, images, name)
         sprites.add(character)
         self.characters.append(character)
         self.character_sprites.append(sprites)
@@ -308,10 +300,7 @@ class DragonWarriorMap:
     def map_player(self, underlying_tile):
         # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
         self.player = Player(center_point=self.center_pt,
-                             down_images=self.hero_images[Direction.DOWN.value],
-                             left_images=self.hero_images[Direction.LEFT.value],
-                             up_images=self.hero_images[Direction.UP.value],
-                             right_images=self.hero_images[Direction.RIGHT.value])
+                             images=self.hero_images)
         self.player_sprites = LayeredDirty(self.player)
         self.player.direction = self.hero_initial_direction()
         self.add_tile_by_value_and_group(underlying_tile)
@@ -348,7 +337,6 @@ class DragonWarriorMap:
 class TestMap(DragonWarriorMap):
 
     def __init__(self, hero_images):
-
         all_characters_values = [character_dict['val'] for character_dict in self.character_key.values()]
         all_characters_values.insert(0, 3)
         all_characters_values.append(3)
@@ -640,5 +628,5 @@ def get_next_coordinates(character_column, character_row, direction):
         return character_row, character_column + 1
 
 
-def get_roaming_character_position(roaming_character):
-    roaming_character.column, roaming_character.row = roaming_character.rect.x // TILE_SIZE, roaming_character.rect.y // TILE_SIZE
+def get_character_position(character):
+    character.column, character.row = character.rect.x // TILE_SIZE, character.rect.y // TILE_SIZE

@@ -52,11 +52,7 @@ class TestGame(TestCase):
         unarmed_hero_sheet = scale(unarmed_hero_sheet,
                                    (unarmed_hero_sheet.get_width() * SCALE, unarmed_hero_sheet.get_height() * SCALE))
         self.hero_images = parse_animated_spritesheet(unarmed_hero_sheet, is_roaming=True)
-        self.game.current_map.player = Player(center_point=self.center_pt,
-                                              down_images=self.hero_images[Direction.DOWN.value],
-                                              left_images=self.hero_images[Direction.LEFT.value],
-                                              up_images=self.hero_images[Direction.UP.value],
-                                              right_images=self.hero_images[Direction.RIGHT.value])
+        self.game.current_map.player = Player(center_point=self.center_pt, images=self.hero_images)
         self.game.current_map.player_sprites = LayeredDirty(self.game.current_map.player)
         self.game.hero_row = 0
         self.game.hero_column = 0

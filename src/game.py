@@ -13,7 +13,7 @@ import menu
 from roaming_character import handle_roaming_character_sides_collision
 from common import get_tile_by_coordinates
 from config import NES_RES
-from maps import get_roaming_character_position
+from maps import get_character_position
 from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
@@ -69,7 +69,7 @@ class Game:
         self.speed = 2
         for roaming_character in self.current_map.roaming_characters:
             roaming_character.last_roaming_clock_check = get_ticks()
-            get_roaming_character_position(roaming_character)
+            get_character_position(roaming_character)
         # Make the big scrollable map
         self.background = self.bigmap.subsurface(0, 0, self.current_map.width,
                                                  self.current_map.height).convert()
@@ -463,7 +463,7 @@ class Game:
         """
         # TODO: Extend roaming characters beyond just the roaming guard.
         for roaming_character in self.current_map.roaming_characters:
-            get_roaming_character_position(roaming_character)
+            get_character_position(roaming_character)
             now = get_ticks()
             if roaming_character.last_roaming_clock_check is None:
                 roaming_character.last_roaming_clock_check = now
@@ -485,19 +485,19 @@ class Game:
                         return
             if is_facing_medially(roaming_character):
                 if roaming_character.direction == Direction.UP.value:
-                    self.move_roaming_character(delta_x=0, delta_y=self.speed, roaming_character=roaming_character)
+                    self.move_roaming_character(roaming_character, delta_x=0, delta_y=self.speed)
                 elif roaming_character.direction == Direction.DOWN.value:
-                    self.move_roaming_character(delta_x=0, delta_y=-self.speed, roaming_character=roaming_character)
+                    self.move_roaming_character(roaming_character, delta_x=0, delta_y=-self.speed)
             elif is_facing_laterally(roaming_character):
                 if roaming_character.direction == Direction.LEFT.value:
-                    self.move_roaming_character(delta_x=-self.speed, delta_y=0, roaming_character=roaming_character)
+                    self.move_roaming_character(roaming_character, delta_x=-self.speed, delta_y=0)
                 elif roaming_character.direction == Direction.RIGHT.value:
-                    self.move_roaming_character(delta_x=self.speed, delta_y=0, roaming_character=roaming_character)
+                    self.move_roaming_character(roaming_character, delta_x=self.speed, delta_y=0)
             else:
                 print("Invalid direction.")
             handle_roaming_character_sides_collision(self.current_map, roaming_character)
 
-    def move_roaming_character(self, delta_x, delta_y, roaming_character):
+    def move_roaming_character(self, roaming_character, delta_x, delta_y):
         """
         The method that actuates the movement of the roaming characters from within the move_roaming_characters method.
         :param delta_x: Change in x position.
