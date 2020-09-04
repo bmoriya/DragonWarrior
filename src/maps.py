@@ -286,10 +286,13 @@ class DragonWarriorMap:
                                        images[Direction.UP.value],
                                        images[Direction.RIGHT.value], name=name)
         character_sprites.add(character)
-        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
-                      tile_group=self.tile_key[underlying_tile]['group'])
+        self.add_tile_by_value_and_group(underlying_tile)
         self.characters.append(character)
         self.character_sprites.append(character_sprites)
+
+    def add_tile_by_value_and_group(self, underlying_tile):
+        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
+                      tile_group=self.tile_key[underlying_tile]['group'])
 
     def map_two_sided_npc(self, image_path, name, underlying_tile):
         sprites = LayeredDirty()
@@ -301,8 +304,7 @@ class DragonWarriorMap:
         sprites.add(character)
         self.characters.append(character)
         self.character_sprites.append(sprites)
-        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
-                      tile_group=self.tile_key[underlying_tile]['group'])
+        self.add_tile_by_value_and_group(underlying_tile)
 
     def map_player(self, underlying_tile):
         # TODO(ELF): Fix underlying tiles so that they aren't all bricks.
@@ -313,8 +315,7 @@ class DragonWarriorMap:
                              right_images=self.hero_images[Direction.RIGHT.value])
         self.player_sprites = LayeredDirty(self.player)
         self.player.direction = self.hero_initial_direction()
-        self.add_tile(tile_value=self.tile_key[underlying_tile]['val'],
-                      tile_group=self.tile_key[underlying_tile]['group'])
+        self.add_tile_by_value_and_group(underlying_tile)
         self.characters.append(self.player)
         self.character_sprites.append(self.player_sprites)
 

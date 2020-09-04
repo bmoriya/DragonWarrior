@@ -26,6 +26,13 @@ class AnimatedSprite(BaseSprite):
         self.right_images = right_images
         self.direction = direction
         self.center_point = center_point
+        # TODO: Implement the use of the images map in the animate method.
+        self.images_map = {
+            Direction.DOWN.value: down_images,
+            Direction.LEFT.value: left_images,
+            Direction.UP.value: up_images,
+            Direction.RIGHT.value: right_images
+        }
 
     def animate(self):
         self.frame_count += 1

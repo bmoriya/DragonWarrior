@@ -1,13 +1,12 @@
 from unittest import TestCase
 
-import numpy as np
 import pygame
 from pygame.imageext import load_extended
 from pygame.sprite import LayeredDirty
 from pygame.transform import scale
 
 from src.camera import Camera
-from src.common import UNARMED_HERO_PATH, Direction
+from src.common import UNARMED_HERO_PATH, Direction, get_tile_by_coordinates
 from src.config import SCALE, TILE_SIZE
 from src.game import Game
 from src.maps import DragonWarriorMap, parse_animated_spritesheet
@@ -25,8 +24,9 @@ def create_key_mock(pressed_key):
 
 class TestMockMap(DragonWarriorMap):
     def __init__(self, hero_images):
+        self.hero_images = hero_images
         test_mock_map = [[33, 0],
-                       [1, 2]]
+                         [1, 2]]
         super().__init__(None, test_mock_map)
 
     def hero_underlying_tile(self):
@@ -79,10 +79,10 @@ class TestGame(TestCase):
         self.assertIsNone(self.game.move_player(key))
 
     def test_get_tile_by_coordinates(self):
-        self.assertEqual('HERO', self.game.get_tile_by_coordinates(0, 0))
-        self.assertEqual('ROOF', self.game.get_tile_by_coordinates(1, 0))
-        self.assertEqual('WALL', self.game.get_tile_by_coordinates(0, 1))
-        self.assertEqual('WOOD', self.game.get_tile_by_coordinates(1, 1))
+        self.assertEqual('HERO', get_tile_by_coordinates(0, 0, self.game.current_map))
+        self.assertEqual('ROOF', get_tile_by_coordinates(1, 0, self.game.current_map))
+        self.assertEqual('WALL', get_tile_by_coordinates(0, 1, self.game.current_map))
+        self.assertEqual('WOOD', get_tile_by_coordinates(1, 1, self.game.current_map))
 
     # TODO: implement test_handle_roaming_character_map_edge_side_collision.
 

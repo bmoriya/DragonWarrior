@@ -11,12 +11,13 @@ from pygame.transform import scale
 
 import menu
 from RoamingCharacter import handle_roaming_character_sides_collision
+from common import get_tile_by_coordinates
 from config import NES_RES
 from maps import get_roaming_character_position
 from src import maps
 from src.camera import Camera
 from src.common import Direction, play_sound, bump_sfx, UNARMED_HERO_PATH, get_image, \
-    menu_button_sfx, stairs_down_sfx, stairs_up_sfx, BLACK
+    menu_button_sfx, stairs_down_sfx, stairs_up_sfx, BLACK, is_facing_medially, is_facing_laterally
 from src.config import SCALE, TILE_SIZE, FULLSCREEN_ENABLED, MUSIC_ENABLED
 from src.maps import parse_animated_spritesheet
 
@@ -310,15 +311,6 @@ class Game:
             self.character_rects.append(command_menu_rect)
         self.command_menu_launched = True
 
-    def get_tile_by_coordinates(self, column, row):
-        """
-        Retrieve the tile name from the coordinates of the tile on the map.
-        :param column: The column of the tile.
-        :param row: The row of the tile.
-        """
-        if row < len(self.current_map.layout) and column < len(self.current_map.layout[0]):
-            return self.current_map.get_tile_by_value(self.current_map.layout[row][column])
-
     def move_player(self, key):
         """
         Move the player in a specified direction.
@@ -343,26 +335,26 @@ class Game:
             self.player_moving = True
         else:  # determine if player has reached new tile
             self.current_map.player_sprites.dirty = 1
-            if (self.current_map.player.direction == Direction.UP.value or
-                    self.current_map.player.direction == Direction.DOWN.value):
+            if is_facing_medially(self.current_map.player):
                 if curr_pos_y % TILE_SIZE == 0:
                     self.player_moving, self.next_tile_checked = False, False
                     return
-            elif (self.current_map.player.direction == Direction.LEFT.value or
-                  self.current_map.player.direction == Direction.RIGHT.value):
+            elif is_facing_laterally(self.current_map.player):
                 if curr_pos_x % TILE_SIZE == 0:
                     self.player_moving, self.next_tile_checked = False, False
                     return
 
         self.camera.move(self.current_map.player.direction)
-        if self.current_map.player.direction == Direction.UP.value:
-            self.move(delta_x=0, delta_y=self.speed)
-        elif self.current_map.player.direction == Direction.DOWN.value:
-            self.move(delta_x=0, delta_y=-self.speed)
-        elif self.current_map.player.direction == Direction.LEFT.value:
-            self.move(delta_x=-self.speed, delta_y=0)
-        elif self.current_map.player.direction == Direction.RIGHT.value:
-            self.move(delta_x=self.speed, delta_y=0)
+        if is_facing_medially(self.current_map.player):
+            if self.current_map.player.direction == Direction.UP.value:
+                self.move(delta_x=0, delta_y=self.speed)
+            elif self.current_map.player.direction == Direction.DOWN.value:
+                self.move(delta_x=0, delta_y=-self.speed)
+        elif is_facing_laterally(self.current_map.player):
+            if self.current_map.player.direction == Direction.LEFT.value:
+                self.move(delta_x=-self.speed, delta_y=0)
+            elif self.current_map.player.direction == Direction.RIGHT.value:
+                self.move(delta_x=self.speed, delta_y=0)
         self.current_map.player_sprites.dirty = 1
 
     def move(self, delta_x, delta_y):
@@ -409,13 +401,13 @@ class Game:
         :return: str: The next tile that the character will step on (e.g., 'BRICK').
         """
         if direction == Direction.UP.value:
-            return self.get_tile_by_coordinates(character_column, character_row - 1)
+            return get_tile_by_coordinates(character_column, character_row - 1, self.current_map)
         elif direction == Direction.DOWN.value:
-            return self.get_tile_by_coordinates(character_column, character_row + 1)
+            return get_tile_by_coordinates(character_column, character_row + 1, self.current_map)
         elif direction == Direction.LEFT.value:
-            return self.get_tile_by_coordinates(character_column - 1, character_row)
+            return get_tile_by_coordinates(character_column - 1, character_row, self.current_map)
         elif direction == Direction.RIGHT.value:
-            return self.get_tile_by_coordinates(character_column + 1, character_row)
+            return get_tile_by_coordinates(character_column + 1, character_row, self.current_map)
 
     def get_next_coordinates(self, character_column, character_row, direction):
         if character_row < len(self.current_map.layout) and character_column < len(self.current_map.layout[0]):
@@ -428,7 +420,7 @@ class Game:
             elif direction == Direction.RIGHT.value:
                 return character_column + 1, character_row
 
-    def is_impassable(self, tile):
+    def is_impassable(self, tile: str) -> bool:
         """
         Check if a tile is impassable (a tile that blocks the player from moving).
         :param tile: Tile to be checked for impassibility.
@@ -436,7 +428,7 @@ class Game:
         """
         return tile in self.current_map.impassable_tiles
 
-    def handle_sides_collision(self, next_pos_x: int, next_pos_y: int):
+    def handle_sides_collision(self, next_pos_x: int, next_pos_y: int) -> tuple:
         """
         Handle collision with the sides of the map (for the player).
         :type next_pos_x: int
@@ -483,22 +475,24 @@ class Game:
                     return
                 roaming_character.is_moving = True
             else:  # determine if character has reached new tile
-                if roaming_character.direction == Direction.UP.value or roaming_character.direction == Direction.DOWN.value:
+                if is_facing_medially(roaming_character):
                     if roaming_character.rect.y % TILE_SIZE == 0:
                         roaming_character.is_moving, roaming_character.next_tile_checked = False, False
                         return
-                elif roaming_character.direction == Direction.LEFT.value or roaming_character.direction == Direction.RIGHT.value:
+                elif is_facing_laterally(roaming_character):
                     if roaming_character.rect.x % TILE_SIZE == 0:
                         roaming_character.is_moving, roaming_character.next_tile_checked = False, False
                         return
-            if roaming_character.direction == Direction.UP.value:
-                self.move_roaming_character(delta_x=0, delta_y=self.speed, roaming_character=roaming_character)
-            elif roaming_character.direction == Direction.DOWN.value:
-                self.move_roaming_character(delta_x=0, delta_y=-self.speed, roaming_character=roaming_character)
-            elif roaming_character.direction == Direction.LEFT.value:
-                self.move_roaming_character(delta_x=-self.speed, delta_y=0, roaming_character=roaming_character)
-            elif roaming_character.direction == Direction.RIGHT.value:
-                self.move_roaming_character(delta_x=self.speed, delta_y=0, roaming_character=roaming_character)
+            if is_facing_medially(roaming_character):
+                if roaming_character.direction == Direction.UP.value:
+                    self.move_roaming_character(delta_x=0, delta_y=self.speed, roaming_character=roaming_character)
+                elif roaming_character.direction == Direction.DOWN.value:
+                    self.move_roaming_character(delta_x=0, delta_y=-self.speed, roaming_character=roaming_character)
+            elif is_facing_laterally(roaming_character):
+                if roaming_character.direction == Direction.LEFT.value:
+                    self.move_roaming_character(delta_x=-self.speed, delta_y=0, roaming_character=roaming_character)
+                elif roaming_character.direction == Direction.RIGHT.value:
+                    self.move_roaming_character(delta_x=self.speed, delta_y=0, roaming_character=roaming_character)
             else:
                 print("Invalid direction.")
             handle_roaming_character_sides_collision(self.current_map, roaming_character)

@@ -106,3 +106,26 @@ if exists(DRAGON_QUEST_FONT_PATH):
     DRAGON_QUEST_FONT = pygame.font.Font(DRAGON_QUEST_FONT_PATH, 15)
 else:
     DRAGON_QUEST_FONT = pygame.font.Font(find_file('dragon-quest.ttf', root_project_path), 15)
+
+
+# Characters
+
+def is_facing_medially(character):
+    return character.direction == Direction.UP.value or character.direction == Direction.DOWN.value
+
+
+def is_facing_laterally(character):
+    return character.direction == Direction.LEFT.value or character.direction == Direction.RIGHT.value
+
+# Maps
+
+
+def get_tile_by_coordinates(column: int, row: int, game_map) -> str:
+    """
+    Retrieve the tile name from the coordinates of the tile on the map.
+    :param column: The column of the tile.
+    :param row: The row of the tile.
+    @rtype: str
+    """
+    if row < len(game_map.layout) and column < len(game_map.layout[0]):
+        return game_map.get_tile_by_value(game_map.layout[row][column])
