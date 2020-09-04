@@ -19,10 +19,6 @@ class TestAnimatedSprite(TestCase):
 
     def test_initialized_values(self):
         self.assertEqual(self.anim_sprite.name, 'Mock')
-        self.assertEqual(self.anim_sprite.down_images, self.mock_images[Direction.DOWN.value])
-        self.assertEqual(self.anim_sprite.left_images, self.mock_images[Direction.LEFT.value])
-        self.assertEqual(self.anim_sprite.up_images, self.mock_images[Direction.UP.value])
-        self.assertEqual(self.anim_sprite.right_images, self.mock_images[Direction.RIGHT.value])
         self.assertEqual(self.anim_sprite.current_frame, 0)
         self.assertEqual(self.anim_sprite.max_frame, 1)
         self.assertEqual(self.anim_sprite.frame_count, 0)
@@ -49,19 +45,19 @@ class TestAnimatedSprite(TestCase):
     def test_animate_down_direction(self):
         self.anim_sprite.direction = Direction.DOWN.value
         self.anim_sprite.animate()
-        self.assertEqual(self.anim_sprite.image, self.anim_sprite.down_images[self.anim_sprite.current_frame])
+        self.assertEqual(self.anim_sprite.image, self.anim_sprite.images_map[self.anim_sprite.direction][self.anim_sprite.current_frame])
 
     def test_animate_left_direction(self):
         self.anim_sprite.direction = Direction.LEFT.value
         self.anim_sprite.animate()
-        self.assertEqual(self.anim_sprite.image, self.anim_sprite.left_images[self.anim_sprite.current_frame])
+        self.assertEqual(self.anim_sprite.image, self.anim_sprite.images_map[self.anim_sprite.direction][self.anim_sprite.current_frame])
 
     def test_animate_up_direction(self):
         self.anim_sprite.direction = Direction.UP.value
         self.anim_sprite.animate()
-        self.assertEqual(self.anim_sprite.image, self.anim_sprite.up_images[self.anim_sprite.current_frame])
+        self.assertEqual(self.anim_sprite.image, self.anim_sprite.images_map[self.anim_sprite.direction][self.anim_sprite.current_frame])
 
     def test_animate_right_direction(self):
         self.anim_sprite.direction = Direction.RIGHT.value
         self.anim_sprite.animate()
-        self.assertEqual(self.anim_sprite.image, self.anim_sprite.right_images[self.anim_sprite.current_frame])
+        self.assertEqual(self.anim_sprite.image, self.anim_sprite.images_map[self.anim_sprite.direction][self.anim_sprite.current_frame])

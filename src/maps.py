@@ -2,7 +2,7 @@ import numpy as np
 from pygame.sprite import Group, LayeredDirty
 from pygame.transform import scale
 
-from src.RoamingCharacter import RoamingCharacter
+from src.roaming_character import RoamingCharacter
 from src.animated_sprite import AnimatedSprite
 from src.base_sprite import BaseSprite
 from src.common import Direction, tantegel_castle_throne_room_music, KING_LORIK_PATH, get_image, \
@@ -299,8 +299,7 @@ class DragonWarriorMap:
         sheet = get_image(image_path)
         sheet = scale(sheet, (sheet.get_width() * SCALE, sheet.get_height() * SCALE))
         images = parse_animated_spritesheet(sheet)
-        character = AnimatedSprite(self.center_pt, Direction.DOWN.value,
-                                   images[0], name=name)
+        character = AnimatedSprite(self.center_pt, Direction.DOWN.value, images[0], images[1], images[2], images[3], name)
         sprites.add(character)
         self.characters.append(character)
         self.character_sprites.append(sprites)

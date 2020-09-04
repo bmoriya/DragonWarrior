@@ -10,7 +10,7 @@ from pygame.time import get_ticks
 from pygame.transform import scale
 
 import menu
-from RoamingCharacter import handle_roaming_character_sides_collision
+from roaming_character import handle_roaming_character_sides_collision
 from common import get_tile_by_coordinates
 from config import NES_RES
 from maps import get_roaming_character_position
