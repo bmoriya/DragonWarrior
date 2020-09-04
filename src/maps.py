@@ -86,7 +86,7 @@ def parse_animated_spritesheet(sheet, is_roaming=False):
 
 
 class DragonWarriorMap:
-    def __init__(self, hero_images):
+    def __init__(self, hero_images, layout):
 
         # Character variables
 
@@ -101,13 +101,15 @@ class DragonWarriorMap:
         # Map variables
 
         self.tiles_in_current_loaded_map = None
-        self.layout = [[]]
-        self.layout_numpy_array = np.empty(0)
+        self.layout = layout
+        self.layout_numpy_array = np.array(self.layout)
         self.center_pt = None
         self.map_tiles = parse_map_tiles(map_path=MAP_TILES_PATH)
         self.impassable_tiles = all_impassable_tiles
         self.tile_group_dict = {}
         self.staircases = {}
+        self.height = len(self.layout) * TILE_SIZE
+        self.width = len(self.layout[0]) * TILE_SIZE
 
         self.roof_group = Group()  # 0
         self.wall_group = Group()  # 1
@@ -239,7 +241,6 @@ class DragonWarriorMap:
 
     def load_map(self):
         # start_time = time.time()
-        current_loaded_map = self
         x_offset = TILE_SIZE // 2
         y_offset = TILE_SIZE // 2
         tiles_in_current_loaded_map = set([self.get_tile_by_value(tile) for row in self.layout for tile in row])
@@ -253,9 +254,9 @@ class DragonWarriorMap:
 
     def map_character_tiles(self, x, y):
         for character, character_dict in self.character_key.items():
-            if self.layout[y][x] >= 33:  # 'HERO' hardcoded value
+            if self.layout[y][x] > 32:  # anything below 32 is a floor tile
                 if self.layout[y][x] == character_dict['val']:
-                    if self.layout[y][x] == self.character_key['HERO']['val']:
+                    if self.layout[y][x] == 33:  # 'HERO' hardcoded value
                         self.map_player(character_dict['underlying_tile'])
                     elif character_dict['four_sided']:
                         self.map_four_sided_npc(name=character, direction=character_dict['direction'],
@@ -347,7 +348,7 @@ class DragonWarriorMap:
 class TestMap(DragonWarriorMap):
 
     def __init__(self, hero_images):
-        super().__init__(hero_images)
+
         all_characters_values = [character_dict['val'] for character_dict in self.character_key.values()]
         all_characters_values.insert(0, 3)
         all_characters_values.append(3)
@@ -369,10 +370,8 @@ class TestMap(DragonWarriorMap):
             [3] + [4] * 14 + [3],
             brick_line
         ]
-        self.layout = test_map
-        self.layout_numpy_array = np.array(self.layout)
-        self.height = len(self.layout * TILE_SIZE)
-        self.width = len(self.layout[0] * TILE_SIZE)
+        super().__init__(hero_images, test_map)
+
         self.music_file_path = village_music
 
     def hero_underlying_tile(self):
@@ -388,7 +387,6 @@ class TantegelThroneRoom(DragonWarriorMap):
     """
 
     def __init__(self, hero_images):
-        super().__init__(hero_images)
         roof_line = tuple([ROOF] * 27)
         tantegel_throne_room = [
             # Using the following dims: coord maps will be 0,0 top left and positive axes towards
@@ -418,10 +416,7 @@ class TantegelThroneRoom(DragonWarriorMap):
             roof_line,  # 20
             roof_line,  # 21
         ]
-        self.layout = tantegel_throne_room
-        self.layout_numpy_array = np.array(self.layout)
-        self.height = len(self.layout * TILE_SIZE)
-        self.width = len(self.layout[0] * TILE_SIZE)
+        super().__init__(hero_images, tantegel_throne_room)
         self.staircases = {(14, 18): {'map': TantegelCourtyard(self.hero_images), 'stair_direction': 'down'}}
         self.music_file_path = tantegel_castle_throne_room_music
 
@@ -438,7 +433,6 @@ class TantegelCourtyard(DragonWarriorMap):
     """
 
     def __init__(self, hero_images):
-        super().__init__(hero_images)
         courtyard_grass_line = [GRASS] * 30
         tantegel_courtyard = [
             courtyard_grass_line,
@@ -488,10 +482,8 @@ class TantegelCourtyard(DragonWarriorMap):
             courtyard_grass_line,
         ]
         tantegel_courtyard = [[13] * 7 + row + [13] * 7 for row in tantegel_courtyard]
-        self.layout = tantegel_courtyard
-        self.layout_numpy_array = np.array(self.layout)
-        self.height = len(self.layout * TILE_SIZE)
-        self.width = len(self.layout[0] * TILE_SIZE)
+        super().__init__(hero_images, tantegel_courtyard)
+
         self.staircases = {
             # TODO: There has to be a better way to do this (when player passes below a certain point, change map).
             (37, 9): {'map': Overworld(self.hero_images), 'stair_direction': 'up'},
@@ -528,7 +520,6 @@ class Overworld(DragonWarriorMap):
     """
 
     def __init__(self, hero_images):
-        super().__init__(hero_images)
         overworld = [
             [WATER] * 26,
             [WATER] * 26,
@@ -611,11 +602,7 @@ class Overworld(DragonWarriorMap):
             [16, 16, 16, 16, 16, 16, 16, 16, 26, 27, 22, 22, 22, 22, 22, 22, 22, 22, 22, 28, 22, 22, 20, 20, 22, 22],
             [16, 16, 16, 16, 16, 16, 16, 16, 26, 27, 22, 22, 22, 22, 22, 22, 22, 22, 22, 28, 22, 22, 20, 20, 22, 22],
         ]
-        self.layout = overworld
-        # self.layout_tiles = parse_map_tiles(join(IMAGES_DIR, 'alefgard.gif'))
-        self.layout_numpy_array = np.array(self.layout)
-        self.height = len(self.layout * TILE_SIZE)
-        self.width = len(self.layout[0] * TILE_SIZE)
+        super().__init__(hero_images, overworld)
         self.music_file_path = overworld_music
         self.staircases = {}
 

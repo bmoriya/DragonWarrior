@@ -21,7 +21,8 @@ class Menu:
                                                                   widget_margin=(10 * SCALE, 5 * SCALE),
                                                                   widget_offset=(0, 5 * SCALE),
                                                                   widget_selection_effect=pygame_menu.widgets.
-                                                                  LeftArrowSelection(blink_ms=500, arrow_size=(SCALE * 5, SCALE * 6)))
+                                                                  LeftArrowSelection(blink_ms=500,
+                                                                                     arrow_size=(SCALE * 5, SCALE * 6)))
         # TODO: Fix LeftArrowSelection size.
 
 

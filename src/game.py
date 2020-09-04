@@ -31,7 +31,6 @@ class Game:
     def __init__(self):
         # Initialize pygame
         self.character_rects = []
-        self.map_rects = []
         self.opacity = 0
         init()
 
@@ -42,8 +41,12 @@ class Game:
         else:
             flags = RESIZABLE | DOUBLEBUF
         self.scale = SCALE
+        # video_infos = pg.display.Info()
+        # current_screen_width, current_screen_height = video_infos.current_w, video_infos.current_h
         self.win_width = NES_RES[0] * self.scale
         self.win_height = NES_RES[1] * self.scale
+        # self.win_width = current_screen_width
+        # self.win_height = current_screen_height
         self.screen = set_mode((self.win_width, self.win_height), flags)
         self.screen.set_alpha(None)
         set_caption(self.GAME_TITLE)
@@ -54,13 +57,12 @@ class Game:
             unarmed_hero_sheet.get_width() * self.scale, unarmed_hero_sheet.get_height() * self.scale))
         self.unarmed_hero_images = parse_animated_spritesheet(unarmed_hero_tilesheet, is_roaming=True)
 
-        # self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
+        self.current_map = maps.TantegelThroneRoom(hero_images=self.unarmed_hero_images)
         # self.current_map = maps.TantegelCourtyard(hero_images=self.unarmed_hero_images)
-        self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
+        # self.current_map = maps.Overworld(hero_images=self.unarmed_hero_images)
 
         # self.current_map = maps.TestMap(hero_images=self.unarmed_hero_images)
-        self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
-        self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
+        self.bigmap = Surface((self.current_map.width, self.current_map.height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
         self.player_moving = False
         self.speed = 2
@@ -119,19 +121,15 @@ class Game:
                 sys.exit()
         pg.event.pump()
         key = pg.key.get_pressed()
-        self.hero_layout_column, self.hero_layout_row = self.current_map.player.rect.x // TILE_SIZE, self.current_map.player.rect.y // TILE_SIZE
+        self.hero_layout_column = self.current_map.player.rect.x // TILE_SIZE
+        self.hero_layout_row = self.current_map.player.rect.y // TILE_SIZE
         if self.enable_roaming and self.current_map.roaming_characters:
             self.move_roaming_characters()
         if self.enable_movement:
             self.move_player(key)
 
         for staircase_location, staircase_dict in self.current_map.staircases.items():
-            if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
-                if staircase_dict['stair_direction'] == 'down':
-                    play_sound(stairs_down_sfx)
-                elif staircase_dict['stair_direction'] == 'up':
-                    play_sound(stairs_up_sfx)
-                self.map_change(staircase_dict['map'])
+            self.process_staircase_warps(staircase_dict, staircase_location)
 
         if key[pg.K_j]:
             # B button
@@ -177,6 +175,14 @@ class Game:
 
         pg.event.pump()
 
+    def process_staircase_warps(self, staircase_dict: dict, staircase_location):
+        if (self.hero_layout_row, self.hero_layout_column) == staircase_location:
+            if staircase_dict['stair_direction'] == 'down':
+                play_sound(stairs_down_sfx)
+            elif staircase_dict['stair_direction'] == 'up':
+                play_sound(stairs_up_sfx)
+            self.map_change(staircase_dict['map'])
+
     def draw_all(self):
         """
         Draw map, sprites, background, menu and other surfaces.
@@ -213,33 +219,26 @@ class Game:
             self.cmd_menu.command_menu.update(self.events)
         pg.display.update()
 
-    def fade_out(self, width, height):
+    def fade(self, width: int, height: int, fade_out: bool):
         """
-        Fade from current scene to black.
+        Fade to/from current scene to/from black.
         :return: None
+        @param width: int
+        Width of surface to fade.
+        @param height:
+        Height of surface to fade.
+        @type fade_out: bool
+        If true, fades out. If false, fades in.
         """
         fade = pg.Surface((width, height))
         fade.fill(BLACK)
         self.opacity = 0
-        for r in range(300):
-            self.opacity += 1
-            fade.set_alpha(self.opacity)
-            self.background.fill(BLACK)
-            self.screen.blit(fade, (0, 0))
-            pg.display.update()
-            pg.time.delay(5)
-
-    def fade_in(self, width, height):
-        # TODO(ELF): Fix fade_in.
-        """
-        Fade from black to current screen.
-        :return: None
-        """
-        fade = pg.Surface((width, height))
-        fade.fill(BLACK)
-        self.opacity = 300
         for alpha in range(300):
-            self.opacity -= 1
+            if fade_out:
+                self.opacity += 1
+            else:
+                # TODO(ELF): Fix fade in.
+                self.opacity -= 1
             fade.set_alpha(self.opacity)
             self.background.fill(BLACK)
             self.screen.blit(fade, (0, 0))
@@ -255,10 +254,9 @@ class Game:
         self.pause_all_movement()
         self.background = Surface(self.screen.get_size()).convert()
         self.current_map = next_map
-        self.bigmap_width, self.bigmap_height = self.current_map.width, self.current_map.height
-        self.bigmap = Surface((self.bigmap_width, self.bigmap_height)).convert()
+        self.bigmap = Surface((self.current_map.width, self.current_map.height)).convert()
         self.bigmap.fill(self.BACK_FILL_COLOR)
-        self.fade_out(self.win_width, self.win_height)
+        self.fade(self.win_width, self.win_height, fade_out=True)
         if MUSIC_ENABLED:
             pg.mixer.music.stop()
         self.current_map.load_map()
@@ -269,7 +267,7 @@ class Game:
         self.hero_layout_row, self.hero_layout_column = initial_hero_location.take(0), initial_hero_location.take(1)
         self.camera = Camera(hero_position=(int(self.hero_layout_column), int(self.hero_layout_row)),
                              current_map=self.current_map, speed=None)
-        self.fade_in(self.win_width, self.win_height)
+        self.fade(self.win_width, self.win_height, fade_out=False)
 
         self.unpause_all_movement()
 
@@ -448,20 +446,19 @@ class Game:
         :return: tuple: The x, y coordinates (in terms of tile size) of the next position of the player.
         """
         max_x_bound, max_y_bound, min_bound = self.current_map.width, self.current_map.height, 0
-        player_pos_x, player_pos_y = self.current_map.player.rect.x, self.current_map.player.rect.y
-        if player_pos_x < min_bound:
+        if self.current_map.player.rect.x < min_bound:
             self.current_map.player.rect.x = min_bound
             play_sound(bump_sfx)
             next_pos_x += -self.speed
-        elif player_pos_x > max_x_bound - TILE_SIZE:
+        elif self.current_map.player.rect.x > max_x_bound - TILE_SIZE:
             self.current_map.player.rect.x = max_x_bound - TILE_SIZE
             play_sound(bump_sfx)
             next_pos_x += self.speed
-        elif player_pos_y < min_bound:
+        elif self.current_map.player.rect.y < min_bound:
             self.current_map.player.rect.y = min_bound
             play_sound(bump_sfx)
             next_pos_y -= self.speed
-        elif player_pos_y > max_y_bound - TILE_SIZE:
+        elif self.current_map.player.rect.y > max_y_bound - TILE_SIZE:
             self.current_map.player.rect.y = max_y_bound - TILE_SIZE
             play_sound(bump_sfx)
             next_pos_y += self.speed
@@ -480,19 +477,19 @@ class Game:
                 roaming_character.last_roaming_clock_check = now
             if now - roaming_character.last_roaming_clock_check >= self.roaming_character_go_cooldown:
                 roaming_character.last_roaming_clock_check = now
-                if not roaming_character.moving:
+                if not roaming_character.is_moving:
                     roaming_character.direction = random.choice(list(map(int, Direction)))
                 else:  # character not moving and no input
                     return
-                roaming_character.moving = True
+                roaming_character.is_moving = True
             else:  # determine if character has reached new tile
                 if roaming_character.direction == Direction.UP.value or roaming_character.direction == Direction.DOWN.value:
                     if roaming_character.rect.y % TILE_SIZE == 0:
-                        roaming_character.moving, roaming_character.next_tile_checked = False, False
+                        roaming_character.is_moving, roaming_character.next_tile_checked = False, False
                         return
                 elif roaming_character.direction == Direction.LEFT.value or roaming_character.direction == Direction.RIGHT.value:
                     if roaming_character.rect.x % TILE_SIZE == 0:
-                        roaming_character.moving, roaming_character.next_tile_checked = False, False
+                        roaming_character.is_moving, roaming_character.next_tile_checked = False, False
                         return
             if roaming_character.direction == Direction.UP.value:
                 self.move_roaming_character(delta_x=0, delta_y=self.speed, roaming_character=roaming_character)

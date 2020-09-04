@@ -37,9 +37,9 @@ class RoamingCharacter(AnimatedSprite):
 def handle_roaming_character_sides_collision(current_map, roaming_character):
     """
     Handle collision with the sides of the map (for roaming characters).
-    :type roaming_character:
-    :param roaming_character: Roaming character to check for sides collision.
     :return: None
+    @param current_map: The current loaded map.
+    @param roaming_character: Roaming character to check for sides collision.
     """
     if roaming_character.rect.x < 0:  # Simple Sides Collision
         roaming_character.rect.x = 0  # Reset Player Rect Coord

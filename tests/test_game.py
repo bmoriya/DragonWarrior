@@ -25,12 +25,9 @@ def create_key_mock(pressed_key):
 
 class TestMockMap(DragonWarriorMap):
     def __init__(self, hero_images):
-        super().__init__(None)
-        self.layout = [[33, 0],
+        test_mock_map = [[33, 0],
                        [1, 2]]
-        self.height = len(self.layout * TILE_SIZE)
-        self.width = len(self.layout[0] * TILE_SIZE)
-        self.layout_numpy_array = np.array(self.layout)
+        super().__init__(None, test_mock_map)
 
     def hero_underlying_tile(self):
         return 'BRICK'
