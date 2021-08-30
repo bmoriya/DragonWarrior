@@ -27,7 +27,7 @@ class Game:
     FPS = 60
     BACK_FILL_COLOR = BLACK
     MOVE_EVENT = USEREVENT + 1
-    time.set_timer(MOVE_EVENT, 100)
+    # time.set_timer(MOVE_EVENT, 100)
 
     def __init__(self):
         # Initialize pygame
@@ -103,7 +103,7 @@ class Game:
         Main loop.
         :return: None
         """
-        while 1:
+        while True:
             self.clock.tick(self.FPS)
             self.get_events()
             self.draw_all()
