@@ -1,16 +1,13 @@
 #!/usr/bin/env python
-from game import Game
 
-def main():
-    window_w = 256
-    window_h = 240
-    multiplier = 3
+# This file is mainly here for the repl.it
+from src.game import Game
 
-    fps = 60
-    title = "RPG Tutorial"
-    
-    game = Game(window_w, window_h, fps, title, multiplier)
-    game.run()
+
+def run():  # pragma: no cover
+    game = Game()
+    game.main()
+
 
 if __name__ == "__main__":
-    main()
+    run()
